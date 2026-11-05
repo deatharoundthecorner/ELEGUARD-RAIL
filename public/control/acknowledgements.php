@@ -1,0 +1,67 @@
+<?php
+/**
+ * Control Desk Driver Acknowledgements Log
+ */
+$pageTitle = "Driver Responses";
+$allowed_roles = 'control_officer';
+require_once __DIR__ . '/../../app/layouts/dashboard_header.php';
+require_once __DIR__ . '/../../app/services/AlertService.php';
+
+$acknowledgements = AlertService::getAcknowledgements();
+?>
+
+<div class="dashboard-title-row">
+    <h1>Driver Cab Acknowledgements</h1>
+    <p class="text-secondary">Track the real-time safety response taken by train drivers when crossing active elephant zones.</p>
+</div>
+
+<div class="card-panel">
+    <div class="table-responsive">
+        <?php if (empty($acknowledgements)): ?>
+            <p class="text-center text-muted" style="padding: 40px 0;">No driver acknowledgements logged in the system database yet.</p>
+        <?php else: ?>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Time Acknowledged</th>
+                        <th>Train Driver</th>
+                        <th>Railway Section</th>
+                        <th>Safety Action Taken</th>
+                        <th>Driver Response Note</th>
+                        <th>Original Alert message</th>
+                        <th>Alert level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($acknowledgements as $ack): ?>
+                        <tr>
+                            <td><?php echo format_date($ack['acknowledged_at']); ?></td>
+                            <td><strong><?php echo e($ack['driver_name']); ?></strong></td>
+                            <td><strong><?php echo e($ack['section_name']); ?></strong></td>
+                            <td>
+                                <span class="badge <?php 
+                                    $st = $ack['action_status'];
+                                    if ($st === 'Stopped') echo 'badge-danger';
+                                    elseif ($st === 'Slowing Down') echo 'badge-warning-dark';
+                                    elseif ($st === 'Acknowledged') echo 'badge-success';
+                                    else echo 'badge-outline';
+                                ?>">
+                                    <?php echo e($ack['action_status']); ?>
+                                </span>
+                            </td>
+                            <td style="font-size:0.85rem; color:#fff; max-width: 200px;"><?php echo e($ack['note'] ? $ack['note'] : 'N/A'); ?></td>
+                            <td style="font-size:0.8rem; color:var(--text-secondary); max-width: 250px;"><?php echo e($ack['alert_message']); ?></td>
+                            <td>
+                                <span class="badge <?php echo get_risk_badge_class($ack['alert_level']); ?>">
+                                    <?php echo e($ack['alert_level']); ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+    </div>
+</div>
+
+<?php require_once __DIR__ . '/../../app/layouts/dashboard_footer.php'; ?>

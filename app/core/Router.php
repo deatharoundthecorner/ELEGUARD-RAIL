@@ -1,0 +1,43 @@
+<?php
+/**
+ * Router and Navigation Helper
+ * Handles safe redirection and base URL resolution for relocatable directories.
+ */
+
+class Router {
+    
+    /**
+     * Resolves absolute path from application root.
+     * E.g. Router::url('assets/css/style.css') => '/eleguard-rail/public/assets/css/style.css'
+     */
+    public static function url($path = '') {
+        // Find script subdirectory mapping.
+        // If the script name is /eleguard-rail/public/index.php, the base is /eleguard-rail/public
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+        
+        // Find position of '/public/' in script name
+        $publicPos = strpos($scriptName, '/public/');
+        
+        if ($publicPos !== false) {
+            $base = substr($scriptName, 0, $publicPos + 8); // includes '/public/'
+        } else {
+            // Fallback: If not in public directly (e.g. root redirector)
+            $base = dirname($scriptName);
+            $base = rtrim($base, '/\\') . '/public/';
+        }
+        
+        $base = rtrim($base, '/');
+        $path = ltrim($path, '/');
+        
+        return $base . '/' . $path;
+    }
+
+    /**
+     * Perform a redirection.
+     */
+    public static function redirect($path) {
+        $url = self::url($path);
+        header("Location: " . $url);
+        exit;
+    }
+}

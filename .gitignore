@@ -1,0 +1,45 @@
+# =========================================================================
+# EleGuard Rail - Git Ignore Configuration
+# =========================================================================
+
+# Environment & Secrets (Never commit credentials)
+.env
+.env.*
+!.env.example
+
+# Uploaded Media & User Files
+public/assets/uploads/*
+!public/assets/uploads/.gitkeep
+
+# Dependency Directories
+node_modules/
+sanity/node_modules/
+vendor/
+
+# Sanity Studio Build Outputs
+dist/
+.sanity/
+
+# Logs & Temporary Runtime Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tmp/
+temp/
+
+# Operating System Files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE & Editor Configurations
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Local Database Backups & Dumps
+*.bak
+*.dump
+backups/
