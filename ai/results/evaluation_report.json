@@ -1,36 +1,38 @@
 {
   "metadata": {
     "project": "EleGuard Rail",
-    "milestone": "8A - AI-Assisted Elephant Detection Prototype",
-    "model_version": "YOLOv8n-ONNX-v1.0-COCO",
-    "evaluated_at": "2026-11-08 04:12:38 UTC",
+    "milestone": "8B - Permissive YOLOX-Tiny Prototype Adoption",
+    "model_version": "YOLOX-Tiny-ONNX-v1.0-COCO",
+    "model_type": "yolox",
+    "model_license": "Apache 2.0 (Permissive)",
+    "evaluated_at": "2026-11-08 06:10:15 UTC",
     "device": "CPU (CPUExecutionProvider)",
     "conf_threshold": 0.4,
     "uncertain_threshold": 0.2,
     "total_samples": 21
   },
   "confusion_matrix": {
-    "true_positives": 9,
+    "true_positives": 10,
     "false_positives": 0,
     "true_negatives": 8,
-    "false_negatives": 3,
-    "uncertain_cases": 1
+    "false_negatives": 1,
+    "uncertain_cases": 2
   },
   "metrics": {
     "precision": 1.0,
-    "recall": 0.75,
-    "f1_score": 0.8571,
-    "binary_accuracy": 0.8095,
-    "exact_classification_accuracy": 0.9048,
+    "recall": 0.9091,
+    "f1_score": 0.9524,
+    "binary_accuracy": 0.8571,
+    "exact_classification_accuracy": 0.8571,
     "false_positive_rate": 0.0
   },
   "performance": {
-    "average_inference_time_ms": 27.71,
-    "min_inference_time_ms": 25.08,
-    "max_inference_time_ms": 36.35,
-    "average_total_pipeline_time_ms": 49.71,
-    "peak_memory_traced_mb": 11.15,
-    "total_evaluation_duration_seconds": 1.502
+    "average_inference_time_ms": 37.71,
+    "min_inference_time_ms": 20.97,
+    "max_inference_time_ms": 94.83,
+    "average_total_pipeline_time_ms": 65.3,
+    "peak_memory_traced_mb": 5.74,
+    "total_evaluation_duration_seconds": 1.779
   },
   "sample_results": [
     {
@@ -41,30 +43,41 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.9127,
-      "estimated_count": 2,
-      "inference_time_ms": 36.35,
-      "total_time_ms": 77.77,
+      "max_confidence": 0.9197,
+      "estimated_count": 3,
+      "inference_time_ms": 56.07,
+      "total_time_ms": 265.14,
       "detections": [
         {
           "box": [
-            167,
+            165,
             95,
-            305,
-            267
+            304,
+            266
           ],
-          "confidence": 0.9127,
+          "confidence": 0.9197,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
-            248,
+            251,
             0,
             481,
-            245
+            246
           ],
-          "confidence": 0.8733,
+          "confidence": 0.9007,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            0,
+            0,
+            95,
+            261
+          ],
+          "confidence": 0.6366,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -78,140 +91,96 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.7657,
-      "estimated_count": 16,
-      "inference_time_ms": 31.34,
-      "total_time_ms": 55.29,
+      "max_confidence": 0.8073,
+      "estimated_count": 14,
+      "inference_time_ms": 43.0,
+      "total_time_ms": 64.9,
       "detections": [
         {
           "box": [
-            456,
-            178,
-            491,
-            230
+            316,
+            166,
+            383,
+            220
           ],
-          "confidence": 0.7657,
+          "confidence": 0.8073,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
-            315,
-            196,
-            343,
-            231
-          ],
-          "confidence": 0.7169,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            69,
-            194,
-            93,
-            231
-          ],
-          "confidence": 0.7091,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            375,
-            201,
+            377,
+            202,
             409,
             231
           ],
-          "confidence": 0.6925,
+          "confidence": 0.7772,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            427,
+            190,
+            460,
+            233
+          ],
+          "confidence": 0.7654,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            32,
+            191,
+            73,
+            234
+          ],
+          "confidence": 0.7442,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
             284,
-            186,
-            318,
+            185,
+            316,
             231
           ],
-          "confidence": 0.6327,
+          "confidence": 0.7395,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
-            428,
+            456,
+            177,
+            492,
+            231
+          ],
+          "confidence": 0.7348,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            427,
             167,
-            455,
+            454,
             193
           ],
-          "confidence": 0.6223,
+          "confidence": 0.7283,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
-            316,
-            168,
-            383,
-            219
-          ],
-          "confidence": 0.6141,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            132,
-            179,
-            165,
-            196
-          ],
-          "confidence": 0.6105,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            31,
-            191,
-            69,
-            233
-          ],
-          "confidence": 0.5879,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            198,
-            186,
-            227,
-            232
-          ],
-          "confidence": 0.5721,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            428,
-            190,
-            464,
+            315,
+            195,
+            345,
             231
           ],
-          "confidence": 0.5492,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            18,
-            208,
-            34,
-            234
-          ],
-          "confidence": 0.5264,
+          "confidence": 0.7109,
           "class_id": 20,
           "class_name": "elephant"
         },
@@ -219,43 +188,65 @@
           "box": [
             91,
             190,
-            138,
-            231
-          ],
-          "confidence": 0.512,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            260,
-            198,
-            284,
-            231
-          ],
-          "confidence": 0.5059,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            227,
-            206,
-            255,
+            130,
             232
           ],
-          "confidence": 0.4937,
+          "confidence": 0.6941,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
-            137,
+            139,
             189,
-            196,
-            235
+            190,
+            233
           ],
-          "confidence": 0.4426,
+          "confidence": 0.6769,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            70,
+            193,
+            94,
+            233
+          ],
+          "confidence": 0.6768,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            198,
+            186,
+            227,
+            229
+          ],
+          "confidence": 0.606,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            259,
+            198,
+            285,
+            232
+          ],
+          "confidence": 0.6014,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            225,
+            191,
+            258,
+            232
+          ],
+          "confidence": 0.5545,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -269,63 +260,52 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.9317,
-      "estimated_count": 5,
-      "inference_time_ms": 25.34,
-      "total_time_ms": 39.34,
+      "max_confidence": 0.933,
+      "estimated_count": 4,
+      "inference_time_ms": 43.28,
+      "total_time_ms": 73.44,
       "detections": [
         {
           "box": [
-            606,
+            0,
+            0,
+            312,
+            260
+          ],
+          "confidence": 0.933,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            638,
+            28,
+            929,
+            265
+          ],
+          "confidence": 0.921,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            267,
+            0,
+            498,
+            235
+          ],
+          "confidence": 0.7972,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            479,
             31,
-            926,
-            266
-          ],
-          "confidence": 0.9317,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            255,
-            1,
-            478,
-            241
-          ],
-          "confidence": 0.8601,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            168,
-            95,
-            305,
-            264
-          ],
-          "confidence": 0.8324,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            486,
-            31,
-            695,
+            676,
             248
           ],
-          "confidence": 0.7359,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            0,
-            2,
-            101,
-            272
-          ],
-          "confidence": 0.4823,
+          "confidence": 0.7783,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -339,10 +319,10 @@
       "actual_classification": "No Elephant Detected",
       "exact_match": true,
       "outcome": "TN (True Negative)",
-      "max_confidence": 0.0001,
+      "max_confidence": 0.0002,
       "estimated_count": 0,
-      "inference_time_ms": 26.34,
-      "total_time_ms": 37.67,
+      "inference_time_ms": 48.64,
+      "total_time_ms": 57.19,
       "detections": []
     },
     {
@@ -355,8 +335,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0001,
       "estimated_count": 0,
-      "inference_time_ms": 26.34,
-      "total_time_ms": 39.26,
+      "inference_time_ms": 32.35,
+      "total_time_ms": 57.8,
       "detections": []
     },
     {
@@ -369,8 +349,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0,
       "estimated_count": 0,
-      "inference_time_ms": 27.47,
-      "total_time_ms": 38.29,
+      "inference_time_ms": 76.7,
+      "total_time_ms": 85.25,
       "detections": []
     },
     {
@@ -383,8 +363,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0,
       "estimated_count": 0,
-      "inference_time_ms": 29.93,
-      "total_time_ms": 53.23,
+      "inference_time_ms": 50.85,
+      "total_time_ms": 68.16,
       "detections": []
     },
     {
@@ -395,10 +375,10 @@
       "actual_classification": "No Elephant Detected",
       "exact_match": true,
       "outcome": "TN (True Negative)",
-      "max_confidence": 0.0,
+      "max_confidence": 0.0019,
       "estimated_count": 0,
-      "inference_time_ms": 26.05,
-      "total_time_ms": 38.49,
+      "inference_time_ms": 55.26,
+      "total_time_ms": 69.14,
       "detections": []
     },
     {
@@ -409,19 +389,19 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.9187,
-      "estimated_count": 3,
-      "inference_time_ms": 25.79,
-      "total_time_ms": 38.25,
+      "max_confidence": 0.9173,
+      "estimated_count": 2,
+      "inference_time_ms": 30.52,
+      "total_time_ms": 39.55,
       "detections": [
         {
           "box": [
-            167,
-            95,
-            306,
-            266
+            15,
+            0,
+            316,
+            262
           ],
-          "confidence": 0.9187,
+          "confidence": 0.9173,
           "class_id": 20,
           "class_name": "elephant"
         },
@@ -429,21 +409,10 @@
           "box": [
             249,
             0,
-            481,
-            242
+            483,
+            237
           ],
-          "confidence": 0.819,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            0,
-            1,
-            94,
-            274
-          ],
-          "confidence": 0.412,
+          "confidence": 0.8738,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -454,14 +423,37 @@
       "category": "blurry_elephant",
       "has_elephant_ground_truth": true,
       "expected_classification": "No Elephant Detected",
-      "actual_classification": "No Elephant Detected",
-      "exact_match": true,
-      "outcome": "FN (False Negative)",
-      "max_confidence": 0.0721,
-      "estimated_count": 0,
-      "inference_time_ms": 27.28,
-      "total_time_ms": 36.82,
-      "detections": []
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": false,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.8086,
+      "estimated_count": 2,
+      "inference_time_ms": 94.83,
+      "total_time_ms": 105.77,
+      "detections": [
+        {
+          "box": [
+            167,
+            90,
+            307,
+            262
+          ],
+          "confidence": 0.8086,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            18,
+            0,
+            261,
+            258
+          ],
+          "confidence": 0.4968,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
     },
     {
       "image": "edge_cases/edge_03_blurry_buffalo.jpg",
@@ -471,10 +463,10 @@
       "actual_classification": "No Elephant Detected",
       "exact_match": true,
       "outcome": "TN (True Negative)",
-      "max_confidence": 0.0083,
+      "max_confidence": 0.0372,
       "estimated_count": 0,
-      "inference_time_ms": 25.15,
-      "total_time_ms": 35.24,
+      "inference_time_ms": 20.97,
+      "total_time_ms": 29.67,
       "detections": []
     },
     {
@@ -485,19 +477,19 @@
       "actual_classification": "Uncertain Result",
       "exact_match": true,
       "outcome": "UNCERTAIN (Advisory Flag)",
-      "max_confidence": 0.3742,
+      "max_confidence": 0.3767,
       "estimated_count": 0,
-      "inference_time_ms": 26.75,
-      "total_time_ms": 38.95,
+      "inference_time_ms": 24.72,
+      "total_time_ms": 32.57,
       "detections": [
         {
           "box": [
-            166,
-            89,
+            169,
+            81,
             311,
             261
           ],
-          "confidence": 0.3742,
+          "confidence": 0.3767,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -511,19 +503,19 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.9459,
+      "max_confidence": 0.9425,
       "estimated_count": 1,
-      "inference_time_ms": 25.08,
-      "total_time_ms": 48.54,
+      "inference_time_ms": 23.37,
+      "total_time_ms": 43.98,
       "detections": [
         {
           "box": [
-            464,
-            551,
-            859,
-            867
+            463,
+            555,
+            860,
+            872
           ],
-          "confidence": 0.9459,
+          "confidence": 0.9425,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -537,19 +529,19 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.8474,
+      "max_confidence": 0.697,
       "estimated_count": 1,
-      "inference_time_ms": 28.87,
-      "total_time_ms": 41.85,
+      "inference_time_ms": 22.8,
+      "total_time_ms": 35.84,
       "detections": [
         {
           "box": [
-            29,
-            3,
-            958,
-            470
+            33,
+            7,
+            955,
+            463
           ],
-          "confidence": 0.8474,
+          "confidence": 0.697,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -563,74 +555,85 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.953,
-      "estimated_count": 7,
-      "inference_time_ms": 27.11,
-      "total_time_ms": 57.41,
+      "max_confidence": 0.9422,
+      "estimated_count": 8,
+      "inference_time_ms": 22.37,
+      "total_time_ms": 49.14,
       "detections": [
         {
           "box": [
-            126,
-            355,
-            506,
-            642
+            599,
+            401,
+            817,
+            575
           ],
-          "confidence": 0.953,
+          "confidence": 0.9422,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
-            597,
-            398,
-            814,
-            573
+            119,
+            354,
+            500,
+            639
           ],
-          "confidence": 0.927,
+          "confidence": 0.9327,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
-            473,
-            301,
-            735,
-            527
+            466,
+            304,
+            733,
+            530
           ],
-          "confidence": 0.8967,
-          "class_id": 20,
-          "class_name": "elephant"
-        },
-        {
-          "box": [
-            18,
-            333,
-            77,
-            395
-          ],
-          "confidence": 0.8495,
+          "confidence": 0.8988,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
             803,
-            308,
-            908,
-            379
+            307,
+            909,
+            381
           ],
-          "confidence": 0.8397,
+          "confidence": 0.8874,
           "class_id": 20,
           "class_name": "elephant"
         },
         {
           "box": [
-            357,
-            334,
-            469,
-            384
+            17,
+            331,
+            76,
+            396
           ],
-          "confidence": 0.7522,
+          "confidence": 0.8678,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            277,
+            312,
+            321,
+            360
+          ],
+          "confidence": 0.6126,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            354,
+            328,
+            468,
+            380
+          ],
+          "confidence": 0.606,
           "class_id": 20,
           "class_name": "elephant"
         },
@@ -638,10 +641,10 @@
           "box": [
             348,
             312,
-            394,
-            353
+            393,
+            354
           ],
-          "confidence": 0.4017,
+          "confidence": 0.5399,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -652,14 +655,26 @@
       "category": "sri_lankan_elephant",
       "has_elephant_ground_truth": true,
       "expected_classification": "Potential Elephant Detected",
-      "actual_classification": "No Elephant Detected",
+      "actual_classification": "Uncertain Result",
       "exact_match": false,
-      "outcome": "FN (False Negative)",
-      "max_confidence": 0.1946,
+      "outcome": "UNCERTAIN (Advisory Flag)",
+      "max_confidence": 0.2236,
       "estimated_count": 0,
-      "inference_time_ms": 26.78,
-      "total_time_ms": 86.7,
-      "detections": []
+      "inference_time_ms": 25.72,
+      "total_time_ms": 87.75,
+      "detections": [
+        {
+          "box": [
+            900,
+            169,
+            958,
+            210
+          ],
+          "confidence": 0.2236,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
     },
     {
       "image": "non_elephants/rail_track_01_ambewela.jpg",
@@ -669,10 +684,10 @@
       "actual_classification": "No Elephant Detected",
       "exact_match": true,
       "outcome": "TN (True Negative)",
-      "max_confidence": 0.0001,
+      "max_confidence": 0.0004,
       "estimated_count": 0,
-      "inference_time_ms": 25.45,
-      "total_time_ms": 56.95,
+      "inference_time_ms": 28.71,
+      "total_time_ms": 53.43,
       "detections": []
     },
     {
@@ -683,10 +698,10 @@
       "actual_classification": "No Elephant Detected",
       "exact_match": true,
       "outcome": "TN (True Negative)",
-      "max_confidence": 0.0008,
+      "max_confidence": 0.0007,
       "estimated_count": 0,
-      "inference_time_ms": 35.51,
-      "total_time_ms": 50.02,
+      "inference_time_ms": 22.73,
+      "total_time_ms": 35.96,
       "detections": []
     },
     {
@@ -697,19 +712,19 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.9421,
+      "max_confidence": 0.9419,
       "estimated_count": 1,
-      "inference_time_ms": 27.26,
-      "total_time_ms": 78.68,
+      "inference_time_ms": 22.88,
+      "total_time_ms": 43.91,
       "detections": [
         {
           "box": [
             463,
-            551,
-            860,
-            867
+            555,
+            856,
+            871
           ],
-          "confidence": 0.9421,
+          "confidence": 0.9419,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -723,19 +738,19 @@
       "actual_classification": "Potential Elephant Detected",
       "exact_match": true,
       "outcome": "TP (True Positive)",
-      "max_confidence": 0.853,
+      "max_confidence": 0.6323,
       "estimated_count": 1,
-      "inference_time_ms": 26.43,
-      "total_time_ms": 49.44,
+      "inference_time_ms": 23.19,
+      "total_time_ms": 37.76,
       "detections": [
         {
           "box": [
-            476,
-            3,
-            959,
-            471
+            468,
+            10,
+            958,
+            467
           ],
-          "confidence": 0.853,
+          "confidence": 0.6323,
           "class_id": 20,
           "class_name": "elephant"
         }
@@ -749,10 +764,10 @@
       "actual_classification": "No Elephant Detected",
       "exact_match": false,
       "outcome": "FN (False Negative)",
-      "max_confidence": 0.0019,
+      "max_confidence": 0.0011,
       "estimated_count": 0,
-      "inference_time_ms": 25.29,
-      "total_time_ms": 45.64,
+      "inference_time_ms": 22.95,
+      "total_time_ms": 34.97,
       "detections": []
     }
   ]

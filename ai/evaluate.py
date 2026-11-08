@@ -1,8 +1,9 @@
 """
 EleGuard Rail - AI Elephant Detector Evaluation Harness
-Milestone 8A: Model Performance & Accuracy Benchmarking
+Milestone 8B: Model Performance & Accuracy Benchmarking
 
-Evaluates ElephantDetector against the ground truth dataset in ai/datasets/ground_truth.json.
+Evaluates ElephantDetector (default: YOLOX-Tiny Apache 2.0) against the ground truth
+dataset in ai/datasets/ground_truth.json (21 samples).
 Generates comprehensive accuracy, confusion matrix, and latency metrics.
 Exports results to ai/results/evaluation_report.json.
 """
@@ -24,6 +25,8 @@ from ai.detector.detector import ElephantDetector
 
 
 def run_evaluation(
+    model_path: str = None,
+    model_type: str = None,
     conf_threshold: float = 0.40,
     uncertain_threshold: float = 0.20,
     save_report: bool = True
@@ -49,6 +52,8 @@ def run_evaluation(
         raise ValueError("Ground truth dataset contains no images.")
 
     detector = ElephantDetector(
+        model_path=model_path,
+        model_type=model_type,
         conf_threshold=conf_threshold,
         uncertain_threshold=uncertain_threshold
     )
@@ -58,16 +63,16 @@ def run_evaluation(
     total_times: List[float] = []
 
     # Confusion matrix counters
-    tp = 0  # True Positive (Ground truth elephant detected)
-    fp = 0  # False Positive (Non-elephant flagged as elephant)
-    tn = 0  # True Negative (Non-elephant correctly rejected)
-    fn = 0  # False Negative (True elephant missed completely)
+    tp = 0  # True Positive
+    fp = 0  # False Positive
+    tn = 0  # True Negative
+    fn = 0  # False Negative
     uncertain_cases = 0
     exact_category_matches = 0
 
     print(f"\n========================================================")
-    print(f" EleGuard Rail - Milestone 8A Detector Evaluation")
-    print(f" Model: {detector.MODEL_VERSION}")
+    print(f" EleGuard Rail - Milestone 8B Detector Evaluation")
+    print(f" Model: {detector.model_version} [{detector.model_license}]")
     print(f" Conf Threshold: {conf_threshold:.2f} | Uncertain: {uncertain_threshold:.2f}")
     print(f" Total Evaluation Samples: {len(images)}")
     print(f"========================================================\n")
@@ -160,8 +165,10 @@ def run_evaluation(
     report = {
         "metadata": {
             "project": "EleGuard Rail",
-            "milestone": "8A - AI-Assisted Elephant Detection Prototype",
-            "model_version": detector.MODEL_VERSION,
+            "milestone": "8B - Permissive YOLOX-Tiny Prototype Adoption",
+            "model_version": detector.model_version,
+            "model_type": detector.model_type,
+            "model_license": detector.model_license,
             "evaluated_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
             "device": "CPU (CPUExecutionProvider)",
             "conf_threshold": conf_threshold,

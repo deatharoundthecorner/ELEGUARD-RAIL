@@ -51,6 +51,7 @@ __pycache__/
 *$py.class
 .pytest_cache/
 
-# AI Candidate Weights (Benchmark Cache)
+# AI Candidate Weights & Large Model Research Artifacts
 ai/models/candidates/
+ai/models/yolox_tiny.onnx
 

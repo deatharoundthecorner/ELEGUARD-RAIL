@@ -3,6 +3,7 @@ EleGuard Rail - AI Elephant Detector Command Line Interface (CLI)
 
 Enables command-line execution and automated integration with external services
 (such as the PHP ReportService backend) via JSON output over stdout.
+Supports both YOLOX-Tiny (Apache 2.0 default) and YOLOv8n (baseline).
 """
 
 import argparse
@@ -20,6 +21,7 @@ from ai.detector.detector import (
     ElephantDetector,
     ImageValidationError,
     ModelNotFoundError,
+    InvalidModelError,
 )
 
 
@@ -58,7 +60,13 @@ def parse_args():
     parser.add_argument(
         "--model", "-m",
         default=None,
-        help="Optional path to custom ONNX model file",
+        help="Optional path to custom ONNX model file (defaults to YOLOX-Tiny)",
+    )
+    parser.add_argument(
+        "--model-type",
+        choices=["yolox", "yolov8"],
+        default=None,
+        help="Optional explicit model architecture type ('yolox' or 'yolov8')",
     )
     parser.add_argument(
         "--pretty",
@@ -74,6 +82,7 @@ def main():
     try:
         detector = ElephantDetector(
             model_path=args.model,
+            model_type=args.model_type,
             conf_threshold=args.conf,
             uncertain_threshold=args.uncertain,
         )
@@ -119,6 +128,15 @@ def main():
         }
         print(json.dumps(error_payload, indent=2))
         sys.exit(3)
+
+    except InvalidModelError as e:
+        error_payload = {
+            "status": "error",
+            "error_type": "InvalidModelError",
+            "message": str(e),
+        }
+        print(json.dumps(error_payload, indent=2))
+        sys.exit(4)
 
     except Exception as e:
         error_payload = {
