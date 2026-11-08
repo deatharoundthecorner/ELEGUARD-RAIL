@@ -5,6 +5,7 @@
 
 require_once __DIR__ . '/../core/Database.php';
 require_once __DIR__ . '/../services/RiskService.php';
+require_once __DIR__ . '/../services/AiDetectionService.php';
 
 class ReportService {
 
@@ -40,17 +41,22 @@ class ReportService {
         $lngParam = ($longitude !== null && $longitude !== '' && is_numeric($longitude)) ? (float)$longitude : null;
         $accParam = ($accuracy !== null && $accuracy !== '' && is_numeric($accuracy)) ? (float)$accuracy : null;
 
-        // 4. Save to Database
+        // 4. Save to Database with initial AI status
+        $initialAiStatus = !empty($imagePath) ? 'pending' : 'skipped';
+        $initialAiNotes = !empty($imagePath) ? 'Awaiting AI advisory inference.' : 'No photograph attached to report.';
+
         $stmt = $db->prepare("
             INSERT INTO elephant_reports (
                 section_id, reported_by, elephant_count, location_description, 
                 latitude, longitude, gps_accuracy_meters,
-                urgency_level, risk_score, report_status, description, image_path, created_at
+                urgency_level, risk_score, report_status, description, image_path,
+                ai_status, ai_detection_notes, created_at
             )
             VALUES (
                 :section_id, :reported_by, :elephant_count, :location_desc,
                 :latitude, :longitude, :gps_accuracy,
-                :urgency_level, :risk_score, 'Pending', :description, :image_path, :created_at
+                :urgency_level, :risk_score, 'Pending', :description, :image_path,
+                :ai_status, :ai_notes, :created_at
             )
         ");
 
@@ -66,8 +72,23 @@ class ReportService {
             ':risk_score' => $calculatedRisk,
             ':description' => $description,
             ':image_path' => $imagePath,
+            ':ai_status' => $initialAiStatus,
+            ':ai_notes' => $initialAiNotes,
             ':created_at' => $reportTime
         ]);
+
+        // 5. Trigger AI advisory inference asynchronously/synchronously if image is provided
+        // Failure of AI must NEVER block, invalidate, or duplicate report submission
+        if ($success) {
+            $reportId = (int)$db->lastInsertId();
+            if ($reportId > 0 && !empty($imagePath)) {
+                try {
+                    AiDetectionService::processReportAi($reportId, $imagePath);
+                } catch (Throwable $e) {
+                    error_log("EleGuard AI Detection Error on Report #{$reportId}: " . $e->getMessage());
+                }
+            }
+        }
 
         return $success;
     }

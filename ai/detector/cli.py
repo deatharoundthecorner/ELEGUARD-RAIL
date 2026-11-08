@@ -90,7 +90,7 @@ def main():
         result = detector.detect(args.image)
 
         # Handle visualization if requested
-        if args.visualize and result["detections"]:
+        if args.visualize:
             annotated_path = detector.draw_annotations(
                 image_input=args.image,
                 detections=result["detections"],

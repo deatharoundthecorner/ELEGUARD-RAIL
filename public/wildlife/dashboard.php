@@ -80,6 +80,7 @@ $recentPending = array_slice($pendingReports, 0, 5);
                             <th>Count</th>
                             <th>Urgency</th>
                             <th>Risk Score</th>
+                            <th>AI Advisory</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -98,6 +99,31 @@ $recentPending = array_slice($pendingReports, 0, 5);
                                     <span class="badge <?php echo get_risk_badge_class($rep['risk_score']); ?>">
                                         <?php echo e($rep['risk_score']); ?>
                                     </span>
+                                </td>
+                                <td>
+                                    <?php
+                                    $dAiSt = $rep['ai_status'] ?? 'pending';
+                                    $dDetected = !empty($rep['ai_detected_elephant']);
+                                    $dConf = isset($rep['ai_confidence']) ? (float)$rep['ai_confidence'] : null;
+
+                                    if ($dAiSt === 'processed') {
+                                        if ($dDetected) {
+                                            $confPct = round($dConf * 100);
+                                            echo "<span class=\"badge badge-success\" style=\"font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">🟢 Detected ({$confPct}%)</span>";
+                                        } elseif ($dConf !== null && $dConf >= 0.20) {
+                                            $confPct = round($dConf * 100);
+                                            echo "<span class=\"badge badge-warning\" style=\"font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">🟡 Uncertain ({$confPct}%)</span>";
+                                        } else {
+                                            echo "<span class=\"badge\" style=\"background:#4b5563; color:#fff; font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">⚪ None</span>";
+                                        }
+                                    } elseif ($dAiSt === 'pending') {
+                                        echo "<span class=\"badge badge-warning\" style=\"font-size:0.75rem;\">⏳ Pending</span>";
+                                    } elseif ($dAiSt === 'failed') {
+                                        echo "<span class=\"badge badge-danger\" style=\"font-size:0.75rem;\">⚠️ Error</span>";
+                                    } else {
+                                        echo "<span class=\"text-muted\" style=\"font-size:0.75rem;\">&mdash;</span>";
+                                    }
+                                    ?>
                                 </td>
                                 <td>
                                     <a href="<?php echo Router::url('wildlife/reports.php?id=' . $rep['id']); ?>" class="btn btn-primary btn-sm">Review</a>

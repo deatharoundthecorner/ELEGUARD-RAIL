@@ -1,7 +1,7 @@
 -- =========================================================================
 -- EleGuard Rail - Migration 02: AI Detection & Verification Metadata
 -- Non-destructive addition of nullable AI inference & clustering columns
--- Planned separately from GPS migration; DO NOT EXECUTE YET
+-- Executed in Milestone 8C: PHP Backend AI Integration
 -- =========================================================================
 
 USE eleguard_rail;

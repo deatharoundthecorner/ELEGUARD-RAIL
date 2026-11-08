@@ -7,6 +7,7 @@ $allowed_roles = 'wildlife_officer';
 require_once __DIR__ . '/../../app/layouts/dashboard_header.php';
 require_once __DIR__ . '/../../app/services/ReportService.php';
 require_once __DIR__ . '/../../app/services/AlertService.php';
+require_once __DIR__ . '/../../app/services/AiDetectionService.php';
 
 $errors = [];
 
@@ -30,6 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Router::redirect('wildlife/reports.php');
         } else {
             $errors['action'] = "Failed to update report status.";
+        }
+    } elseif ($action === 'rerun_ai') {
+        if (!empty($reportId)) {
+            $rep = ReportService::getById((int)$reportId);
+            if ($rep && !empty($rep['image_path'])) {
+                $res = AiDetectionService::processReportAi((int)$reportId, $rep['image_path']);
+                Session::flash('success', "AI advisory analysis re-executed (Status: {$res['status']}).");
+            } else {
+                Session::flash('error', "Cannot run AI analysis: no photograph attached to this report.");
+            }
+            Router::redirect('wildlife/reports.php?id=' . (int)$reportId);
         }
     }
 }
@@ -56,8 +68,12 @@ $sections = AlertService::getAllSections();
 </div>
 
 <?php if ($selectedReport): ?>
+    <?php
+    $annotatedWebPath = !empty($selectedReport['image_path']) ? AiDetectionService::getAnnotatedWebPath($selectedReport['image_path']) : null;
+    $hasAnnotated = ($annotatedWebPath !== null);
+    ?>
     <!-- Detailed Report Review Panel -->
-    <div class="card-panel" style="border-top: 4px solid var(--accent-color); max-width: 800px; margin-bottom: 40px;">
+    <div class="card-panel" style="border-top: 4px solid var(--accent-color); max-width: 900px; margin-bottom: 40px;">
         <div class="panel-header">
             <h2 class="panel-title">Reviewing Sighting Report #<?php echo $selectedReport['id']; ?></h2>
             <a href="<?php echo Router::url('wildlife/reports.php'); ?>" class="btn btn-outline btn-sm">Close Review</a>
@@ -126,10 +142,58 @@ $sections = AlertService::getAllSections();
             
             <div class="report-details-media" style="display:flex; flex-direction:column; gap:15px; align-items:center; justify-content:center;">
                 <?php if (!empty($selectedReport['image_path'])): ?>
-                    <label style="align-self:flex-start; font-size:0.85rem; color:var(--text-secondary);">Sighting Attachment:</label>
-                    <a href="<?php echo Router::url($selectedReport['image_path']); ?>" target="_blank">
-                        <img src="<?php echo Router::url($selectedReport['image_path']); ?>" alt="Sighting media" style="max-width:100%; max-height:260px; border-radius:6px; border:1px solid var(--border-color); object-fit:contain;">
-                    </a>
+                    <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin:0;">Sighting Photograph:</label>
+                        <?php if ($hasAnnotated): ?>
+                            <button type="button" id="btnToggleAiBoxes" class="btn btn-outline btn-sm" style="font-size:0.75rem; padding:4px 8px;" onclick="toggleAiBoundingBoxes()">
+                                🎯 Toggle AI Bounding Boxes
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                    <div style="position:relative; width:100%; text-align:center;">
+                        <a id="sightingImgLink" href="<?php echo Router::url($selectedReport['image_path']); ?>" target="_blank">
+                            <img id="sightingImg" src="<?php echo Router::url($selectedReport['image_path']); ?>" alt="Sighting media" style="max-width:100%; max-height:260px; border-radius:6px; border:1px solid var(--border-color); object-fit:contain; transition: opacity 0.2s ease;">
+                        </a>
+                        <div id="aiOverlayBadge" style="display:none; position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.8); color:#10b981; padding:3px 8px; border-radius:4px; font-size:0.75rem; border:1px solid #10b981; font-weight:600;">
+                            AI Bounding Boxes Overlay
+                        </div>
+                    </div>
+                    <?php if ($hasAnnotated): ?>
+                        <script>
+                            let showingAnnotated = false;
+                            const originalSrc = "<?php echo Router::url($selectedReport['image_path']); ?>";
+                            const annotatedSrc = "<?php echo Router::url($annotatedWebPath); ?>";
+                            function toggleAiBoundingBoxes() {
+                                const img = document.getElementById('sightingImg');
+                                const link = document.getElementById('sightingImgLink');
+                                const badge = document.getElementById('aiOverlayBadge');
+                                const btn = document.getElementById('btnToggleAiBoxes');
+                                if (!img || !link) return;
+                                
+                                showingAnnotated = !showingAnnotated;
+                                if (showingAnnotated) {
+                                    img.src = annotatedSrc;
+                                    link.href = annotatedSrc;
+                                    badge.style.display = 'block';
+                                    btn.classList.remove('btn-outline');
+                                    btn.classList.add('btn-primary');
+                                    btn.innerText = '📷 View Original Photo';
+                                } else {
+                                    img.src = originalSrc;
+                                    link.href = originalSrc;
+                                    badge.style.display = 'none';
+                                    btn.classList.remove('btn-primary');
+                                    btn.classList.add('btn-outline');
+                                    btn.innerText = '🎯 Toggle AI Bounding Boxes';
+                                }
+                            }
+                            <?php if (!empty($_GET['show_boxes'])): ?>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                toggleAiBoundingBoxes();
+                            });
+                            <?php endif; ?>
+                        </script>
+                    <?php endif; ?>
                 <?php else: ?>
                     <div style="width:100%; height:200px; background:rgba(255,255,255,0.01); border:1px dashed var(--border-color); border-radius:6px; display:flex; justify-content:center; align-items:center; color:var(--text-muted);">
                         No Photo Attachment
@@ -157,6 +221,119 @@ $sections = AlertService::getAllSections();
                     </div>
                 <?php endif; ?>
             </div>
+        </div>
+
+        <!-- AI Sighting Advisory Panel -->
+        <div class="ai-advisory-card" style="margin-top: 25px; padding: 20px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap:wrap; gap:10px;">
+                <h3 style="font-size: 1.05rem; margin:0; display:flex; align-items:center; gap:8px;">
+                    <span>🤖</span>
+                    <span>AI Vision Sighting Advisory</span>
+                    <span style="font-size:0.75rem; font-weight:normal; color:var(--text-muted);">(YOLOX-Tiny ONNX &bull; Apache-2.0)</span>
+                </h3>
+                <div>
+                    <?php
+                    $aiSt = $selectedReport['ai_status'] ?? 'pending';
+                    $detected = !empty($selectedReport['ai_detected_elephant']);
+                    $conf = isset($selectedReport['ai_confidence']) ? (float)$selectedReport['ai_confidence'] : null;
+                    
+                    if ($aiSt === 'processed') {
+                        if ($detected) {
+                            echo '<span class="badge badge-success" style="font-size:0.85rem; padding:6px 12px;">🟢 Potential Elephant Detected</span>';
+                        } elseif ($conf !== null && $conf >= 0.20) {
+                            echo '<span class="badge badge-warning" style="font-size:0.85rem; padding:6px 12px;">🟡 Uncertain Result (Manual Review Required)</span>';
+                        } else {
+                            echo '<span class="badge" style="background:#4b5563; color:#fff; font-size:0.85rem; padding:6px 12px;">⚪ No Elephant Detected</span>';
+                        }
+                    } elseif ($aiSt === 'pending') {
+                        echo '<span class="badge badge-warning" style="font-size:0.85rem; padding:6px 12px;">⏳ AI Inference Pending</span>';
+                    } elseif ($aiSt === 'failed') {
+                        echo '<span class="badge badge-danger" style="font-size:0.85rem; padding:6px 12px;">⚠️ AI Analysis Failed</span>';
+                    } else {
+                        echo '<span class="badge" style="background:#374151; color:#9ca3af; font-size:0.85rem; padding:6px 12px;">ℹ️ Skipped (No Photo)</span>';
+                    }
+                    ?>
+                </div>
+            </div>
+
+            <!-- Mandatory Governance Disclaimer Alert -->
+            <div style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 4px; margin-bottom: 15px; font-size: 0.85rem; line-height: 1.45; color: #fbbf24;">
+                <strong>Advisory Only:</strong> This detection is an automated AI suggestion. Official report verification and railway hazard decisions must be made solely by authorized Wildlife Officers. AI outputs never modify risk scores, alter verification status, or broadcast railway alerts.
+            </div>
+
+            <div class="grid grid-2col" style="gap:15px; font-size:0.9rem;">
+                <div>
+                    <table class="data-table" style="font-size:0.88rem; width:100%;">
+                        <tr>
+                            <td style="color:var(--text-secondary); width:45%;">Detection Outcome:</td>
+                            <td>
+                                <?php if ($aiSt === 'processed'): ?>
+                                    <strong><?php echo $detected ? 'Elephant Pattern Identified' : ($conf >= 0.20 ? 'Ambiguous / Low Confidence' : 'No Elephant Features'); ?></strong>
+                                <?php elseif ($aiSt === 'skipped'): ?>
+                                    <span class="text-muted">Skipped (Text-only report)</span>
+                                <?php elseif ($aiSt === 'failed'): ?>
+                                    <span style="color:#ef4444;">Processing Error</span>
+                                <?php else: ?>
+                                    <span class="text-muted">Awaiting analysis</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-secondary);">Highest Confidence:</td>
+                            <td>
+                                <?php if ($conf !== null): ?>
+                                    <strong style="color:<?php echo $detected ? '#10b981' : ($conf >= 0.20 ? '#f59e0b' : 'inherit'); ?>;">
+                                        <?php echo number_format($conf * 100, 1); ?>%
+                                    </strong>
+                                <?php else: ?>
+                                    <span class="text-muted">&mdash;</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-secondary);">Estimated Count:</td>
+                            <td>
+                                <?php if ($selectedReport['ai_estimated_count'] !== null): ?>
+                                    <strong><?php echo (int)$selectedReport['ai_estimated_count']; ?> elephant(s)</strong>
+                                <?php else: ?>
+                                    <span class="text-muted">&mdash;</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <table class="data-table" style="font-size:0.88rem; width:100%;">
+                        <tr>
+                            <td style="color:var(--text-secondary); width:40%;">Model Engine:</td>
+                            <td><code><?php echo e($selectedReport['ai_model_version'] ?? 'YOLOX-Tiny-ONNX'); ?></code></td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-secondary);">Processed At:</td>
+                            <td><?php echo !empty($selectedReport['ai_processed_at']) ? format_date($selectedReport['ai_processed_at']) : '<span class="text-muted">&mdash;</span>'; ?></td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-secondary);">Advisory Notes:</td>
+                            <td>
+                                <span style="font-size:0.82rem; color:var(--text-secondary); line-height:1.4;">
+                                    <?php echo e($selectedReport['ai_detection_notes'] ?? 'None recorded.'); ?>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <?php if (!empty($selectedReport['image_path'])): ?>
+                <div style="margin-top: 15px; display:flex; justify-content:flex-end;">
+                    <form action="<?php echo Router::url('wildlife/reports.php'); ?>" method="POST" style="display:inline;">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="report_id" value="<?php echo $selectedReport['id']; ?>">
+                        <input type="hidden" name="action" value="rerun_ai">
+                        <button type="submit" class="btn btn-outline btn-sm" style="font-size:0.8rem;">🔄 Re-run AI Advisory Analysis</button>
+                    </form>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 <?php endif; ?>
@@ -222,6 +399,7 @@ $sections = AlertService::getAllSections();
                         <th>Photo</th>
                         <th>Urgency</th>
                         <th>Computed Risk</th>
+                        <th>AI Advisory</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -260,6 +438,32 @@ $sections = AlertService::getAllSections();
                                 <span class="badge <?php echo get_risk_badge_class($rep['risk_score']); ?>">
                                     <?php echo e($rep['risk_score']); ?>
                                 </span>
+                            </td>
+                            <td>
+                                <?php
+                                $rAiSt = $rep['ai_status'] ?? 'pending';
+                                $rDetected = !empty($rep['ai_detected_elephant']);
+                                $rConf = isset($rep['ai_confidence']) ? (float)$rep['ai_confidence'] : null;
+
+                                if ($rAiSt === 'processed') {
+                                    if ($rDetected) {
+                                        $confPct = round($rConf * 100);
+                                        $cnt = (int)$rep['ai_estimated_count'];
+                                        echo "<span class=\"badge badge-success\" title=\"" . e($rep['ai_detection_notes']) . "\">🟢 Detected ({$confPct}%)</span>";
+                                    } elseif ($rConf !== null && $rConf >= 0.20) {
+                                        $confPct = round($rConf * 100);
+                                        echo "<span class=\"badge badge-warning\" title=\"" . e($rep['ai_detection_notes']) . "\">🟡 Uncertain ({$confPct}%)</span>";
+                                    } else {
+                                        echo "<span class=\"badge\" style=\"background:#4b5563; color:#fff;\" title=\"" . e($rep['ai_detection_notes']) . "\">⚪ None</span>";
+                                    }
+                                } elseif ($rAiSt === 'pending') {
+                                    echo "<span class=\"badge badge-warning\">⏳ Pending</span>";
+                                } elseif ($rAiSt === 'failed') {
+                                    echo "<span class=\"badge badge-danger\" title=\"" . e($rep['ai_detection_notes']) . "\">⚠️ Error</span>";
+                                } else {
+                                    echo "<span class=\"text-muted\" style=\"font-size:0.75rem;\">&mdash;</span>";
+                                }
+                                ?>
                             </td>
                             <td>
                                 <span class="badge <?php 
