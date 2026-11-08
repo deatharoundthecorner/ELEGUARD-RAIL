@@ -10,8 +10,7 @@ require_once __DIR__ . '/../app/includes/validation.php';
 
 // Redirect if already logged in
 if (Auth::check()) {
-    $userRole = Auth::role();
-    Router::redirect("{$userRole}/dashboard.php");
+    Router::redirectToDashboard();
 }
 
 $errors = [];
@@ -36,9 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (empty($errors)) {
         if (Auth::login($email, $password)) {
-            $userRole = Auth::role();
             Session::flash('success', 'Logged in successfully. Welcome to EleGuard Rail!');
-            Router::redirect("{$userRole}/dashboard.php");
+            Router::redirectToDashboard();
         } else {
             $errors['auth'] = 'Invalid email or password. Please try again.';
         }

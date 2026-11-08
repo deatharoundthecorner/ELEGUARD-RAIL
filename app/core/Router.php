@@ -40,4 +40,34 @@ class Router {
         header("Location: " . $url);
         exit;
     }
+
+    /**
+     * Resolves the correct relative dashboard path for a given user role.
+     */
+    public static function getDashboardPath($role = null) {
+        if ($role === null) {
+            require_once __DIR__ . '/Auth.php';
+            $role = Auth::role();
+        }
+        switch ($role) {
+            case 'admin':
+                return 'admin/dashboard.php';
+            case 'control_officer':
+                return 'control/dashboard.php';
+            case 'wildlife_officer':
+                return 'wildlife/dashboard.php';
+            case 'driver':
+                return 'driver/dashboard.php';
+            case 'reporter':
+            default:
+                return 'reporter/dashboard.php';
+        }
+    }
+
+    /**
+     * Redirects user to their role-specific dashboard.
+     */
+    public static function redirectToDashboard($role = null) {
+        self::redirect(self::getDashboardPath($role));
+    }
 }

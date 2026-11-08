@@ -38,11 +38,7 @@ require_once __DIR__ . '/../includes/functions.php';
                 <a href="<?php echo Router::url('emergency_contacts.php'); ?>" class="nav-link">Emergency Contacts</a>
                 
                 <?php if (Auth::check()): ?>
-                    <?php
-                    $role = Auth::role();
-                    $dashboardPath = "{$role}/dashboard.php";
-                    ?>
-                    <a href="<?php echo Router::url($dashboardPath); ?>" class="nav-btn btn-primary">Dashboard</a>
+                    <a href="<?php echo Router::url(Router::getDashboardPath()); ?>" class="nav-btn btn-primary">Dashboard</a>
                     <a href="<?php echo Router::url('logout.php'); ?>" class="nav-link logout-link">Logout</a>
                 <?php else: ?>
                     <a href="<?php echo Router::url('login.php'); ?>" class="nav-link">Login</a>

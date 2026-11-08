@@ -10,8 +10,7 @@ require_once __DIR__ . '/../app/core/Router.php';
 
 // Redirect if already logged in
 if (Auth::check()) {
-    $userRole = Auth::role();
-    Router::redirect("{$userRole}/dashboard.php");
+    Router::redirectToDashboard();
 }
 
 $errors = [];
