@@ -46,6 +46,21 @@ $recentPending = array_slice($pendingReports, 0, 5);
     </div>
 </div>
 
+<div class="card-panel" style="margin-top: 30px;">
+    <div class="panel-header">
+        <h2 class="panel-title">🗺️ Live Wildlife & Railway Corridor GIS Map</h2>
+        <a href="<?php echo Router::url('wildlife/map.php'); ?>" class="btn btn-outline btn-sm">Full Screen Map ↗</a>
+    </div>
+    <?php 
+    $mapContainerId = 'wildlife-dash-map';
+    $mapHeight = '460px';
+    $mapRole = 'wildlife_officer';
+    $showFilters = true;
+    $showStatsBar = false;
+    include __DIR__ . '/../../app/layouts/map_view_partial.php'; 
+    ?>
+</div>
+
 <div class="grid grid-2col" style="margin-top: 30px;">
     <div class="card-panel">
         <div class="panel-header">

@@ -51,6 +51,21 @@ $recentAcks = array_slice($acknowledgements, 0, 5);
     </div>
 </div>
 
+<div class="card-panel" style="margin-top: 30px; margin-bottom: 30px;">
+    <div class="panel-header">
+        <h2 class="panel-title">🚦 Live Railway Corridor Hazard Map</h2>
+        <a href="<?php echo Router::url('control/map.php'); ?>" class="btn btn-outline btn-sm">Full Screen Map ↗</a>
+    </div>
+    <?php 
+    $mapContainerId = 'control-dash-map';
+    $mapHeight = '460px';
+    $mapRole = 'control_officer';
+    $showFilters = true;
+    $showStatsBar = false;
+    include __DIR__ . '/../../app/layouts/map_view_partial.php'; 
+    ?>
+</div>
+
 <div class="grid grid-2col">
     <!-- Reports Pending Alert Generation -->
     <div class="card-panel">

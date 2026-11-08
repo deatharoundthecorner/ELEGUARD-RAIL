@@ -14,7 +14,8 @@ public/assets/uploads/*
 # Dependency Directories
 node_modules/
 sanity/node_modules/
-vendor/
+/vendor/
+!public/assets/vendor/
 
 # Sanity Studio Build Outputs
 dist/

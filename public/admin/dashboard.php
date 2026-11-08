@@ -63,6 +63,21 @@ $recentIncidents = array_slice(AlertService::getAllIncidents(), 0, 5);
     </div>
 </div>
 
+<div class="card-panel" style="margin-top: 30px; margin-bottom: 30px;">
+    <div class="panel-header">
+        <h2 class="panel-title">🗺️ Central Railway GIS & Wildlife Tracking Map</h2>
+        <a href="<?php echo Router::url('admin/map.php'); ?>" class="btn btn-outline btn-sm">Full Screen Map ↗</a>
+    </div>
+    <?php 
+    $mapContainerId = 'admin-dash-map';
+    $mapHeight = '480px';
+    $mapRole = 'admin';
+    $showFilters = true;
+    $showStatsBar = false;
+    include __DIR__ . '/../../app/layouts/map_view_partial.php'; 
+    ?>
+</div>
+
 <div class="grid grid-2col">
     <!-- Left panel: Recent Elephant Reports -->
     <div class="card-panel">

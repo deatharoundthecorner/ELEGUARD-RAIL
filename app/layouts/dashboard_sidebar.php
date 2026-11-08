@@ -29,6 +29,11 @@ $role = Auth::role();
                     </a>
                 </li>
                 <li>
+                    <a href="<?php echo Router::url('admin/map.php'); ?>" class="nav-link-item <?php echo strpos($_SERVER['REQUEST_URI'], 'admin/map.php') !== false ? 'active' : ''; ?>">
+                        <span class="nav-icon">🗺️</span> Central Railway GIS Map
+                    </a>
+                </li>
+                <li>
                     <a href="<?php echo Router::url('admin/users.php'); ?>" class="nav-link-item <?php echo strpos($_SERVER['REQUEST_URI'], 'admin/users.php') !== false ? 'active' : ''; ?>">
                         <span class="nav-icon">👥</span> Manage Users
                     </a>
@@ -77,6 +82,11 @@ $role = Auth::role();
                     </a>
                 </li>
                 <li>
+                    <a href="<?php echo Router::url('control/map.php'); ?>" class="nav-link-item <?php echo strpos($_SERVER['REQUEST_URI'], 'control/map.php') !== false ? 'active' : ''; ?>">
+                        <span class="nav-icon">🗺️</span> Operational Railway Map
+                    </a>
+                </li>
+                <li>
                     <a href="<?php echo Router::url('control/reports.php'); ?>" class="nav-link-item <?php echo strpos($_SERVER['REQUEST_URI'], 'control/reports.php') !== false ? 'active' : ''; ?>">
                         <span class="nav-icon">📝</span> Sighting Reports
                     </a>
@@ -120,6 +130,11 @@ $role = Auth::role();
                 <li>
                     <a href="<?php echo Router::url('wildlife/dashboard.php'); ?>" class="nav-link-item <?php echo strpos($_SERVER['REQUEST_URI'], 'wildlife/dashboard.php') !== false ? 'active' : ''; ?>">
                         <span class="nav-icon">📊</span> Ranger Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo Router::url('wildlife/map.php'); ?>" class="nav-link-item <?php echo strpos($_SERVER['REQUEST_URI'], 'wildlife/map.php') !== false ? 'active' : ''; ?>">
+                        <span class="nav-icon">🗺️</span> Wildlife Tracking Map
                     </a>
                 </li>
                 <li>
