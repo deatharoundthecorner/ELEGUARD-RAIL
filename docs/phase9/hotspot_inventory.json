@@ -1,0 +1,383 @@
+{
+    "audit_metadata": {
+        "generated_at": "2026-11-08T19:14:40+01:00",
+        "total_hotspots_audited": 4,
+        "study_corridor_bounds": {
+            "min_lat": 7.8,
+            "max_lat": 8.4,
+            "min_lon": 80.2,
+            "max_lon": 81.6
+        },
+        "railway_features_loaded": 4,
+        "duplicates_detected": 0,
+        "duplicate_details": []
+    },
+    "hotspots": [
+        {
+            "id": 1,
+            "name": "Minneriya Elephant Crossing",
+            "risk_level": "Critical",
+            "reason": "Elephants crossing from national park to reservoir during seasonal migrations.",
+            "created_at": "2026-11-08 08:02:21",
+            "latitude": 8.0412,
+            "longitude": 80.8256,
+            "is_coordinate_valid": true,
+            "validation_reason": null,
+            "in_study_corridor": true,
+            "assigned_section": {
+                "section_id": 2,
+                "section_name": "Minneriya - Hingurakgoda",
+                "district": "Polonnaruwa",
+                "start_location": "Minneriya Station",
+                "end_location": "Hingurakgoda Station",
+                "risk_level": "High",
+                "distance_to_track_meters": 7483.74,
+                "distance_to_track_km": 7.484
+            },
+            "geometric_nearest_section": {
+                "section_id": 1,
+                "distance_to_track_meters": 5154.43,
+                "distance_to_track_km": 5.154,
+                "closest_track_point": {
+                    "latitude": 8.06452,
+                    "longitude": 80.785139
+                }
+            },
+            "is_section_consistent": false,
+            "section_mismatch_details": {
+                "assigned_section_id": 2,
+                "nearest_geometric_section_id": 1,
+                "distance_difference_meters": 2329.31
+            },
+            "distances_to_all_sections": {
+                "1": {
+                    "section_id": 1,
+                    "distance_meters": 5154.43,
+                    "distance_km": 5.154,
+                    "closest_point": {
+                        "latitude": 8.06452,
+                        "longitude": 80.785139
+                    }
+                },
+                "2": {
+                    "section_id": 2,
+                    "distance_meters": 7483.74,
+                    "distance_km": 7.484,
+                    "closest_point": {
+                        "latitude": 8.071618,
+                        "longitude": 80.886235
+                    }
+                },
+                "3": {
+                    "section_id": 3,
+                    "distance_meters": 55808.82,
+                    "distance_km": 55.809,
+                    "closest_point": {
+                        "latitude": 8.257885,
+                        "longitude": 80.368265
+                    }
+                },
+                "4": {
+                    "section_id": 4,
+                    "distance_meters": 47061.28,
+                    "distance_km": 47.061,
+                    "closest_point": {
+                        "latitude": 7.943505,
+                        "longitude": 81.241442
+                    }
+                }
+            }
+        },
+        {
+            "id": 2,
+            "name": "Habarana Forest Edge",
+            "risk_level": "High",
+            "reason": "Thick vegetation close to tracks limiting driver visibility to less than 50 meters.",
+            "created_at": "2026-11-08 08:02:21",
+            "latitude": 8.0354,
+            "longitude": 80.7511,
+            "is_coordinate_valid": true,
+            "validation_reason": null,
+            "in_study_corridor": true,
+            "assigned_section": {
+                "section_id": 1,
+                "section_name": "Habarana - Gal Oya",
+                "district": "Anuradhapura/Polonnaruwa",
+                "start_location": "Habarana Station",
+                "end_location": "Gal Oya Junction",
+                "risk_level": "Critical",
+                "distance_to_track_meters": 2177,
+                "distance_to_track_km": 2.177
+            },
+            "geometric_nearest_section": {
+                "section_id": 1,
+                "distance_to_track_meters": 2177,
+                "distance_to_track_km": 2.177,
+                "closest_track_point": {
+                    "latitude": 8.054821,
+                    "longitude": 80.748603
+                }
+            },
+            "is_section_consistent": true,
+            "section_mismatch_details": null,
+            "distances_to_all_sections": {
+                "1": {
+                    "section_id": 1,
+                    "distance_meters": 2177,
+                    "distance_km": 2.177,
+                    "closest_point": {
+                        "latitude": 8.054821,
+                        "longitude": 80.748603
+                    }
+                },
+                "2": {
+                    "section_id": 2,
+                    "distance_meters": 15398.9,
+                    "distance_km": 15.399,
+                    "closest_point": {
+                        "latitude": 8.072862,
+                        "longitude": 80.885751
+                    }
+                },
+                "3": {
+                    "section_id": 3,
+                    "distance_meters": 48599.23,
+                    "distance_km": 48.599,
+                    "closest_point": {
+                        "latitude": 8.183513,
+                        "longitude": 80.335745
+                    }
+                },
+                "4": {
+                    "section_id": 4,
+                    "distance_meters": 54952.66,
+                    "distance_km": 54.953,
+                    "closest_point": {
+                        "latitude": 7.943505,
+                        "longitude": 81.241442
+                    }
+                }
+            }
+        },
+        {
+            "id": 3,
+            "name": "Gal Oya Corridor",
+            "risk_level": "High",
+            "reason": "Active path linking two major forest reserves.",
+            "created_at": "2026-11-08 08:02:21",
+            "latitude": 8.1256,
+            "longitude": 80.9124,
+            "is_coordinate_valid": true,
+            "validation_reason": null,
+            "in_study_corridor": true,
+            "assigned_section": {
+                "section_id": 1,
+                "section_name": "Habarana - Gal Oya",
+                "district": "Anuradhapura/Polonnaruwa",
+                "start_location": "Habarana Station",
+                "end_location": "Gal Oya Junction",
+                "risk_level": "Critical",
+                "distance_to_track_meters": 5134.18,
+                "distance_to_track_km": 5.134
+            },
+            "geometric_nearest_section": {
+                "section_id": 2,
+                "distance_to_track_meters": 3742.48,
+                "distance_to_track_km": 3.742,
+                "closest_track_point": {
+                    "latitude": 8.125238,
+                    "longitude": 80.878404
+                }
+            },
+            "is_section_consistent": false,
+            "section_mismatch_details": {
+                "assigned_section_id": 1,
+                "nearest_geometric_section_id": 2,
+                "distance_difference_meters": 1391.7
+            },
+            "distances_to_all_sections": {
+                "1": {
+                    "section_id": 1,
+                    "distance_meters": 5134.18,
+                    "distance_km": 5.134,
+                    "closest_point": {
+                        "latitude": 8.137588,
+                        "longitude": 80.867358
+                    }
+                },
+                "2": {
+                    "section_id": 2,
+                    "distance_meters": 3742.48,
+                    "distance_km": 3.742,
+                    "closest_point": {
+                        "latitude": 8.125238,
+                        "longitude": 80.878404
+                    }
+                },
+                "3": {
+                    "section_id": 3,
+                    "distance_meters": 60018.64,
+                    "distance_km": 60.019,
+                    "closest_point": {
+                        "latitude": 8.334114,
+                        "longitude": 80.40936
+                    }
+                },
+                "4": {
+                    "section_id": 4,
+                    "distance_meters": 41502.94,
+                    "distance_km": 41.503,
+                    "closest_point": {
+                        "latitude": 7.943505,
+                        "longitude": 81.241442
+                    }
+                }
+            }
+        },
+        {
+            "id": 4,
+            "name": "Night Movement Zone 01",
+            "risk_level": "Medium",
+            "reason": "Water bodies on south side force night-time crossings during dry periods.",
+            "created_at": "2026-11-08 08:02:21",
+            "latitude": 7.9854,
+            "longitude": 80.3214,
+            "is_coordinate_valid": true,
+            "validation_reason": null,
+            "in_study_corridor": true,
+            "assigned_section": {
+                "section_id": 3,
+                "section_name": "Maho - Anuradhapura",
+                "district": "Kurunegala/Anuradhapura",
+                "start_location": "Maho Junction",
+                "end_location": "Anuradhapura Station",
+                "risk_level": "Medium",
+                "distance_to_track_meters": 5604.14,
+                "distance_to_track_km": 5.604
+            },
+            "geometric_nearest_section": {
+                "section_id": 3,
+                "distance_to_track_meters": 5604.14,
+                "distance_to_track_km": 5.604,
+                "closest_track_point": {
+                    "latitude": 7.993782,
+                    "longitude": 80.271215
+                }
+            },
+            "is_section_consistent": true,
+            "section_mismatch_details": null,
+            "distances_to_all_sections": {
+                "1": {
+                    "section_id": 1,
+                    "distance_meters": 47667.32,
+                    "distance_km": 47.667,
+                    "closest_point": {
+                        "latitude": 8.054821,
+                        "longitude": 80.748603
+                    }
+                },
+                "2": {
+                    "section_id": 2,
+                    "distance_meters": 62584.13,
+                    "distance_km": 62.584,
+                    "closest_point": {
+                        "latitude": 8.10535,
+                        "longitude": 80.876769
+                    }
+                },
+                "3": {
+                    "section_id": 3,
+                    "distance_meters": 5604.14,
+                    "distance_km": 5.604,
+                    "closest_point": {
+                        "latitude": 7.993782,
+                        "longitude": 80.271215
+                    }
+                },
+                "4": {
+                    "section_id": 4,
+                    "distance_meters": 101424.2,
+                    "distance_km": 101.424,
+                    "closest_point": {
+                        "latitude": 7.943505,
+                        "longitude": 81.241442
+                    }
+                }
+            }
+        }
+    ],
+    "pairwise_distances": [
+        {
+            "hotspot_a": {
+                "id": 1,
+                "name": "Minneriya Elephant Crossing"
+            },
+            "hotspot_b": {
+                "id": 2,
+                "name": "Habarana Forest Edge"
+            },
+            "distance_meters": 8227.94,
+            "distance_km": 8.228
+        },
+        {
+            "hotspot_a": {
+                "id": 1,
+                "name": "Minneriya Elephant Crossing"
+            },
+            "hotspot_b": {
+                "id": 3,
+                "name": "Gal Oya Corridor"
+            },
+            "distance_meters": 13393.63,
+            "distance_km": 13.394
+        },
+        {
+            "hotspot_a": {
+                "id": 1,
+                "name": "Minneriya Elephant Crossing"
+            },
+            "hotspot_b": {
+                "id": 4,
+                "name": "Night Movement Zone 01"
+            },
+            "distance_meters": 55862.69,
+            "distance_km": 55.863
+        },
+        {
+            "hotspot_a": {
+                "id": 2,
+                "name": "Habarana Forest Edge"
+            },
+            "hotspot_b": {
+                "id": 3,
+                "name": "Gal Oya Corridor"
+            },
+            "distance_meters": 20394.39,
+            "distance_km": 20.394
+        },
+        {
+            "hotspot_a": {
+                "id": 2,
+                "name": "Habarana Forest Edge"
+            },
+            "hotspot_b": {
+                "id": 4,
+                "name": "Night Movement Zone 01"
+            },
+            "distance_meters": 47639.79,
+            "distance_km": 47.64
+        },
+        {
+            "hotspot_a": {
+                "id": 3,
+                "name": "Gal Oya Corridor"
+            },
+            "hotspot_b": {
+                "id": 4,
+                "name": "Night Movement Zone 01"
+            },
+            "distance_meters": 66909.23,
+            "distance_km": 66.909
+        }
+    ]
+}

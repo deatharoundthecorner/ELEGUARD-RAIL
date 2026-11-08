@@ -1,0 +1,3215 @@
+{
+  "analysis_metadata": {
+    "generated_at": "2026-11-08T19:14:40+01:00",
+    "total_reports_analyzed": 43,
+    "total_gps_enabled_reports": 29,
+    "total_text_only_reports": 14,
+    "provenance_breakdown": {
+      "Confirmed Historical Baseline": 3,
+      "Confirmed Automated Test": 33,
+      "Inferred Demonstration": 3,
+      "E2E Audit Verification": 4
+    },
+    "gps_enabled_by_provenance": {
+      "Confirmed Automated Test": 22,
+      "Inferred Demonstration": 3,
+      "E2E Audit Verification": 4
+    }
+  },
+  "primary_historical_baseline_analysis": {
+    "description": "Analysis of confirmed genuine historical baseline records (IDs 1-3).",
+    "sample_size": 3,
+    "gps_coverage_percentage": 0.0,
+    "findings": [
+      "All N=3 confirmed historical baseline reports lack numerical GPS coordinates.",
+      "Records contain text location descriptions and administrative railway section assignments only.",
+      "Geodesic point-to-point distance calculations to surveyed hotspots are mathematically impossible without fabricated coordinates.",
+      "Report ID 1: Section 1 (Habarana - Gal Oya), text location \"Near mile post 127/4\".",
+      "Report ID 2: Section 2 (Minneriya - Hingurakgoda), text location \"Near Minneriya reservoir bund\".",
+      "Report ID 3: Section 1 (Habarana - Gal Oya), text location \"Near Gal Oya junction approach\".",
+      "Sample size limitation: N=3 records cannot substantiate statistically valid elephant movement models or empirical hotspot validation."
+    ]
+  },
+  "supplementary_gps_population_analysis": {
+    "description": "Spatial analysis of 29 GPS-enabled test, demo, and audit reports.",
+    "sample_size": 29,
+    "provenance_composition": {
+      "Confirmed Automated Test": 22,
+      "Inferred Demonstration": 3,
+      "E2E Audit Verification": 4
+    },
+    "nearest_hotspot_distribution": {
+      "Minneriya Elephant Crossing": 12,
+      "Gal Oya Corridor": 12,
+      "Habarana Forest Edge": 5
+    },
+    "distance_band_distribution": {
+      "co_located_under_25m": 22,
+      "immediate_vicinity_under_100m": 1,
+      "corridor_100m_to_1km": 5,
+      "landscape_1km_to_5km": 0,
+      "regional_5km_to_20km": 1,
+      "distant_over_20km": 0
+    },
+    "key_insights": [
+      "11 test reports (automated test harness) were instantiated at (8.04125, 80.82564), within 7.1m of Hotspot 1 (Minneriya Elephant Crossing).",
+      "11 test reports (automated test harness) were instantiated at (8.12560, 80.91240), perfectly matching Hotspot 3 (Gal Oya Corridor) at 0.0m.",
+      "4 audit reports (Milestone 8C) were submitted at (8.03500, 80.75200), located 108.9m from Hotspot 2 (Habarana Forest Edge).",
+      "1 demo report (ID 42) at (8.04100, 80.82600) is located 48.7m from Hotspot 1.",
+      "1 demo report (ID 41) at (8.03840, 80.75520) is located 562.1m from Hotspot 2.",
+      "1 demo report (ID 43) at (8.08200, 80.89100) is intermediate, located 5.3km from Hotspot 3 and 8.6km from Hotspot 1."
+    ]
+  },
+  "reports": [
+    {
+      "report_id": 1,
+      "provenance": "Confirmed Historical Baseline",
+      "assigned_section_id": 3,
+      "assigned_section_name": "Maho - Anuradhapura",
+      "location_description": "Near Mile Post 85, close to the small lake",
+      "created_at": "2026-11-08 07:02:21",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 2,
+      "provenance": "Confirmed Historical Baseline",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Minneriya Crossing marker 102",
+      "created_at": "2026-11-08 06:02:21",
+      "urgency_level": "High",
+      "report_status": "Verified",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 3,
+      "provenance": "Confirmed Historical Baseline",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Habarana bend near forest temple",
+      "created_at": "2026-11-08 07:32:21",
+      "urgency_level": "Critical",
+      "report_status": "Converted to Alert",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 4,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 08:10:44",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 5,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 08:10:44",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 6,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 08:10:44",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 7,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 08:11:26",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 8,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 08:11:26",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 9,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 08:11:26",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 10,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 08:42:44",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 11,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 08:42:44",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 12,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 08:42:44",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 13,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 08:51:57",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 14,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 08:51:57",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 15,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 08:51:57",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 16,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 09:11:29",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 17,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 09:11:29",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 18,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 09:11:29",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 19,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 09:28:56",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 20,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 09:28:56",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 21,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 09:28:56",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 22,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 09:42:57",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 23,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 09:42:57",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 24,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 09:42:57",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 25,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 10:34:57",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 26,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 10:34:57",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 27,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 10:34:57",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 28,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 11:46:05",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 29,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 11:46:05",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 30,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 11:46:05",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 31,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 12:36:34",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 32,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 12:36:34",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 33,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 12:36:34",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 38,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Near Curve 44 (Text Only)",
+      "created_at": "2026-11-08 12:42:14",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": false,
+      "latitude": null,
+      "longitude": null,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [],
+      "nearest_hotspot": null,
+      "nearest_track": {
+        "has_coordinates": false,
+        "is_valid": false,
+        "status_message": "Coordinates not provided (null or empty)."
+      }
+    },
+    {
+      "report_id": 39,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Near Minneriya Crossing Marker 105",
+      "created_at": "2026-11-08 12:42:14",
+      "urgency_level": "High",
+      "report_status": "Converted to Alert",
+      "has_gps": true,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "gps_accuracy_meters": 14.5,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7.09,
+          "distance_km": 0.007,
+          "uncertainty_interval_meters": [
+            0.0,
+            21.59
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8232.77,
+          "distance_km": 8.233,
+          "uncertainty_interval_meters": [
+            8218.27,
+            8247.27
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13386.59,
+          "distance_km": 13.387,
+          "uncertainty_interval_meters": [
+            13372.09,
+            13401.09
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55867.69,
+          "distance_km": 55.868,
+          "uncertainty_interval_meters": [
+            55853.19,
+            55882.19
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 7.09,
+        "distance_km": 0.007,
+        "uncertainty_interval_meters": [
+          0.0,
+          21.59
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.04125,
+        "longitude": 80.82564,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5155.4,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 14.5,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5140.9,
+          "max_distance_meters": 5169.9,
+          "accuracy_meters": 14.5
+        },
+        "uncertainty_range_text": "5155.4m (±14.5m: [5140.9m - 5169.9m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 40,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Manual Coordinates",
+      "created_at": "2026-11-08 12:42:14",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "gps_accuracy_meters": null,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 13393.63,
+          "distance_km": 13.394,
+          "uncertainty_interval_meters": [
+            13393.63,
+            13393.63
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 20394.39,
+          "distance_km": 20.394,
+          "uncertainty_interval_meters": [
+            20394.39,
+            20394.39
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 0.0,
+          "distance_km": 0.0,
+          "uncertainty_interval_meters": [
+            0.0,
+            0.0
+          ],
+          "is_co_located": true
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 66909.23,
+          "distance_km": 66.909,
+          "uncertainty_interval_meters": [
+            66909.23,
+            66909.23
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 0.0,
+        "distance_km": 0.0,
+        "uncertainty_interval_meters": [
+          0.0,
+          0.0
+        ],
+        "is_co_located": true
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.1256,
+        "longitude": 80.9124,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 3742.5,
+        "closest_track_point": {
+          "latitude": 8.1252381,
+          "longitude": 80.8784038
+        },
+        "gps_accuracy_meters": null,
+        "effective_uncertainty_range": null,
+        "uncertainty_range_text": "3742.5m (GPS accuracy unspecified)",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 41,
+      "provenance": "Inferred Demonstration",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Habarana Corridor Milepost 127",
+      "created_at": "2026-11-08 08:13:23",
+      "urgency_level": "High",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.0384,
+      "longitude": 80.7552,
+      "gps_accuracy_meters": 12.0,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 7757.43,
+          "distance_km": 7.757,
+          "uncertainty_interval_meters": [
+            7745.43,
+            7769.43
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 561.3,
+          "distance_km": 0.561,
+          "uncertainty_interval_meters": [
+            549.3,
+            573.3
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 19837.38,
+          "distance_km": 19.837,
+          "uncertainty_interval_meters": [
+            19825.38,
+            19849.38
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 48127.71,
+          "distance_km": 48.128,
+          "uncertainty_interval_meters": [
+            48115.71,
+            48139.71
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 2,
+        "hotspot_name": "Habarana Forest Edge",
+        "assigned_section_id": 1,
+        "distance_meters": 561.3,
+        "distance_km": 0.561,
+        "uncertainty_interval_meters": [
+          549.3,
+          573.3
+        ],
+        "is_co_located": false
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.0384,
+        "longitude": 80.7552,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 1958.7,
+        "closest_track_point": {
+          "latitude": 8.0552412,
+          "longitude": 80.7499855
+        },
+        "gps_accuracy_meters": 12,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 1946.7,
+          "max_distance_meters": 1970.7,
+          "accuracy_meters": 12
+        },
+        "uncertainty_range_text": "1958.7m (±12m: [1946.7m - 1970.7m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 42,
+      "provenance": "Inferred Demonstration",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "Minneriya Track Kilometer 214",
+      "created_at": "2026-11-08 08:13:24",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.041,
+      "longitude": 80.826,
+      "gps_accuracy_meters": 15.0,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 49.34,
+          "distance_km": 0.049,
+          "uncertainty_interval_meters": [
+            34.34,
+            64.34
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 8270.15,
+          "distance_km": 8.27,
+          "uncertainty_interval_meters": [
+            8255.15,
+            8285.15
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 13377.87,
+          "distance_km": 13.378,
+          "uncertainty_interval_meters": [
+            13362.87,
+            13392.87
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 55904.02,
+          "distance_km": 55.904,
+          "uncertainty_interval_meters": [
+            55889.02,
+            55919.02
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 1,
+        "hotspot_name": "Minneriya Elephant Crossing",
+        "assigned_section_id": 2,
+        "distance_meters": 49.34,
+        "distance_km": 0.049,
+        "uncertainty_interval_meters": [
+          34.34,
+          64.34
+        ],
+        "is_co_located": false
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.041,
+        "longitude": 80.826,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 5203.7,
+        "closest_track_point": {
+          "latitude": 8.06452,
+          "longitude": 80.7851391
+        },
+        "gps_accuracy_meters": 15,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 5188.7,
+          "max_distance_meters": 5218.7,
+          "accuracy_meters": 15
+        },
+        "uncertainty_range_text": "5203.7m (±15m: [5188.7m - 5218.7m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 43,
+      "provenance": "Inferred Demonstration",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "Gal Oya Forest Edge Dusk",
+      "created_at": "2026-11-08 08:13:25",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.082,
+      "longitude": 80.891,
+      "gps_accuracy_meters": 25.0,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 8510.36,
+          "distance_km": 8.51,
+          "uncertainty_interval_meters": [
+            8485.36,
+            8535.36
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 16250.8,
+          "distance_km": 16.251,
+          "uncertainty_interval_meters": [
+            16225.8,
+            16275.8
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 5390.17,
+          "distance_km": 5.39,
+          "uncertainty_interval_meters": [
+            5365.17,
+            5415.17
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 63628.25,
+          "distance_km": 63.628,
+          "uncertainty_interval_meters": [
+            63603.25,
+            63653.25
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 3,
+        "hotspot_name": "Gal Oya Corridor",
+        "assigned_section_id": 1,
+        "distance_meters": 5390.17,
+        "distance_km": 5.39,
+        "uncertainty_interval_meters": [
+          5365.17,
+          5415.17
+        ],
+        "is_co_located": false
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.082,
+        "longitude": 80.891,
+        "nearest_section_id": 2,
+        "nearest_section_name": "Minneriya - Hingurakgoda",
+        "nearest_district": "Polonnaruwa",
+        "nearest_section_risk": "High",
+        "distance_meters": 827.1,
+        "closest_track_point": {
+          "latitude": 8.0800236,
+          "longitude": 80.883757
+        },
+        "gps_accuracy_meters": 25,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 802.1,
+          "max_distance_meters": 852.1,
+          "accuracy_meters": 25
+        },
+        "uncertainty_range_text": "827.1m (±25m: [802.1m - 852.1m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 53,
+      "provenance": "E2E Audit Verification",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "E2E-AUDIT-ELEPHANT-1794150352",
+      "created_at": "2026-11-08 20:35:52",
+      "urgency_level": "High",
+      "report_status": "Verified",
+      "has_gps": true,
+      "latitude": 8.035,
+      "longitude": 80.752,
+      "gps_accuracy_meters": 10.0,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 8132.81,
+          "distance_km": 8.133,
+          "uncertainty_interval_meters": [
+            8122.81,
+            8142.81
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 108.62,
+          "distance_km": 0.109,
+          "uncertainty_interval_meters": [
+            98.62,
+            118.62
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 20330.19,
+          "distance_km": 20.33,
+          "uncertainty_interval_meters": [
+            20320.19,
+            20340.19
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 47733.07,
+          "distance_km": 47.733,
+          "uncertainty_interval_meters": [
+            47723.07,
+            47743.07
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 2,
+        "hotspot_name": "Habarana Forest Edge",
+        "assigned_section_id": 1,
+        "distance_meters": 108.62,
+        "distance_km": 0.109,
+        "uncertainty_interval_meters": [
+          98.62,
+          118.62
+        ],
+        "is_co_located": false
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.035,
+        "longitude": 80.752,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 2235.6,
+        "closest_track_point": {
+          "latitude": 8.0548214,
+          "longitude": 80.7486025
+        },
+        "gps_accuracy_meters": 10,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 2225.6,
+          "max_distance_meters": 2245.6,
+          "accuracy_meters": 10
+        },
+        "uncertainty_range_text": "2235.6m (±10m: [2225.6m - 2245.6m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 54,
+      "provenance": "E2E Audit Verification",
+      "assigned_section_id": 2,
+      "assigned_section_name": "Minneriya - Hingurakgoda",
+      "location_description": "E2E-AUDIT-TRACK-1794150352",
+      "created_at": "2026-11-08 20:35:52",
+      "urgency_level": "Low",
+      "report_status": "Rejected",
+      "has_gps": true,
+      "latitude": 8.035,
+      "longitude": 80.752,
+      "gps_accuracy_meters": 10.0,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 8132.81,
+          "distance_km": 8.133,
+          "uncertainty_interval_meters": [
+            8122.81,
+            8142.81
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 108.62,
+          "distance_km": 0.109,
+          "uncertainty_interval_meters": [
+            98.62,
+            118.62
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 20330.19,
+          "distance_km": 20.33,
+          "uncertainty_interval_meters": [
+            20320.19,
+            20340.19
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 47733.07,
+          "distance_km": 47.733,
+          "uncertainty_interval_meters": [
+            47723.07,
+            47743.07
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 2,
+        "hotspot_name": "Habarana Forest Edge",
+        "assigned_section_id": 1,
+        "distance_meters": 108.62,
+        "distance_km": 0.109,
+        "uncertainty_interval_meters": [
+          98.62,
+          118.62
+        ],
+        "is_co_located": false
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.035,
+        "longitude": 80.752,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 2235.6,
+        "closest_track_point": {
+          "latitude": 8.0548214,
+          "longitude": 80.7486025
+        },
+        "gps_accuracy_meters": 10,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 2225.6,
+          "max_distance_meters": 2245.6,
+          "accuracy_meters": 10
+        },
+        "uncertainty_range_text": "2235.6m (±10m: [2225.6m - 2245.6m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 55,
+      "provenance": "E2E Audit Verification",
+      "assigned_section_id": 1,
+      "assigned_section_name": "Habarana - Gal Oya",
+      "location_description": "E2E-AUDIT-UNCERTAIN-1794150352",
+      "created_at": "2026-11-08 20:35:53",
+      "urgency_level": "Medium",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.035,
+      "longitude": 80.752,
+      "gps_accuracy_meters": 10.0,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 8132.81,
+          "distance_km": 8.133,
+          "uncertainty_interval_meters": [
+            8122.81,
+            8142.81
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 108.62,
+          "distance_km": 0.109,
+          "uncertainty_interval_meters": [
+            98.62,
+            118.62
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 20330.19,
+          "distance_km": 20.33,
+          "uncertainty_interval_meters": [
+            20320.19,
+            20340.19
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 47733.07,
+          "distance_km": 47.733,
+          "uncertainty_interval_meters": [
+            47723.07,
+            47743.07
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 2,
+        "hotspot_name": "Habarana Forest Edge",
+        "assigned_section_id": 1,
+        "distance_meters": 108.62,
+        "distance_km": 0.109,
+        "uncertainty_interval_meters": [
+          98.62,
+          118.62
+        ],
+        "is_co_located": false
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.035,
+        "longitude": 80.752,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 2235.6,
+        "closest_track_point": {
+          "latitude": 8.0548214,
+          "longitude": 80.7486025
+        },
+        "gps_accuracy_meters": 10,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 2225.6,
+          "max_distance_meters": 2245.6,
+          "accuracy_meters": 10
+        },
+        "uncertainty_range_text": "2235.6m (±10m: [2225.6m - 2245.6m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    },
+    {
+      "report_id": 56,
+      "provenance": "E2E Audit Verification",
+      "assigned_section_id": 3,
+      "assigned_section_name": "Maho - Anuradhapura",
+      "location_description": "E2E-AUDIT-TEXTONLY-1794150352",
+      "created_at": "2026-11-08 20:35:53",
+      "urgency_level": "Low",
+      "report_status": "Pending",
+      "has_gps": true,
+      "latitude": 8.035,
+      "longitude": 80.752,
+      "gps_accuracy_meters": 10.0,
+      "hotspot_distances": [
+        {
+          "hotspot_id": 1,
+          "hotspot_name": "Minneriya Elephant Crossing",
+          "assigned_section_id": 2,
+          "distance_meters": 8132.81,
+          "distance_km": 8.133,
+          "uncertainty_interval_meters": [
+            8122.81,
+            8142.81
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 2,
+          "hotspot_name": "Habarana Forest Edge",
+          "assigned_section_id": 1,
+          "distance_meters": 108.62,
+          "distance_km": 0.109,
+          "uncertainty_interval_meters": [
+            98.62,
+            118.62
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 3,
+          "hotspot_name": "Gal Oya Corridor",
+          "assigned_section_id": 1,
+          "distance_meters": 20330.19,
+          "distance_km": 20.33,
+          "uncertainty_interval_meters": [
+            20320.19,
+            20340.19
+          ],
+          "is_co_located": false
+        },
+        {
+          "hotspot_id": 4,
+          "hotspot_name": "Night Movement Zone 01",
+          "assigned_section_id": 3,
+          "distance_meters": 47733.07,
+          "distance_km": 47.733,
+          "uncertainty_interval_meters": [
+            47723.07,
+            47743.07
+          ],
+          "is_co_located": false
+        }
+      ],
+      "nearest_hotspot": {
+        "hotspot_id": 2,
+        "hotspot_name": "Habarana Forest Edge",
+        "assigned_section_id": 1,
+        "distance_meters": 108.62,
+        "distance_km": 0.109,
+        "uncertainty_interval_meters": [
+          98.62,
+          118.62
+        ],
+        "is_co_located": false
+      },
+      "nearest_track": {
+        "has_coordinates": true,
+        "is_valid": true,
+        "latitude": 8.035,
+        "longitude": 80.752,
+        "nearest_section_id": 1,
+        "nearest_section_name": "Habarana - Gal Oya",
+        "nearest_district": "Anuradhapura/Polonnaruwa",
+        "nearest_section_risk": "Critical",
+        "distance_meters": 2235.6,
+        "closest_track_point": {
+          "latitude": 8.0548214,
+          "longitude": 80.7486025
+        },
+        "gps_accuracy_meters": 10,
+        "effective_uncertainty_range": {
+          "min_distance_meters": 2225.6,
+          "max_distance_meters": 2245.6,
+          "accuracy_meters": 10
+        },
+        "uncertainty_range_text": "2235.6m (±10m: [2225.6m - 2245.6m])",
+        "calculation_method": "Geodesic Haversine Point-to-LineString with Conformal Tangent Projection",
+        "status_message": "Proximity calculated successfully"
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "evidence_classifications": [
+    {
+      "hotspot_id": 1,
+      "name": "Minneriya Elephant Crossing",
+      "assigned_section": "Section 2 (Minneriya - Hingurakgoda)",
+      "recorded_risk_level": "Critical",
+      "administrative_tier": "Existing Mapped Hotspot",
+      "empirical_evidence_tier": "Insufficient Empirical Evidence",
+      "historical_baseline_alignment": "Qualitative Match (Report ID 2: \"Near Minneriya reservoir bund\", no GPS)",
+      "synthetic_test_coverage": "11 automated test runs + 1 demo report co-located within 50m (synthetic)",
+      "recommendation": "Retain in database as surveyed corridor; deploy GPS field logging to capture authentic movement patterns."
+    },
+    {
+      "hotspot_id": 2,
+      "name": "Habarana Forest Edge",
+      "assigned_section": "Section 1 (Habarana - Gal Oya)",
+      "recorded_risk_level": "High",
+      "administrative_tier": "Existing Mapped Hotspot",
+      "empirical_evidence_tier": "Insufficient Empirical Evidence",
+      "historical_baseline_alignment": "Qualitative Match (Report ID 1: \"Near mile post 127/4\", no GPS)",
+      "synthetic_test_coverage": "1 demo report at 562m; 4 E2E audit reports at 109m (verification tests)",
+      "recommendation": "Retain in database; priority section for optical/thermal camera integration."
+    },
+    {
+      "hotspot_id": 3,
+      "name": "Gal Oya Corridor",
+      "assigned_section": "Section 1 (Habarana - Gal Oya)",
+      "recorded_risk_level": "High",
+      "administrative_tier": "Existing Mapped Hotspot",
+      "empirical_evidence_tier": "Insufficient Empirical Evidence",
+      "historical_baseline_alignment": "Qualitative Match (Report ID 3: \"Near Gal Oya junction approach\", no GPS)",
+      "synthetic_test_coverage": "11 automated test runs at exact coordinates (0m, synthetic test artifacts)",
+      "recommendation": "Retain in database; resolve junction boundary definition with Railway Department."
+    },
+    {
+      "hotspot_id": 4,
+      "name": "Night Movement Zone 01",
+      "assigned_section": "Section 3 (Maho - Anuradhapura)",
+      "recorded_risk_level": "Medium",
+      "administrative_tier": "Existing Mapped Hotspot",
+      "empirical_evidence_tier": "Zero Observational Support",
+      "historical_baseline_alignment": "No historical reports in database for Section 3",
+      "synthetic_test_coverage": "0 test reports in database for Section 3",
+      "recommendation": "Retain surveyed boundary; conduct targeted officer reconnaissance to verify activity."
+    }
+  ]
+}

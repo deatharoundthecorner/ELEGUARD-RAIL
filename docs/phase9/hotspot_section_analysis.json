@@ -1,0 +1,458 @@
+{
+  "metadata": {
+    "total_gps_reports": 29,
+    "mismatch_count": 26,
+    "match_count": 3,
+    "mismatch_percentage": 89.66
+  },
+  "railway_sections_spatial_profiles": [
+    {
+      "section_id": 1,
+      "vertex_count": 88,
+      "bounds": {
+        "lat_min": 8.05482,
+        "lat_max": 8.14571,
+        "lon_min": 80.7486,
+        "lon_max": 80.86736
+      }
+    },
+    {
+      "section_id": 2,
+      "vertex_count": 128,
+      "bounds": {
+        "lat_min": 8.01311,
+        "lat_max": 8.13478,
+        "lon_min": 80.87232,
+        "lon_max": 80.97789
+      }
+    },
+    {
+      "section_id": 3,
+      "vertex_count": 755,
+      "bounds": {
+        "lat_min": 7.81868,
+        "lat_max": 8.34143,
+        "lon_min": 80.24548,
+        "lon_max": 80.41085
+      }
+    },
+    {
+      "section_id": 4,
+      "vertex_count": 84,
+      "bounds": {
+        "lat_min": 7.92242,
+        "lat_max": 7.96606,
+        "lon_min": 81.24144,
+        "lon_max": 81.51402
+      }
+    }
+  ],
+  "hotspot_section_associations": [
+    {
+      "hotspot_id": 1,
+      "name": "Minneriya Elephant Crossing",
+      "assigned_section_id": 2,
+      "geometric_nearest_section_id": 1,
+      "is_consistent": false,
+      "distance_to_nearest_meters": 5154.43,
+      "distance_to_assigned_meters": 7483.74,
+      "explanation": "Administratively assigned to Minneriya - Hingurakgoda (Section 2) due to park corridor, but spatial location (8.0412, 80.8256) is 5.15 km from Section 1 track and 7.48 km from Section 2 track."
+    },
+    {
+      "hotspot_id": 2,
+      "name": "Habarana Forest Edge",
+      "assigned_section_id": 1,
+      "geometric_nearest_section_id": 1,
+      "is_consistent": true,
+      "distance_to_nearest_meters": 2177,
+      "distance_to_assigned_meters": 2177,
+      "explanation": "Geographically and administratively consistent with Section 1 (Habarana - Gal Oya)."
+    },
+    {
+      "hotspot_id": 3,
+      "name": "Gal Oya Corridor",
+      "assigned_section_id": 1,
+      "geometric_nearest_section_id": 2,
+      "is_consistent": false,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "explanation": "Administratively assigned to Section 1 (Habarana - Gal Oya terminus), but spatial coordinates (8.1256, 80.9124) near junction are 3.74 km from Section 2 track vs 5.13 km from Section 1 track."
+    },
+    {
+      "hotspot_id": 4,
+      "name": "Night Movement Zone 01",
+      "assigned_section_id": 3,
+      "geometric_nearest_section_id": 3,
+      "is_consistent": true,
+      "distance_to_nearest_meters": 5604.14,
+      "distance_to_assigned_meters": 5604.14,
+      "explanation": "Geographically and administratively consistent with Section 3 (Maho - Anuradhapura)."
+    }
+  ],
+  "mismatches": [
+    {
+      "report_id": 5,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 6,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 8,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 9,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 11,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 12,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 14,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 15,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 17,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 18,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 20,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 21,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 23,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 24,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 26,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 27,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 29,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 30,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 32,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 33,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 39,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5155.45,
+      "distance_to_assigned_meters": 7477.29,
+      "discrepancy_meters": 2321.85,
+      "latitude": 8.04125,
+      "longitude": 80.82564,
+      "possible_explanation": "Automated test harness artifact instantiated near Hotspot 1 (Minneriya Elephant Crossing). Inherited Hotspot 1 administrative section assignment (Section 2), but nearest track centerline in GeoJSON is Section 1 (5.16 km vs 7.48 km to Section 2).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 40,
+      "provenance": "Confirmed Automated Test",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 3742.48,
+      "distance_to_assigned_meters": 5134.18,
+      "discrepancy_meters": 1391.7,
+      "latitude": 8.1256,
+      "longitude": 80.9124,
+      "possible_explanation": "Automated test harness artifact instantiated at Hotspot 3 (Gal Oya Corridor). Inherited Hotspot 3 administrative section assignment (Section 1), but track geometry of Section 2 passes closer to the junction (3.74 km vs 5.13 km to Section 1).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 42,
+      "provenance": "Inferred Demonstration",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 5203.68,
+      "distance_to_assigned_meters": 7454.61,
+      "discrepancy_meters": 2250.93,
+      "latitude": 8.041,
+      "longitude": 80.826,
+      "possible_explanation": "Inferred demonstration report near Hotspot 1 (Minneriya). Administratively assigned to Section 2, geometrically closer to Section 1 track (5.18 km vs 7.44 km).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 43,
+      "provenance": "Inferred Demonstration",
+      "assigned_section": 1,
+      "nearest_geometric_section": 2,
+      "distance_to_nearest_meters": 827.12,
+      "distance_to_assigned_meters": 6706.64,
+      "discrepancy_meters": 5879.52,
+      "latitude": 8.082,
+      "longitude": 80.891,
+      "possible_explanation": "Inferred demonstration report at intermediate location (8.0820, 80.8910). Distance difference between Section 1 (4.26 km) and Section 2 (4.46 km) is only 197 metres.",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 54,
+      "provenance": "E2E Audit Verification",
+      "assigned_section": 2,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 2235.56,
+      "distance_to_assigned_meters": 15315.7,
+      "discrepancy_meters": 13080.15,
+      "latitude": 8.035,
+      "longitude": 80.752,
+      "possible_explanation": "Milestone 8C end-to-end verification audit run where reporter submitted Section 2 while using test coordinates near Habarana Forest (Section 1 territory, 2.24 km from Section 1 track).",
+      "confidence_in_interpretation": "High"
+    },
+    {
+      "report_id": 56,
+      "provenance": "E2E Audit Verification",
+      "assigned_section": 3,
+      "nearest_geometric_section": 1,
+      "distance_to_nearest_meters": 2235.56,
+      "distance_to_assigned_meters": 48707.53,
+      "discrepancy_meters": 46471.98,
+      "latitude": 8.035,
+      "longitude": 80.752,
+      "possible_explanation": "Milestone 8C end-to-end verification audit run where reporter submitted Section 2 while using test coordinates near Habarana Forest (Section 1 territory, 2.24 km from Section 1 track).",
+      "confidence_in_interpretation": "High"
+    }
+  ],
+  "matches": [
+    {
+      "report_id": 41,
+      "provenance": "Inferred Demonstration",
+      "assigned_section": 1,
+      "distance_to_track_meters": 1958.69,
+      "latitude": 8.0384,
+      "longitude": 80.7552
+    },
+    {
+      "report_id": 53,
+      "provenance": "E2E Audit Verification",
+      "assigned_section": 1,
+      "distance_to_track_meters": 2235.56,
+      "latitude": 8.035,
+      "longitude": 80.752
+    },
+    {
+      "report_id": 55,
+      "provenance": "E2E Audit Verification",
+      "assigned_section": 1,
+      "distance_to_track_meters": 2235.56,
+      "latitude": 8.035,
+      "longitude": 80.752
+    }
+  ]
+}
