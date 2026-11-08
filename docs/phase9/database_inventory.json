@@ -1,0 +1,1407 @@
+{
+    "database_name": "eleguard_rail",
+    "extracted_at": "2026-11-08T17:25:28+01:00",
+    "table_count": 8,
+    "tables": {
+        "alerts": {
+            "name": "alerts",
+            "engine": "InnoDB",
+            "comment": "",
+            "live_row_count": 15,
+            "data_length_bytes": 16384,
+            "index_length_bytes": 49152,
+            "create_time": "2026-11-08 08:01:20",
+            "update_time": "2026-11-08 21:00:32",
+            "columns": [
+                {
+                    "COLUMN_NAME": "id",
+                    "ORDINAL_POSITION": 1,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "PRI",
+                    "EXTRA": "auto_increment",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "report_id",
+                    "ORDINAL_POSITION": 2,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "section_id",
+                    "ORDINAL_POSITION": 3,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "alert_level",
+                    "ORDINAL_POSITION": 4,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 8,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Low','Medium','High','Critical')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "alert_message",
+                    "ORDINAL_POSITION": 5,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "text",
+                    "CHARACTER_MAXIMUM_LENGTH": 65535,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "text",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "alert_status",
+                    "ORDINAL_POSITION": 6,
+                    "COLUMN_DEFAULT": "'Active'",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 11,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Active','Resolved','False Alert')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "created_by",
+                    "ORDINAL_POSITION": 7,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "created_at",
+                    "ORDINAL_POSITION": 8,
+                    "COLUMN_DEFAULT": "current_timestamp()",
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "timestamp",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "timestamp",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "resolved_at",
+                    "ORDINAL_POSITION": 9,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "datetime",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "datetime",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "created_by",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "created_by"
+                    ]
+                },
+                {
+                    "name": "PRIMARY",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "id"
+                    ]
+                },
+                {
+                    "name": "report_id",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "report_id"
+                    ]
+                },
+                {
+                    "name": "section_id",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "section_id"
+                    ]
+                }
+            ],
+            "foreign_keys": [
+                {
+                    "CONSTRAINT_NAME": "alerts_ibfk_1",
+                    "COLUMN_NAME": "report_id",
+                    "REFERENCED_TABLE_NAME": "elephant_reports",
+                    "REFERENCED_COLUMN_NAME": "id"
+                },
+                {
+                    "CONSTRAINT_NAME": "alerts_ibfk_2",
+                    "COLUMN_NAME": "section_id",
+                    "REFERENCED_TABLE_NAME": "railway_sections",
+                    "REFERENCED_COLUMN_NAME": "id"
+                },
+                {
+                    "CONSTRAINT_NAME": "alerts_ibfk_3",
+                    "COLUMN_NAME": "created_by",
+                    "REFERENCED_TABLE_NAME": "users",
+                    "REFERENCED_COLUMN_NAME": "id"
+                }
+            ]
+        },
+        "driver_acknowledgements": {
+            "name": "driver_acknowledgements",
+            "engine": "InnoDB",
+            "comment": "",
+            "live_row_count": 13,
+            "data_length_bytes": 16384,
+            "index_length_bytes": 32768,
+            "create_time": "2026-11-08 08:01:20",
+            "update_time": "2026-11-08 20:59:49",
+            "columns": [
+                {
+                    "COLUMN_NAME": "id",
+                    "ORDINAL_POSITION": 1,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "PRI",
+                    "EXTRA": "auto_increment",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "alert_id",
+                    "ORDINAL_POSITION": 2,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "driver_id",
+                    "ORDINAL_POSITION": 3,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "action_status",
+                    "ORDINAL_POSITION": 4,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 12,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Acknowledged','Slowing Down','Stopped','False Alert')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "note",
+                    "ORDINAL_POSITION": 5,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "text",
+                    "CHARACTER_MAXIMUM_LENGTH": 65535,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "text",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "acknowledged_at",
+                    "ORDINAL_POSITION": 6,
+                    "COLUMN_DEFAULT": "current_timestamp()",
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "timestamp",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "timestamp",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "alert_id",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "alert_id"
+                    ]
+                },
+                {
+                    "name": "driver_id",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "driver_id"
+                    ]
+                },
+                {
+                    "name": "PRIMARY",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "id"
+                    ]
+                }
+            ],
+            "foreign_keys": [
+                {
+                    "CONSTRAINT_NAME": "driver_acknowledgements_ibfk_1",
+                    "COLUMN_NAME": "alert_id",
+                    "REFERENCED_TABLE_NAME": "alerts",
+                    "REFERENCED_COLUMN_NAME": "id"
+                },
+                {
+                    "CONSTRAINT_NAME": "driver_acknowledgements_ibfk_2",
+                    "COLUMN_NAME": "driver_id",
+                    "REFERENCED_TABLE_NAME": "users",
+                    "REFERENCED_COLUMN_NAME": "id"
+                }
+            ]
+        },
+        "elephant_reports": {
+            "name": "elephant_reports",
+            "engine": "InnoDB",
+            "comment": "",
+            "live_row_count": 43,
+            "data_length_bytes": 32768,
+            "index_length_bytes": 81920,
+            "create_time": "2026-11-08 12:25:24",
+            "update_time": "2026-11-08 21:00:32",
+            "columns": [
+                {
+                    "COLUMN_NAME": "id",
+                    "ORDINAL_POSITION": 1,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "PRI",
+                    "EXTRA": "auto_increment",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "section_id",
+                    "ORDINAL_POSITION": 2,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "reported_by",
+                    "ORDINAL_POSITION": 3,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "elephant_count",
+                    "ORDINAL_POSITION": 4,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "location_description",
+                    "ORDINAL_POSITION": 5,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 255,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(255)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "latitude",
+                    "ORDINAL_POSITION": 6,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "decimal",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 8,
+                    "COLUMN_TYPE": "decimal(10,8)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "longitude",
+                    "ORDINAL_POSITION": 7,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "decimal",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 11,
+                    "NUMERIC_SCALE": 8,
+                    "COLUMN_TYPE": "decimal(11,8)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "gps_accuracy_meters",
+                    "ORDINAL_POSITION": 8,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "decimal",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 8,
+                    "NUMERIC_SCALE": 2,
+                    "COLUMN_TYPE": "decimal(8,2)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "urgency_level",
+                    "ORDINAL_POSITION": 9,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 8,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Low','Medium','High','Critical')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "risk_score",
+                    "ORDINAL_POSITION": 10,
+                    "COLUMN_DEFAULT": "'Low'",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 8,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Low','Medium','High','Critical')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "report_status",
+                    "ORDINAL_POSITION": 11,
+                    "COLUMN_DEFAULT": "'Pending'",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 18,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Pending','Verified','Rejected','Converted to Alert','Resolved')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "description",
+                    "ORDINAL_POSITION": 12,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "text",
+                    "CHARACTER_MAXIMUM_LENGTH": 65535,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "text",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "image_path",
+                    "ORDINAL_POSITION": 13,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 255,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(255)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "ai_status",
+                    "ORDINAL_POSITION": 14,
+                    "COLUMN_DEFAULT": "'pending'",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 9,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('pending','processed','skipped','failed')",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "ai_detected_elephant",
+                    "ORDINAL_POSITION": 15,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "tinyint",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 3,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "tinyint(1)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "ai_confidence",
+                    "ORDINAL_POSITION": 16,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "decimal",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 5,
+                    "NUMERIC_SCALE": 4,
+                    "COLUMN_TYPE": "decimal(5,4)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "ai_estimated_count",
+                    "ORDINAL_POSITION": 17,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "ai_model_version",
+                    "ORDINAL_POSITION": 18,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 50,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(50)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "ai_detection_notes",
+                    "ORDINAL_POSITION": 19,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "text",
+                    "CHARACTER_MAXIMUM_LENGTH": 65535,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "text",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "ai_processed_at",
+                    "ORDINAL_POSITION": 20,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "datetime",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "datetime",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "is_potential_duplicate",
+                    "ORDINAL_POSITION": 21,
+                    "COLUMN_DEFAULT": "0",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "tinyint",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 3,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "tinyint(1)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "duplicate_cluster_id",
+                    "ORDINAL_POSITION": 22,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "created_at",
+                    "ORDINAL_POSITION": 23,
+                    "COLUMN_DEFAULT": "current_timestamp()",
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "timestamp",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "timestamp",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "updated_at",
+                    "ORDINAL_POSITION": 24,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "datetime",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "datetime",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_elephant_reports_ai_status",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "ai_status"
+                    ]
+                },
+                {
+                    "name": "idx_elephant_reports_coords",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "latitude",
+                        "longitude"
+                    ]
+                },
+                {
+                    "name": "idx_elephant_reports_duplicate",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "is_potential_duplicate",
+                        "duplicate_cluster_id"
+                    ]
+                },
+                {
+                    "name": "PRIMARY",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "id"
+                    ]
+                },
+                {
+                    "name": "reported_by",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "reported_by"
+                    ]
+                },
+                {
+                    "name": "section_id",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "section_id"
+                    ]
+                }
+            ],
+            "foreign_keys": [
+                {
+                    "CONSTRAINT_NAME": "elephant_reports_ibfk_1",
+                    "COLUMN_NAME": "section_id",
+                    "REFERENCED_TABLE_NAME": "railway_sections",
+                    "REFERENCED_COLUMN_NAME": "id"
+                },
+                {
+                    "CONSTRAINT_NAME": "elephant_reports_ibfk_2",
+                    "COLUMN_NAME": "reported_by",
+                    "REFERENCED_TABLE_NAME": "users",
+                    "REFERENCED_COLUMN_NAME": "id"
+                }
+            ]
+        },
+        "hotspots": {
+            "name": "hotspots",
+            "engine": "InnoDB",
+            "comment": "",
+            "live_row_count": 4,
+            "data_length_bytes": 16384,
+            "index_length_bytes": 16384,
+            "create_time": "2026-11-08 08:01:20",
+            "update_time": null,
+            "columns": [
+                {
+                    "COLUMN_NAME": "id",
+                    "ORDINAL_POSITION": 1,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "PRI",
+                    "EXTRA": "auto_increment",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "section_id",
+                    "ORDINAL_POSITION": 2,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "hotspot_name",
+                    "ORDINAL_POSITION": 3,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 150,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(150)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "latitude",
+                    "ORDINAL_POSITION": 4,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "decimal",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 8,
+                    "COLUMN_TYPE": "decimal(10,8)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "longitude",
+                    "ORDINAL_POSITION": 5,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "decimal",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 11,
+                    "NUMERIC_SCALE": 8,
+                    "COLUMN_TYPE": "decimal(11,8)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "risk_level",
+                    "ORDINAL_POSITION": 6,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 8,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Low','Medium','High','Critical')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "reason",
+                    "ORDINAL_POSITION": 7,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "text",
+                    "CHARACTER_MAXIMUM_LENGTH": 65535,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "text",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "created_at",
+                    "ORDINAL_POSITION": 8,
+                    "COLUMN_DEFAULT": "current_timestamp()",
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "timestamp",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "timestamp",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "id"
+                    ]
+                },
+                {
+                    "name": "section_id",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "section_id"
+                    ]
+                }
+            ],
+            "foreign_keys": [
+                {
+                    "CONSTRAINT_NAME": "hotspots_ibfk_1",
+                    "COLUMN_NAME": "section_id",
+                    "REFERENCED_TABLE_NAME": "railway_sections",
+                    "REFERENCED_COLUMN_NAME": "id"
+                }
+            ]
+        },
+        "incident_history": {
+            "name": "incident_history",
+            "engine": "InnoDB",
+            "comment": "",
+            "live_row_count": 3,
+            "data_length_bytes": 16384,
+            "index_length_bytes": 16384,
+            "create_time": "2026-11-08 08:01:20",
+            "update_time": null,
+            "columns": [
+                {
+                    "COLUMN_NAME": "id",
+                    "ORDINAL_POSITION": 1,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "PRI",
+                    "EXTRA": "auto_increment",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "section_id",
+                    "ORDINAL_POSITION": 2,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "incident_type",
+                    "ORDINAL_POSITION": 3,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 100,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(100)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "description",
+                    "ORDINAL_POSITION": 4,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "text",
+                    "CHARACTER_MAXIMUM_LENGTH": 65535,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "text",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "incident_date",
+                    "ORDINAL_POSITION": 5,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "date",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "date",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "severity",
+                    "ORDINAL_POSITION": 6,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 8,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Low','Medium','High','Critical')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "created_at",
+                    "ORDINAL_POSITION": 7,
+                    "COLUMN_DEFAULT": "current_timestamp()",
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "timestamp",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "timestamp",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "id"
+                    ]
+                },
+                {
+                    "name": "section_id",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "section_id"
+                    ]
+                }
+            ],
+            "foreign_keys": [
+                {
+                    "CONSTRAINT_NAME": "incident_history_ibfk_1",
+                    "COLUMN_NAME": "section_id",
+                    "REFERENCED_TABLE_NAME": "railway_sections",
+                    "REFERENCED_COLUMN_NAME": "id"
+                }
+            ]
+        },
+        "railway_sections": {
+            "name": "railway_sections",
+            "engine": "InnoDB",
+            "comment": "",
+            "live_row_count": 4,
+            "data_length_bytes": 16384,
+            "index_length_bytes": 0,
+            "create_time": "2026-11-08 08:01:20",
+            "update_time": null,
+            "columns": [
+                {
+                    "COLUMN_NAME": "id",
+                    "ORDINAL_POSITION": 1,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "PRI",
+                    "EXTRA": "auto_increment",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "section_name",
+                    "ORDINAL_POSITION": 2,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 150,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(150)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "district",
+                    "ORDINAL_POSITION": 3,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 100,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(100)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "start_location",
+                    "ORDINAL_POSITION": 4,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 150,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(150)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "end_location",
+                    "ORDINAL_POSITION": 5,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 150,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(150)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "risk_level",
+                    "ORDINAL_POSITION": 6,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 8,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('Low','Medium','High','Critical')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "description",
+                    "ORDINAL_POSITION": 7,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "text",
+                    "CHARACTER_MAXIMUM_LENGTH": 65535,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "text",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "created_at",
+                    "ORDINAL_POSITION": 8,
+                    "COLUMN_DEFAULT": "current_timestamp()",
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "timestamp",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "timestamp",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "id"
+                    ]
+                }
+            ],
+            "foreign_keys": []
+        },
+        "system_logs": {
+            "name": "system_logs",
+            "engine": "InnoDB",
+            "comment": "",
+            "live_row_count": 185,
+            "data_length_bytes": 16384,
+            "index_length_bytes": 16384,
+            "create_time": "2026-11-08 08:01:21",
+            "update_time": "2026-11-08 20:59:53",
+            "columns": [
+                {
+                    "COLUMN_NAME": "id",
+                    "ORDINAL_POSITION": 1,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "PRI",
+                    "EXTRA": "auto_increment",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "user_id",
+                    "ORDINAL_POSITION": 2,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "MUL",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "action",
+                    "ORDINAL_POSITION": 3,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 255,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(255)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "description",
+                    "ORDINAL_POSITION": 4,
+                    "COLUMN_DEFAULT": "NULL",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "text",
+                    "CHARACTER_MAXIMUM_LENGTH": 65535,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "text",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "created_at",
+                    "ORDINAL_POSITION": 5,
+                    "COLUMN_DEFAULT": "current_timestamp()",
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "timestamp",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "timestamp",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "id"
+                    ]
+                },
+                {
+                    "name": "user_id",
+                    "unique": false,
+                    "type": "BTREE",
+                    "columns": [
+                        "user_id"
+                    ]
+                }
+            ],
+            "foreign_keys": [
+                {
+                    "CONSTRAINT_NAME": "system_logs_ibfk_1",
+                    "COLUMN_NAME": "user_id",
+                    "REFERENCED_TABLE_NAME": "users",
+                    "REFERENCED_COLUMN_NAME": "id"
+                }
+            ]
+        },
+        "users": {
+            "name": "users",
+            "engine": "InnoDB",
+            "comment": "",
+            "live_row_count": 5,
+            "data_length_bytes": 16384,
+            "index_length_bytes": 16384,
+            "create_time": "2026-11-08 08:01:20",
+            "update_time": null,
+            "columns": [
+                {
+                    "COLUMN_NAME": "id",
+                    "ORDINAL_POSITION": 1,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "int",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": 10,
+                    "NUMERIC_SCALE": 0,
+                    "COLUMN_TYPE": "int(11)",
+                    "COLUMN_KEY": "PRI",
+                    "EXTRA": "auto_increment",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "name",
+                    "ORDINAL_POSITION": 2,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 100,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(100)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "email",
+                    "ORDINAL_POSITION": 3,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 100,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(100)",
+                    "COLUMN_KEY": "UNI",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "password",
+                    "ORDINAL_POSITION": 4,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "varchar",
+                    "CHARACTER_MAXIMUM_LENGTH": 255,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "varchar(255)",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "role",
+                    "ORDINAL_POSITION": 5,
+                    "COLUMN_DEFAULT": null,
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 16,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('admin','control_officer','driver','wildlife_officer','reporter')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "status",
+                    "ORDINAL_POSITION": 6,
+                    "COLUMN_DEFAULT": "'active'",
+                    "IS_NULLABLE": "YES",
+                    "DATA_TYPE": "enum",
+                    "CHARACTER_MAXIMUM_LENGTH": 8,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "enum('active','inactive')",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                },
+                {
+                    "COLUMN_NAME": "created_at",
+                    "ORDINAL_POSITION": 7,
+                    "COLUMN_DEFAULT": "current_timestamp()",
+                    "IS_NULLABLE": "NO",
+                    "DATA_TYPE": "timestamp",
+                    "CHARACTER_MAXIMUM_LENGTH": null,
+                    "NUMERIC_PRECISION": null,
+                    "NUMERIC_SCALE": null,
+                    "COLUMN_TYPE": "timestamp",
+                    "COLUMN_KEY": "",
+                    "EXTRA": "",
+                    "COLUMN_COMMENT": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "email",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "email"
+                    ]
+                },
+                {
+                    "name": "PRIMARY",
+                    "unique": true,
+                    "type": "BTREE",
+                    "columns": [
+                        "id"
+                    ]
+                }
+            ],
+            "foreign_keys": []
+        }
+    }
+}

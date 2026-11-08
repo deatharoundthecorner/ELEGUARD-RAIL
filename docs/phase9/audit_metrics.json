@@ -1,0 +1,276 @@
+{
+  "extracted_at": "2026-11-08T22:03:01.652554",
+  "inventory_summary": {
+    "total_tables": 4,
+    "total_reports": 43,
+    "total_alerts": 15,
+    "total_driver_acks": 13,
+    "total_hotspots": 4,
+    "total_incidents": 3
+  },
+  "data_provenance": {
+    "total_records": 43,
+    "origin_breakdown": {
+      "Automated Workflow Test Harness": 33,
+      "Milestone 8C E2E Audit": 4,
+      "Baseline Historical Seed": 3,
+      "Milestone 8 Demonstration": 3
+    },
+    "filtering_rules": {
+      "baseline_historical_seed": "IDs 1-3: Domain seed records from initial project setup",
+      "automated_workflow_test": "IDs 4-33, 38-40: 11 identical test triplets from test_gps_and_workflows.php",
+      "milestone_8_demo": "IDs 41-43: Curated prototype demonstration cases for AI and GIS",
+      "milestone_8c_audit": "IDs 53-56: Live end-to-end audit cases submitted via HTTP"
+    }
+  },
+  "report_status": {
+    "counts": {
+      "Pending": 28,
+      "Converted to Alert": 12,
+      "Verified": 2,
+      "Rejected": 1
+    },
+    "percentages": {
+      "Pending": 65.12,
+      "Converted to Alert": 27.91,
+      "Verified": 4.65,
+      "Rejected": 2.33
+    }
+  },
+  "gps_data_quality": {
+    "has_gps_count": 29,
+    "has_gps_pct": 67.44,
+    "no_gps_count": 14,
+    "no_gps_pct": 32.56,
+    "valid_gps_count": 29,
+    "valid_gps_pct": 100.0,
+    "accuracy_recorded_count": 18,
+    "accuracy_recorded_pct": 62.07,
+    "accuracy_statistics": {
+      "min_m": 10.0,
+      "max_m": 25.0,
+      "mean_m": 13.97,
+      "median_m": 14.5,
+      "std_m": 3.37
+    },
+    "repeated_coordinate_clusters": {
+      "(8.04125000, 80.82564000)": 11,
+      "(8.12560000, 80.91240000)": 11,
+      "(8.03500000, 80.75200000)": 4
+    }
+  },
+  "railway_proximity_quality": {
+    "calculable_count": 29,
+    "calculable_pct": 67.44,
+    "non_calculable_count": 14,
+    "distance_brackets": {
+      "immediate_danger_under_50m": 0,
+      "corridor_buffer_50_to_100m": 0,
+      "near_track_100_to_500m": 0,
+      "moderate_500m_to_1km": 1,
+      "distant_1km_to_5km": 16,
+      "out_of_corridor_over_5km": 12
+    },
+    "distance_statistics": {
+      "min_meters": 827.1,
+      "max_meters": 5203.7,
+      "mean_meters": 3958.9,
+      "median_meters": 3742.5,
+      "std_meters": 1246.4
+    },
+    "section_mismatches_count": 26,
+    "section_mismatch_pct": 89.66
+  },
+  "ai_detection_quality": {
+    "outcomes": {
+      "processed_total": 6,
+      "skipped_total": 37,
+      "failed_total": 0,
+      "positive_detected": 2,
+      "negative_not_detected": 2,
+      "uncertain_review_required": 2
+    },
+    "confidence_statistics": {
+      "min": 0.0004,
+      "max": 0.9197,
+      "mean": 0.4323,
+      "median": 0.3767,
+      "q25": 0.0945,
+      "q75": 0.7839
+    },
+    "ai_human_crosstab": {
+      "Converted to Alert": {
+        "processed": 0,
+        "skipped": 12
+      },
+      "Pending": {
+        "processed": 4,
+        "skipped": 24
+      },
+      "Rejected": {
+        "processed": 1,
+        "skipped": 0
+      },
+      "Verified": {
+        "processed": 1,
+        "skipped": 1
+      }
+    },
+    "investigation_cases": {
+      "ai_positive_officer_rejected": [],
+      "ai_negative_officer_verified": [],
+      "ai_uncertain_ids": [
+        43,
+        55
+      ]
+    }
+  },
+  "temporal_quality": {
+    "earliest_submission": "2026-11-08 06:02:21",
+    "latest_submission": "2026-11-08 20:35:53",
+    "time_span_days": 0.61,
+    "monthly_distribution": {
+      "2026-11": 43
+    },
+    "hourly_distribution": {
+      "6": 1,
+      "7": 2,
+      "8": 15,
+      "9": 9,
+      "10": 3,
+      "11": 3,
+      "12": 6,
+      "20": 4
+    },
+    "day_of_week_distribution": {
+      "Sunday": 43
+    },
+    "missing_timestamps": 0,
+    "sighting_time_limitation": "elephant_reports table stores only submission created_at and updated_at; no distinct sighting_time column exists in the database schema."
+  },
+  "duplication_investigation": {
+    "total_duplicate_clusters": 3,
+    "total_duplicate_records": 33,
+    "clusters": [
+      {
+        "cluster_id": 1,
+        "report_count": 11,
+        "report_ids": [
+          4,
+          7,
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          31,
+          38
+        ],
+        "description": "Near Curve 44 (Text Only)",
+        "coordinates": "(nan, nan)",
+        "section_id": "1",
+        "suspected_cause": "Automated workflow regression test loop",
+        "confidence": "High"
+      },
+      {
+        "cluster_id": 2,
+        "report_count": 11,
+        "report_ids": [
+          5,
+          8,
+          11,
+          14,
+          17,
+          20,
+          23,
+          26,
+          29,
+          32,
+          39
+        ],
+        "description": "Near Minneriya Crossing Marker 105",
+        "coordinates": "(8.04125000, 80.82564000)",
+        "section_id": "2",
+        "suspected_cause": "Automated workflow regression test loop",
+        "confidence": "High"
+      },
+      {
+        "cluster_id": 3,
+        "report_count": 11,
+        "report_ids": [
+          6,
+          9,
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          33,
+          40
+        ],
+        "description": "Gal Oya Manual Coordinates",
+        "coordinates": "(8.12560000, 80.91240000)",
+        "section_id": "1",
+        "suspected_cause": "Automated workflow regression test loop",
+        "confidence": "High"
+      }
+    ]
+  },
+  "railway_section_analysis": {
+    "sections": [
+      {
+        "section_id": 1,
+        "section_name": "Habarana - Gal Oya",
+        "district": "Anuradhapura/Polonnaruwa",
+        "length_km": null,
+        "total_reports": 27,
+        "pct_of_total": 62.79,
+        "verified_reports": 1,
+        "gps_enabled_reports": 15,
+        "ai_assisted_reports": 4,
+        "active_alerts": 1
+      },
+      {
+        "section_id": 2,
+        "section_name": "Minneriya - Hingurakgoda",
+        "district": "Polonnaruwa",
+        "length_km": null,
+        "total_reports": 14,
+        "pct_of_total": 32.56,
+        "verified_reports": 1,
+        "gps_enabled_reports": 13,
+        "ai_assisted_reports": 2,
+        "active_alerts": 13
+      },
+      {
+        "section_id": 3,
+        "section_name": "Maho - Anuradhapura",
+        "district": "Kurunegala/Anuradhapura",
+        "length_km": null,
+        "total_reports": 2,
+        "pct_of_total": 4.65,
+        "verified_reports": 0,
+        "gps_enabled_reports": 1,
+        "ai_assisted_reports": 0,
+        "active_alerts": 0
+      },
+      {
+        "section_id": 4,
+        "section_name": "Batticaloa Line Forest Section",
+        "district": "Batticaloa",
+        "length_km": null,
+        "total_reports": 0,
+        "pct_of_total": 0.0,
+        "verified_reports": 0,
+        "gps_enabled_reports": 0,
+        "ai_assisted_reports": 0,
+        "active_alerts": 1
+      }
+    ],
+    "unassigned_sections": 0
+  }
+}
