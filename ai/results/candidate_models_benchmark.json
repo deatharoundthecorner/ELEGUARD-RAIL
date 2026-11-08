@@ -1,0 +1,669 @@
+{
+  "timestamp": "2026-11-08 10:33:08 UTC",
+  "models": [
+    {
+      "model_name": "YOLOv8n (Ultralytics)",
+      "license": "AGPL-3.0 (Copyleft)",
+      "license_type": "Copyleft (Network clause)",
+      "file_size_mb": 12.26,
+      "avg_latency_ms": 25.29,
+      "peak_memory_mb": 15.06,
+      "true_positives": 9,
+      "false_positives": 0,
+      "true_negatives": 8,
+      "false_negatives": 3,
+      "uncertain_reviews": 1,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1_score": 0.8571,
+      "exact_match_accuracy": 0.9048,
+      "details": [
+        {
+          "file": "elephants/elephant_01_asian.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9127,
+          "latency_ms": 29.81
+        },
+        {
+          "file": "elephants/elephant_02_african.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.7657,
+          "latency_ms": 31.05
+        },
+        {
+          "file": "elephants/elephant_03_herd.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9317,
+          "latency_ms": 24.34
+        },
+        {
+          "file": "non_elephants/buffalo_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0001,
+          "latency_ms": 24.63
+        },
+        {
+          "file": "non_elephants/train_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0001,
+          "latency_ms": 25.0
+        },
+        {
+          "file": "non_elephants/dog_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 25.01
+        },
+        {
+          "file": "non_elephants/vehicle_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 27.0
+        },
+        {
+          "file": "non_elephants/landscape_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 27.24
+        },
+        {
+          "file": "edge_cases/edge_01_low_light_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9187,
+          "latency_ms": 25.98
+        },
+        {
+          "file": "edge_cases/edge_02_blurry_elephant.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0721,
+          "latency_ms": 23.35
+        },
+        {
+          "file": "edge_cases/edge_03_blurry_buffalo.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0083,
+          "latency_ms": 23.27
+        },
+        {
+          "file": "edge_cases/edge_04_uncertain_elephant.jpg",
+          "expected": "Uncertain Result",
+          "actual": "Uncertain Result",
+          "confidence": 0.3742,
+          "latency_ms": 23.33
+        },
+        {
+          "file": "elephants/elephant_04_habarana_crossing.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9459,
+          "latency_ms": 25.33
+        },
+        {
+          "file": "elephants/elephant_05_sigiriya_wild.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.8474,
+          "latency_ms": 24.81
+        },
+        {
+          "file": "elephants/elephant_06_kaudulla_herd.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.953,
+          "latency_ms": 24.0
+        },
+        {
+          "file": "elephants/elephant_07_kaudulla_brush.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.1946,
+          "latency_ms": 24.75
+        },
+        {
+          "file": "non_elephants/rail_track_01_ambewela.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0001,
+          "latency_ms": 23.99
+        },
+        {
+          "file": "non_elephants/rail_track_02_corridor.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0008,
+          "latency_ms": 24.04
+        },
+        {
+          "file": "edge_cases/edge_05_night_headlight_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9421,
+          "latency_ms": 24.93
+        },
+        {
+          "file": "edge_cases/edge_06_obscured_foliage_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.853,
+          "latency_ms": 25.02
+        },
+        {
+          "file": "edge_cases/edge_07_distant_elephant.jpg",
+          "expected": "Uncertain Result",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0019,
+          "latency_ms": 24.27
+        }
+      ]
+    },
+    {
+      "model_name": "YOLOX-Nano (Megvii)",
+      "license": "Apache 2.0 (Permissive)",
+      "license_type": "Permissive (Commercial & private friendly)",
+      "file_size_mb": 3.49,
+      "avg_latency_ms": 7.93,
+      "peak_memory_mb": 4.48,
+      "true_positives": 9,
+      "false_positives": 0,
+      "true_negatives": 8,
+      "false_negatives": 3,
+      "uncertain_reviews": 1,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1_score": 0.8571,
+      "exact_match_accuracy": 0.7143,
+      "details": [
+        {
+          "file": "elephants/elephant_01_asian.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9231,
+          "latency_ms": 9.55
+        },
+        {
+          "file": "elephants/elephant_02_african.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.7261,
+          "latency_ms": 8.47
+        },
+        {
+          "file": "elephants/elephant_03_herd.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9093,
+          "latency_ms": 7.3
+        },
+        {
+          "file": "non_elephants/buffalo_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0012,
+          "latency_ms": 8.68
+        },
+        {
+          "file": "non_elephants/train_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0005,
+          "latency_ms": 7.78
+        },
+        {
+          "file": "non_elephants/dog_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0001,
+          "latency_ms": 7.73
+        },
+        {
+          "file": "non_elephants/vehicle_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0001,
+          "latency_ms": 8.2
+        },
+        {
+          "file": "non_elephants/landscape_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 7.81
+        },
+        {
+          "file": "edge_cases/edge_01_low_light_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.926,
+          "latency_ms": 8.03
+        },
+        {
+          "file": "edge_cases/edge_02_blurry_elephant.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.8185,
+          "latency_ms": 8.09
+        },
+        {
+          "file": "edge_cases/edge_03_blurry_buffalo.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0047,
+          "latency_ms": 8.26
+        },
+        {
+          "file": "edge_cases/edge_04_uncertain_elephant.jpg",
+          "expected": "Uncertain Result",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.7291,
+          "latency_ms": 8.0
+        },
+        {
+          "file": "elephants/elephant_04_habarana_crossing.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9113,
+          "latency_ms": 7.94
+        },
+        {
+          "file": "elephants/elephant_05_sigiriya_wild.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0244,
+          "latency_ms": 8.39
+        },
+        {
+          "file": "elephants/elephant_06_kaudulla_herd.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9436,
+          "latency_ms": 8.38
+        },
+        {
+          "file": "elephants/elephant_07_kaudulla_brush.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Uncertain Result",
+          "confidence": 0.3546,
+          "latency_ms": 7.22
+        },
+        {
+          "file": "non_elephants/rail_track_01_ambewela.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0025,
+          "latency_ms": 7.37
+        },
+        {
+          "file": "non_elephants/rail_track_02_corridor.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0002,
+          "latency_ms": 7.47
+        },
+        {
+          "file": "edge_cases/edge_05_night_headlight_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9103,
+          "latency_ms": 7.4
+        },
+        {
+          "file": "edge_cases/edge_06_obscured_foliage_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.1684,
+          "latency_ms": 7.35
+        },
+        {
+          "file": "edge_cases/edge_07_distant_elephant.jpg",
+          "expected": "Uncertain Result",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0004,
+          "latency_ms": 7.12
+        }
+      ]
+    },
+    {
+      "model_name": "YOLOX-Tiny (Megvii)",
+      "license": "Apache 2.0 (Permissive)",
+      "license_type": "Permissive (Commercial & private friendly)",
+      "file_size_mb": 19.28,
+      "avg_latency_ms": 16.27,
+      "peak_memory_mb": 4.48,
+      "true_positives": 11,
+      "false_positives": 0,
+      "true_negatives": 8,
+      "false_negatives": 1,
+      "uncertain_reviews": 1,
+      "precision": 1.0,
+      "recall": 0.9167,
+      "f1_score": 0.9565,
+      "exact_match_accuracy": 0.8095,
+      "details": [
+        {
+          "file": "elephants/elephant_01_asian.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9197,
+          "latency_ms": 18.33
+        },
+        {
+          "file": "elephants/elephant_02_african.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.8073,
+          "latency_ms": 17.49
+        },
+        {
+          "file": "elephants/elephant_03_herd.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.933,
+          "latency_ms": 15.64
+        },
+        {
+          "file": "non_elephants/buffalo_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0002,
+          "latency_ms": 16.72
+        },
+        {
+          "file": "non_elephants/train_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0001,
+          "latency_ms": 16.99
+        },
+        {
+          "file": "non_elephants/dog_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 16.29
+        },
+        {
+          "file": "non_elephants/vehicle_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 16.44
+        },
+        {
+          "file": "non_elephants/landscape_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0019,
+          "latency_ms": 16.53
+        },
+        {
+          "file": "edge_cases/edge_01_low_light_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9173,
+          "latency_ms": 16.04
+        },
+        {
+          "file": "edge_cases/edge_02_blurry_elephant.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.8086,
+          "latency_ms": 15.69
+        },
+        {
+          "file": "edge_cases/edge_03_blurry_buffalo.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0372,
+          "latency_ms": 16.72
+        },
+        {
+          "file": "edge_cases/edge_04_uncertain_elephant.jpg",
+          "expected": "Uncertain Result",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.8009,
+          "latency_ms": 16.32
+        },
+        {
+          "file": "elephants/elephant_04_habarana_crossing.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9425,
+          "latency_ms": 16.18
+        },
+        {
+          "file": "elephants/elephant_05_sigiriya_wild.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.697,
+          "latency_ms": 15.6
+        },
+        {
+          "file": "elephants/elephant_06_kaudulla_herd.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9422,
+          "latency_ms": 16.03
+        },
+        {
+          "file": "elephants/elephant_07_kaudulla_brush.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Uncertain Result",
+          "confidence": 0.2236,
+          "latency_ms": 15.89
+        },
+        {
+          "file": "non_elephants/rail_track_01_ambewela.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0004,
+          "latency_ms": 15.52
+        },
+        {
+          "file": "non_elephants/rail_track_02_corridor.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0007,
+          "latency_ms": 15.78
+        },
+        {
+          "file": "edge_cases/edge_05_night_headlight_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9419,
+          "latency_ms": 15.85
+        },
+        {
+          "file": "edge_cases/edge_06_obscured_foliage_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.6323,
+          "latency_ms": 15.85
+        },
+        {
+          "file": "edge_cases/edge_07_distant_elephant.jpg",
+          "expected": "Uncertain Result",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0011,
+          "latency_ms": 15.8
+        }
+      ]
+    },
+    {
+      "model_name": "SSD-MobileNetV1 (ONNX Zoo)",
+      "license": "Apache 2.0 / MIT (Permissive)",
+      "license_type": "Permissive (Commercial & private friendly)",
+      "file_size_mb": 27.92,
+      "avg_latency_ms": 16.45,
+      "peak_memory_mb": 8.98,
+      "true_positives": 10,
+      "false_positives": 0,
+      "true_negatives": 8,
+      "false_negatives": 2,
+      "uncertain_reviews": 1,
+      "precision": 1.0,
+      "recall": 0.8333,
+      "f1_score": 0.9091,
+      "exact_match_accuracy": 0.8571,
+      "details": [
+        {
+          "file": "elephants/elephant_01_asian.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9936,
+          "latency_ms": 23.33
+        },
+        {
+          "file": "elephants/elephant_02_african.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.8335,
+          "latency_ms": 14.19
+        },
+        {
+          "file": "elephants/elephant_03_herd.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9369,
+          "latency_ms": 14.95
+        },
+        {
+          "file": "non_elephants/buffalo_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 14.17
+        },
+        {
+          "file": "non_elephants/train_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 14.84
+        },
+        {
+          "file": "non_elephants/dog_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 13.54
+        },
+        {
+          "file": "non_elephants/vehicle_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 20.57
+        },
+        {
+          "file": "non_elephants/landscape_01.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 16.67
+        },
+        {
+          "file": "edge_cases/edge_01_low_light_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9884,
+          "latency_ms": 16.02
+        },
+        {
+          "file": "edge_cases/edge_02_blurry_elephant.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 15.35
+        },
+        {
+          "file": "edge_cases/edge_03_blurry_buffalo.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 15.18
+        },
+        {
+          "file": "edge_cases/edge_04_uncertain_elephant.jpg",
+          "expected": "Uncertain Result",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.4545,
+          "latency_ms": 15.48
+        },
+        {
+          "file": "elephants/elephant_04_habarana_crossing.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9891,
+          "latency_ms": 18.39
+        },
+        {
+          "file": "elephants/elephant_05_sigiriya_wild.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9635,
+          "latency_ms": 15.97
+        },
+        {
+          "file": "elephants/elephant_06_kaudulla_herd.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9958,
+          "latency_ms": 16.95
+        },
+        {
+          "file": "elephants/elephant_07_kaudulla_brush.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Uncertain Result",
+          "confidence": 0.3974,
+          "latency_ms": 16.42
+        },
+        {
+          "file": "non_elephants/rail_track_01_ambewela.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 18.2
+        },
+        {
+          "file": "non_elephants/rail_track_02_corridor.jpg",
+          "expected": "No Elephant Detected",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 15.93
+        },
+        {
+          "file": "edge_cases/edge_05_night_headlight_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.9898,
+          "latency_ms": 17.71
+        },
+        {
+          "file": "edge_cases/edge_06_obscured_foliage_elephant.jpg",
+          "expected": "Potential Elephant Detected",
+          "actual": "Potential Elephant Detected",
+          "confidence": 0.8939,
+          "latency_ms": 15.61
+        },
+        {
+          "file": "edge_cases/edge_07_distant_elephant.jpg",
+          "expected": "Uncertain Result",
+          "actual": "No Elephant Detected",
+          "confidence": 0.0,
+          "latency_ms": 15.9
+        }
+      ]
+    }
+  ]
+}
