@@ -1,5 +1,5 @@
 {
-  "extracted_at": "2026-11-08T22:03:01.652554",
+  "extracted_at": "2026-11-08T23:28:23.835943",
   "inventory_summary": {
     "total_tables": 4,
     "total_reports": 43,
@@ -44,6 +44,19 @@
     "no_gps_pct": 32.56,
     "valid_gps_count": 29,
     "valid_gps_pct": 100.0,
+    "observed_coordinate_extent": {
+      "latitude": {
+        "min": 8.035,
+        "max": 8.1256,
+        "span": 0.0906
+      },
+      "longitude": {
+        "min": 80.752,
+        "max": 80.9124,
+        "span": 0.1604
+      }
+    },
+    "geographical_validation_scope": "North-Central railway corridor study area (Habarana-Gal Oya / Minneriya) within general Sri Lankan mainland envelope",
     "accuracy_recorded_count": 18,
     "accuracy_recorded_pct": 62.07,
     "accuracy_statistics": {
@@ -115,6 +128,13 @@
         "processed": 1,
         "skipped": 1
       }
+    },
+    "human_decision_sample_size": {
+      "total_ai_processed": 6,
+      "reports_with_human_decision": 2,
+      "reports_pending_human_decision": 4,
+      "scientific_concordance_valid": false,
+      "note": "Sample of N=2 decisions (#53 verified, #54 rejected) is statistically insufficient for model concordance validation."
     },
     "investigation_cases": {
       "ai_positive_officer_rejected": [],

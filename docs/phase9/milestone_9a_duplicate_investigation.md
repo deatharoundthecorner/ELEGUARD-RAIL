@@ -93,31 +93,32 @@ pie title Report Dataset Composition by Provenance (N=43)
 
 ---
 
-### Cluster 4: Milestone 8C Runtime E2E Audit Runs
-- **Confidence Rating:** **HIGH (Controlled Verification Test Submissions)**
+### Multi-Tier Audit Submissions (Kept Separate from Duplicate Redundancy)
+- **Classification:** **E2E Audit Verification Submissions (IDs 53, 54, 55, 56)**
+- **Confidence Rating:** **CONFIRMED (Controlled Verification Test Submissions)**
 - **Total Records:** **4 records**
 - **Report IDs:** `53`, `54`, `55`, `56`
 - **Creation Timestamps:** `2026-11-08 20:35:52` – `20:35:53`
-- **Coordinates:** Latitude `8.03500000`, Longitude `80.75200000` (Habarana corridor)
-- **GPS Accuracy:** `10.00 m`
-- **Calculated Track Distance:** $3,742.5\text{ m}$ to Section 1
-- **Differences:** Submitted with distinct test images to evaluate YOLOX-Tiny AI detection outcomes:
-  - Report #53: `elephant_01_asian.jpg` (AI Elephant Detected 92.0%, Verified by Officer)
-  - Report #54: `rail_track_01_ambewela.jpg` (AI No Elephant 0.04%, Rejected by Officer)
-  - Report #55: `edge_04_uncertain_elephant.jpg` (AI Uncertain 37.7%, Pending)
-  - Report #56: Text-Only (AI Skipped, Pending)
+- **Spatial Coordinates:** Latitude `8.03500000`, Longitude `80.75200000` (Habarana corridor)
+- **Analytical Distinction:** Although these 4 submissions share a common test location coordinate, they **MUST NOT be categorized as redundant duplicate sightings**. Each report was intentionally submitted with distinct inputs and generated distinct outcomes:
+  - Report #53: `elephant_01_asian.jpg` (AI Positive Elephant Detected, 92.0%, human-verified)
+  - Report #54: `rail_track_01_ambewela.jpg` (AI Negative No Elephant, 0.04%, human-rejected)
+  - Report #55: `edge_04_uncertain_elephant.jpg` (AI Uncertain 37.7%, pending review)
+  - Report #56: Text-Only (AI Skipped, pending review)
+  Because they evaluate four distinct operational verification paths and contain differing data content, they are maintained as separate verification artifacts.
 
 ---
 
 ## 3. Duplicate Cluster Master Summary
 
-| Cluster | Pattern Description | Report Count | IDs Encompassed | Lat / Lon | GPS Acc | Root Cause |
+| Category | Cluster / Group | Report Count | IDs Encompassed | Lat / Lon | GPS Acc | Classification Evidence |
 | :---: | :--- | :---: | :---: | :---: | :---: | :--- |
-| **C-01** | `Near Curve 44 (Text Only)` | **11** | 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 38 | `NULL` | N/A | Automated test suite rerun |
-| **C-02** | `Near Minneriya Crossing Marker 105` | **11** | 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 39 | `8.04125, 80.82564` | 14.50m | Automated test suite rerun |
-| **C-03** | `Gal Oya Manual Coordinates` | **11** | 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 40 | `8.12560, 80.91240` | `NULL` | Automated test suite rerun |
-| **C-04** | `E2E-AUDIT-*` (Milestone 8C) | **4** | 53, 54, 55, 56 | `8.03500, 80.75200` | 10.00m | Live HTTP audit verification |
-| **Unique**| Baseline Seeds & Demonstrators | **7** | 1, 2, 3, 41, 42, 43 | Diverse | Diverse | Legitimate records |
+| **Redundant Cluster** | **C-01:** `Near Curve 44 (Text Only)` | **11** | 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 38 | `NULL` | N/A | **Confirmed:** Exact code match in `test_gps_and_workflows.php:64` |
+| **Redundant Cluster** | **C-02:** `Near Minneriya Crossing Marker 105` | **11** | 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 39 | `8.04125, 80.82564` | 14.50m | **Confirmed:** Exact code match in `test_gps_and_workflows.php:72` |
+| **Redundant Cluster** | **C-03:** `Gal Oya Manual Coordinates` | **11** | 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 40 | `8.12560, 80.91240` | `NULL` | **Confirmed:** Exact code match in `test_gps_and_workflows.php:80` |
+| **Non-Duplicate Test**| **Audit Runs:** `E2E-AUDIT-*` (Milestone 8C) | **4** | 53, 54, 55, 56 | `8.03500, 80.75200` | 10.00m | **Confirmed:** Distinct audit cases from `audit_e2e_submissions.py` |
+| **Non-Duplicate Demo**| **Prototypes:** Milestone 8 Demonstrators | **3** | 41, 42, 43 | Diverse | Diverse | **High Confidence / Inferred:** Curated tier demo images |
+| **Non-Duplicate Seed**| **Historical Baseline:** Seed Data | **3** | 1, 2, 3 | Diverse | N/A | **Confirmed:** Defined in `database/seed_data.sql` |
 | **TOTAL** | | **43** | | | | |
 
 ---

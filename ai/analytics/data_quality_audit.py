@@ -97,16 +97,20 @@ missing_timestamps = int(df['created_at'].isnull().sum())
 # ==============================================================================
 # 3. GPS DATA QUALITY (PHASE 3)
 # ==============================================================================
-# Sri Lanka bounding box: Lat [5.8, 10.0], Lon [79.5, 82.2]
-SL_LAT_MIN, SL_LAT_MAX = 5.8, 10.0
-SL_LON_MIN, SL_LON_MAX = 79.5, 82.2
+# General Sri Lanka geographic plausibility envelope (approximate regional bounding box)
+SL_LAT_MIN, SL_LAT_MAX = 5.9, 9.9
+SL_LON_MIN, SL_LON_MAX = 79.6, 81.9
 
 df_gps = df[df['has_gps']].copy()
 df_gps['lat_f'] = pd.to_numeric(df_gps['latitude'], errors='coerce')
 df_gps['lon_f'] = pd.to_numeric(df_gps['longitude'], errors='coerce')
 df_gps['acc_f'] = pd.to_numeric(df_gps['gps_accuracy_meters'], errors='coerce')
 
-# Plausibility check
+# Observed dataset extent
+lat_extent = {'min': float(df_gps['lat_f'].min()), 'max': float(df_gps['lat_f'].max()), 'span': round(float(df_gps['lat_f'].max() - df_gps['lat_f'].min()), 4)}
+lon_extent = {'min': float(df_gps['lon_f'].min()), 'max': float(df_gps['lon_f'].max()), 'span': round(float(df_gps['lon_f'].max() - df_gps['lon_f'].min()), 4)}
+
+# Regional Plausibility check (within general mainland coordinates)
 df_gps['in_sl_bounds'] = (
     (df_gps['lat_f'] >= SL_LAT_MIN) & (df_gps['lat_f'] <= SL_LAT_MAX) &
     (df_gps['lon_f'] >= SL_LON_MIN) & (df_gps['lon_f'] <= SL_LON_MAX)
@@ -325,6 +329,11 @@ metrics_payload = {
         'no_gps_pct': no_gps_pct,
         'valid_gps_count': valid_gps_count,
         'valid_gps_pct': valid_gps_pct,
+        'observed_coordinate_extent': {
+            'latitude': lat_extent,
+            'longitude': lon_extent
+        },
+        'geographical_validation_scope': 'North-Central railway corridor study area (Habarana-Gal Oya / Minneriya) within general Sri Lankan mainland envelope',
         'accuracy_recorded_count': acc_count,
         'accuracy_recorded_pct': acc_pct_of_gps,
         'accuracy_statistics': {
@@ -349,6 +358,13 @@ metrics_payload = {
         'outcomes': ai_outcomes,
         'confidence_statistics': ai_conf_stats,
         'ai_human_crosstab': crosstab_ai_human,
+        'human_decision_sample_size': {
+            'total_ai_processed': len(df_ai),
+            'reports_with_human_decision': int((df_ai['report_status'].isin(['Verified', 'Rejected'])).sum()),
+            'reports_pending_human_decision': int((df_ai['report_status'] == 'Pending').sum()),
+            'scientific_concordance_valid': False,
+            'note': 'Sample of N=2 decisions (#53 verified, #54 rejected) is statistically insufficient for model concordance validation.'
+        },
         'investigation_cases': {
             'ai_positive_officer_rejected': ai_pos_officer_rej,
             'ai_negative_officer_verified': ai_neg_officer_ver,
