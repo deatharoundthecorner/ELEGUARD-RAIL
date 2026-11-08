@@ -3,34 +3,34 @@
     "project": "EleGuard Rail",
     "milestone": "8A - AI-Assisted Elephant Detection Prototype",
     "model_version": "YOLOv8n-ONNX-v1.0-COCO",
-    "evaluated_at": "2026-11-08 03:57:35 UTC",
+    "evaluated_at": "2026-11-08 04:12:38 UTC",
     "device": "CPU (CPUExecutionProvider)",
     "conf_threshold": 0.4,
     "uncertain_threshold": 0.2,
-    "total_samples": 12
+    "total_samples": 21
   },
   "confusion_matrix": {
-    "true_positives": 4,
+    "true_positives": 9,
     "false_positives": 0,
-    "true_negatives": 6,
-    "false_negatives": 1,
+    "true_negatives": 8,
+    "false_negatives": 3,
     "uncertain_cases": 1
   },
   "metrics": {
     "precision": 1.0,
-    "recall": 0.8,
-    "f1_score": 0.8889,
-    "binary_accuracy": 0.8333,
-    "exact_classification_accuracy": 1.0,
+    "recall": 0.75,
+    "f1_score": 0.8571,
+    "binary_accuracy": 0.8095,
+    "exact_classification_accuracy": 0.9048,
     "false_positive_rate": 0.0
   },
   "performance": {
-    "average_inference_time_ms": 32.42,
-    "min_inference_time_ms": 29.21,
-    "max_inference_time_ms": 37.62,
-    "average_total_pipeline_time_ms": 51.55,
-    "peak_memory_traced_mb": 10.65,
-    "total_evaluation_duration_seconds": 0.825
+    "average_inference_time_ms": 27.71,
+    "min_inference_time_ms": 25.08,
+    "max_inference_time_ms": 36.35,
+    "average_total_pipeline_time_ms": 49.71,
+    "peak_memory_traced_mb": 11.15,
+    "total_evaluation_duration_seconds": 1.502
   },
   "sample_results": [
     {
@@ -43,8 +43,8 @@
       "outcome": "TP (True Positive)",
       "max_confidence": 0.9127,
       "estimated_count": 2,
-      "inference_time_ms": 35.82,
-      "total_time_ms": 78.55,
+      "inference_time_ms": 36.35,
+      "total_time_ms": 77.77,
       "detections": [
         {
           "box": [
@@ -80,8 +80,8 @@
       "outcome": "TP (True Positive)",
       "max_confidence": 0.7657,
       "estimated_count": 16,
-      "inference_time_ms": 37.62,
-      "total_time_ms": 66.59,
+      "inference_time_ms": 31.34,
+      "total_time_ms": 55.29,
       "detections": [
         {
           "box": [
@@ -271,8 +271,8 @@
       "outcome": "TP (True Positive)",
       "max_confidence": 0.9317,
       "estimated_count": 5,
-      "inference_time_ms": 29.21,
-      "total_time_ms": 48.77,
+      "inference_time_ms": 25.34,
+      "total_time_ms": 39.34,
       "detections": [
         {
           "box": [
@@ -341,8 +341,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0001,
       "estimated_count": 0,
-      "inference_time_ms": 30.67,
-      "total_time_ms": 46.65,
+      "inference_time_ms": 26.34,
+      "total_time_ms": 37.67,
       "detections": []
     },
     {
@@ -355,8 +355,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0001,
       "estimated_count": 0,
-      "inference_time_ms": 31.88,
-      "total_time_ms": 47.47,
+      "inference_time_ms": 26.34,
+      "total_time_ms": 39.26,
       "detections": []
     },
     {
@@ -369,8 +369,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0,
       "estimated_count": 0,
-      "inference_time_ms": 35.32,
-      "total_time_ms": 50.13,
+      "inference_time_ms": 27.47,
+      "total_time_ms": 38.29,
       "detections": []
     },
     {
@@ -383,8 +383,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0,
       "estimated_count": 0,
-      "inference_time_ms": 30.88,
-      "total_time_ms": 57.27,
+      "inference_time_ms": 29.93,
+      "total_time_ms": 53.23,
       "detections": []
     },
     {
@@ -397,8 +397,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0,
       "estimated_count": 0,
-      "inference_time_ms": 32.79,
-      "total_time_ms": 44.07,
+      "inference_time_ms": 26.05,
+      "total_time_ms": 38.49,
       "detections": []
     },
     {
@@ -411,8 +411,8 @@
       "outcome": "TP (True Positive)",
       "max_confidence": 0.9187,
       "estimated_count": 3,
-      "inference_time_ms": 30.65,
-      "total_time_ms": 46.99,
+      "inference_time_ms": 25.79,
+      "total_time_ms": 38.25,
       "detections": [
         {
           "box": [
@@ -459,8 +459,8 @@
       "outcome": "FN (False Negative)",
       "max_confidence": 0.0721,
       "estimated_count": 0,
-      "inference_time_ms": 32.66,
-      "total_time_ms": 44.9,
+      "inference_time_ms": 27.28,
+      "total_time_ms": 36.82,
       "detections": []
     },
     {
@@ -473,8 +473,8 @@
       "outcome": "TN (True Negative)",
       "max_confidence": 0.0083,
       "estimated_count": 0,
-      "inference_time_ms": 31.8,
-      "total_time_ms": 44.99,
+      "inference_time_ms": 25.15,
+      "total_time_ms": 35.24,
       "detections": []
     },
     {
@@ -487,8 +487,8 @@
       "outcome": "UNCERTAIN (Advisory Flag)",
       "max_confidence": 0.3742,
       "estimated_count": 0,
-      "inference_time_ms": 29.71,
-      "total_time_ms": 42.21,
+      "inference_time_ms": 26.75,
+      "total_time_ms": 38.95,
       "detections": [
         {
           "box": [
@@ -502,6 +502,258 @@
           "class_name": "elephant"
         }
       ]
+    },
+    {
+      "image": "elephants/elephant_04_habarana_crossing.jpg",
+      "category": "sri_lankan_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.9459,
+      "estimated_count": 1,
+      "inference_time_ms": 25.08,
+      "total_time_ms": 48.54,
+      "detections": [
+        {
+          "box": [
+            464,
+            551,
+            859,
+            867
+          ],
+          "confidence": 0.9459,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "elephants/elephant_05_sigiriya_wild.jpg",
+      "category": "sri_lankan_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.8474,
+      "estimated_count": 1,
+      "inference_time_ms": 28.87,
+      "total_time_ms": 41.85,
+      "detections": [
+        {
+          "box": [
+            29,
+            3,
+            958,
+            470
+          ],
+          "confidence": 0.8474,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "elephants/elephant_06_kaudulla_herd.jpg",
+      "category": "sri_lankan_elephant_herd",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.953,
+      "estimated_count": 7,
+      "inference_time_ms": 27.11,
+      "total_time_ms": 57.41,
+      "detections": [
+        {
+          "box": [
+            126,
+            355,
+            506,
+            642
+          ],
+          "confidence": 0.953,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            597,
+            398,
+            814,
+            573
+          ],
+          "confidence": 0.927,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            473,
+            301,
+            735,
+            527
+          ],
+          "confidence": 0.8967,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            18,
+            333,
+            77,
+            395
+          ],
+          "confidence": 0.8495,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            803,
+            308,
+            908,
+            379
+          ],
+          "confidence": 0.8397,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            357,
+            334,
+            469,
+            384
+          ],
+          "confidence": 0.7522,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            348,
+            312,
+            394,
+            353
+          ],
+          "confidence": 0.4017,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "elephants/elephant_07_kaudulla_brush.jpg",
+      "category": "sri_lankan_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": false,
+      "outcome": "FN (False Negative)",
+      "max_confidence": 0.1946,
+      "estimated_count": 0,
+      "inference_time_ms": 26.78,
+      "total_time_ms": 86.7,
+      "detections": []
+    },
+    {
+      "image": "non_elephants/rail_track_01_ambewela.jpg",
+      "category": "railway_environment",
+      "has_elephant_ground_truth": false,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "TN (True Negative)",
+      "max_confidence": 0.0001,
+      "estimated_count": 0,
+      "inference_time_ms": 25.45,
+      "total_time_ms": 56.95,
+      "detections": []
+    },
+    {
+      "image": "non_elephants/rail_track_02_corridor.jpg",
+      "category": "railway_environment",
+      "has_elephant_ground_truth": false,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "TN (True Negative)",
+      "max_confidence": 0.0008,
+      "estimated_count": 0,
+      "inference_time_ms": 35.51,
+      "total_time_ms": 50.02,
+      "detections": []
+    },
+    {
+      "image": "edge_cases/edge_05_night_headlight_elephant.jpg",
+      "category": "night_headlight_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.9421,
+      "estimated_count": 1,
+      "inference_time_ms": 27.26,
+      "total_time_ms": 78.68,
+      "detections": [
+        {
+          "box": [
+            463,
+            551,
+            860,
+            867
+          ],
+          "confidence": 0.9421,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "edge_cases/edge_06_obscured_foliage_elephant.jpg",
+      "category": "foliage_obscured_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.853,
+      "estimated_count": 1,
+      "inference_time_ms": 26.43,
+      "total_time_ms": 49.44,
+      "detections": [
+        {
+          "box": [
+            476,
+            3,
+            959,
+            471
+          ],
+          "confidence": 0.853,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "edge_cases/edge_07_distant_elephant.jpg",
+      "category": "distant_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Uncertain Result",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": false,
+      "outcome": "FN (False Negative)",
+      "max_confidence": 0.0019,
+      "estimated_count": 0,
+      "inference_time_ms": 25.29,
+      "total_time_ms": 45.64,
+      "detections": []
     }
   ]
 }

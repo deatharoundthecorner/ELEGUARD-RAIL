@@ -6,7 +6,9 @@
       "elephant",
       "non_elephant"
     ],
-    "target_species": "Elephas maximus (Asian Elephant) and Loxodonta africana (African Elephant)"
+    "target_species": "Elephas maximus (Asian Elephant) and Loxodonta africana (African Elephant)",
+    "total_images": 21,
+    "last_expanded": "Milestone 8B authentic Sri Lankan dataset expansion"
   },
   "images": [
     {
@@ -104,6 +106,102 @@
       "category": "uncertain_elephant",
       "expected_classification": "Uncertain Result",
       "notes": "Blurred Asian elephant calibrated to produce uncertain confidence (0.20-0.40)"
+    },
+    {
+      "file": "elephants/elephant_04_habarana_crossing.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "sri_lankan_elephant",
+      "expected_classification": "Potential Elephant Detected",
+      "license": "CC BY-SA 4.0",
+      "author": "Nisakya Nissanka",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:An_elephant_crossing_the_road_in_Habarana.jpg",
+      "notes": "Wild Sri Lankan elephant (Elephas maximus maximus) crossing road in Habarana corridor"
+    },
+    {
+      "file": "elephants/elephant_05_sigiriya_wild.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "sri_lankan_elephant",
+      "expected_classification": "Potential Elephant Detected",
+      "license": "CC BY-SA 4.0",
+      "author": "Lasanthi Wijayathunga",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:Asian_Elephant_in_Sigiriya.jpg",
+      "notes": "Wild Asian elephant in Sigiriya dry forest zone near railway section 1"
+    },
+    {
+      "file": "elephants/elephant_06_kaudulla_herd.jpg",
+      "has_elephant": true,
+      "expected_count": 5,
+      "category": "sri_lankan_elephant_herd",
+      "expected_classification": "Potential Elephant Detected",
+      "license": "CC BY 4.0",
+      "author": "Josep Renalias (Lohen11)",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:Parc_Nacional_de_Kaudulla_-_Elefants.jpg",
+      "notes": "Wild Sri Lankan elephant herd foraging in Kaudulla National Park"
+    },
+    {
+      "file": "elephants/elephant_07_kaudulla_brush.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "sri_lankan_elephant",
+      "expected_classification": "Potential Elephant Detected",
+      "license": "CC BY-SA 4.0",
+      "author": "Z thomas",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:Kaudulla_nationalpark_2017-10-17_(9).jpg",
+      "notes": "Solitary adult Sri Lankan elephant in natural brush terrain"
+    },
+    {
+      "file": "non_elephants/rail_track_01_ambewela.jpg",
+      "has_elephant": false,
+      "expected_count": 0,
+      "category": "railway_environment",
+      "expected_classification": "No Elephant Detected",
+      "license": "CC BY-SA 3.0",
+      "author": "Ji-Elle",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:Ambewela-Sri_Lanka_04.jpg",
+      "notes": "Authentic Sri Lanka Railways track infrastructure and surrounding embankment"
+    },
+    {
+      "file": "non_elephants/rail_track_02_corridor.jpg",
+      "has_elephant": false,
+      "expected_count": 0,
+      "category": "railway_environment",
+      "expected_classification": "No Elephant Detected",
+      "license": "CC BY-SA 4.0",
+      "author": "Reshitha Gayamal",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:Beauty_%26_nature_of_Sri_Lanka.jpg",
+      "notes": "Sri Lankan railway line traversing dense jungle foliage (negative corridor test)"
+    },
+    {
+      "file": "edge_cases/edge_05_night_headlight_elephant.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "night_headlight_elephant",
+      "expected_classification": "Potential Elephant Detected",
+      "license": "Derived from CC BY-SA 4.0 (Nisakya Nissanka)",
+      "author": "EleGuard Rail Optical Benchmark",
+      "notes": "Elephant illuminated under simulated locomotive headlight cone against nocturnal darkness"
+    },
+    {
+      "file": "edge_cases/edge_06_obscured_foliage_elephant.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "foliage_obscured_elephant",
+      "expected_classification": "Potential Elephant Detected",
+      "license": "Derived from CC BY-SA 4.0 (Lasanthi Wijayathunga)",
+      "author": "EleGuard Rail Optical Benchmark",
+      "notes": "Wild Asian elephant partially obscured (~35% occlusion) by foreground tree trunk and branches"
+    },
+    {
+      "file": "edge_cases/edge_07_distant_elephant.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "distant_elephant",
+      "expected_classification": "Uncertain Result",
+      "license": "Derived from CC BY-SA 4.0 (Reshitha Gayamal & Nisakya Nissanka)",
+      "author": "EleGuard Rail Optical Benchmark",
+      "notes": "Distant elephant along railway corridor; low pixel resolution expected to yield uncertain advisory"
     }
   ]
 }
