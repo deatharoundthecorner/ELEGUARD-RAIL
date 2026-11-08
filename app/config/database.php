@@ -7,6 +7,7 @@
 
 $envPath = __DIR__ . '/../../.env';
 $host = 'localhost';
+$port = '3306';
 $db   = 'eleguard_rail';
 $user = 'root';
 $pass = '';
@@ -31,6 +32,9 @@ if (file_exists($envPath)) {
                 case 'DB_HOST':
                     $host = $value;
                     break;
+                case 'DB_PORT':
+                    $port = $value;
+                    break;
                 case 'DB_NAME':
                     $db = $value;
                     break;
@@ -49,6 +53,9 @@ if (file_exists($envPath)) {
 if (getenv('DB_HOST') !== false) {
     $host = getenv('DB_HOST');
 }
+if (getenv('DB_PORT') !== false) {
+    $port = getenv('DB_PORT');
+}
 if (getenv('DB_NAME') !== false) {
     $db = getenv('DB_NAME');
 }
@@ -60,7 +67,8 @@ if (getenv('DB_PASS') !== false) {
 }
 
 define('DB_HOST', $host);
+define('DB_PORT', $port);
 define('DB_NAME', $db);
 define('DB_USER', $user);
 define('DB_PASS', $pass);
-define('DB_DSN', "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4");
+define('DB_DSN', "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4");
