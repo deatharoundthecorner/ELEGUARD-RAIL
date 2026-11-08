@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "title": "EleGuard Rail - Computer Vision Evaluation Ground Truth",
+    "version": "1.0",
+    "categories": [
+      "elephant",
+      "non_elephant"
+    ],
+    "target_species": "Elephas maximus (Asian Elephant) and Loxodonta africana (African Elephant)"
+  },
+  "images": [
+    {
+      "file": "elephants/elephant_01_asian.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "asian_elephant",
+      "notes": "Single Asian elephant (Elephas maximus), natural lighting",
+      "expected_classification": "Potential Elephant Detected"
+    },
+    {
+      "file": "elephants/elephant_02_african.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "african_elephant",
+      "notes": "Single African bush elephant in savanna terrain",
+      "expected_classification": "Potential Elephant Detected"
+    },
+    {
+      "file": "elephants/elephant_03_herd.jpg",
+      "has_elephant": true,
+      "expected_count": 2,
+      "category": "elephant_herd",
+      "notes": "Two elephants in proximity, herd crossing simulation",
+      "expected_classification": "Potential Elephant Detected"
+    },
+    {
+      "file": "non_elephants/buffalo_01.jpg",
+      "has_elephant": false,
+      "expected_count": 0,
+      "category": "water_buffalo",
+      "notes": "Water buffalo (Bubalus bubalis), frequent false positive test",
+      "expected_classification": "No Elephant Detected"
+    },
+    {
+      "file": "non_elephants/train_01.jpg",
+      "has_elephant": false,
+      "expected_count": 0,
+      "category": "locomotive",
+      "notes": "Train on railway tracks",
+      "expected_classification": "No Elephant Detected"
+    },
+    {
+      "file": "non_elephants/dog_01.jpg",
+      "has_elephant": false,
+      "expected_count": 0,
+      "category": "canine",
+      "notes": "Domestic dog / sheepdog",
+      "expected_classification": "No Elephant Detected"
+    },
+    {
+      "file": "non_elephants/vehicle_01.jpg",
+      "has_elephant": false,
+      "expected_count": 0,
+      "category": "vehicle",
+      "notes": "Motor vehicle / jeep near road",
+      "expected_classification": "No Elephant Detected"
+    },
+    {
+      "file": "non_elephants/landscape_01.jpg",
+      "has_elephant": false,
+      "expected_count": 0,
+      "category": "empty_landscape",
+      "notes": "Corridor foliage without animals",
+      "expected_classification": "No Elephant Detected"
+    },
+    {
+      "file": "edge_cases/edge_01_low_light_elephant.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "low_light_elephant",
+      "notes": "Elephant under twilight / low ambient illumination",
+      "expected_classification": "Potential Elephant Detected"
+    },
+    {
+      "file": "edge_cases/edge_02_blurry_elephant.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "blurry_elephant",
+      "notes": "Elephant with mobile camera motion blur",
+      "expected_classification": "No Elephant Detected"
+    },
+    {
+      "file": "edge_cases/edge_03_blurry_buffalo.jpg",
+      "has_elephant": false,
+      "expected_count": 0,
+      "category": "blurry_non_elephant",
+      "notes": "Blurry water buffalo - testing false positive suppression under blur",
+      "expected_classification": "No Elephant Detected"
+    },
+    {
+      "file": "edge_cases/edge_04_uncertain_elephant.jpg",
+      "has_elephant": true,
+      "expected_count": 1,
+      "category": "uncertain_elephant",
+      "expected_classification": "Uncertain Result",
+      "notes": "Blurred Asian elephant calibrated to produce uncertain confidence (0.20-0.40)"
+    }
+  ]
+}

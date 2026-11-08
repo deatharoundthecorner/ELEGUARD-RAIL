@@ -1,0 +1,507 @@
+{
+  "metadata": {
+    "project": "EleGuard Rail",
+    "milestone": "8A - AI-Assisted Elephant Detection Prototype",
+    "model_version": "YOLOv8n-ONNX-v1.0-COCO",
+    "evaluated_at": "2026-11-08 03:57:35 UTC",
+    "device": "CPU (CPUExecutionProvider)",
+    "conf_threshold": 0.4,
+    "uncertain_threshold": 0.2,
+    "total_samples": 12
+  },
+  "confusion_matrix": {
+    "true_positives": 4,
+    "false_positives": 0,
+    "true_negatives": 6,
+    "false_negatives": 1,
+    "uncertain_cases": 1
+  },
+  "metrics": {
+    "precision": 1.0,
+    "recall": 0.8,
+    "f1_score": 0.8889,
+    "binary_accuracy": 0.8333,
+    "exact_classification_accuracy": 1.0,
+    "false_positive_rate": 0.0
+  },
+  "performance": {
+    "average_inference_time_ms": 32.42,
+    "min_inference_time_ms": 29.21,
+    "max_inference_time_ms": 37.62,
+    "average_total_pipeline_time_ms": 51.55,
+    "peak_memory_traced_mb": 10.65,
+    "total_evaluation_duration_seconds": 0.825
+  },
+  "sample_results": [
+    {
+      "image": "elephants/elephant_01_asian.jpg",
+      "category": "asian_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.9127,
+      "estimated_count": 2,
+      "inference_time_ms": 35.82,
+      "total_time_ms": 78.55,
+      "detections": [
+        {
+          "box": [
+            167,
+            95,
+            305,
+            267
+          ],
+          "confidence": 0.9127,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            248,
+            0,
+            481,
+            245
+          ],
+          "confidence": 0.8733,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "elephants/elephant_02_african.jpg",
+      "category": "african_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.7657,
+      "estimated_count": 16,
+      "inference_time_ms": 37.62,
+      "total_time_ms": 66.59,
+      "detections": [
+        {
+          "box": [
+            456,
+            178,
+            491,
+            230
+          ],
+          "confidence": 0.7657,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            315,
+            196,
+            343,
+            231
+          ],
+          "confidence": 0.7169,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            69,
+            194,
+            93,
+            231
+          ],
+          "confidence": 0.7091,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            375,
+            201,
+            409,
+            231
+          ],
+          "confidence": 0.6925,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            284,
+            186,
+            318,
+            231
+          ],
+          "confidence": 0.6327,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            428,
+            167,
+            455,
+            193
+          ],
+          "confidence": 0.6223,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            316,
+            168,
+            383,
+            219
+          ],
+          "confidence": 0.6141,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            132,
+            179,
+            165,
+            196
+          ],
+          "confidence": 0.6105,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            31,
+            191,
+            69,
+            233
+          ],
+          "confidence": 0.5879,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            198,
+            186,
+            227,
+            232
+          ],
+          "confidence": 0.5721,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            428,
+            190,
+            464,
+            231
+          ],
+          "confidence": 0.5492,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            18,
+            208,
+            34,
+            234
+          ],
+          "confidence": 0.5264,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            91,
+            190,
+            138,
+            231
+          ],
+          "confidence": 0.512,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            260,
+            198,
+            284,
+            231
+          ],
+          "confidence": 0.5059,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            227,
+            206,
+            255,
+            232
+          ],
+          "confidence": 0.4937,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            137,
+            189,
+            196,
+            235
+          ],
+          "confidence": 0.4426,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "elephants/elephant_03_herd.jpg",
+      "category": "elephant_herd",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.9317,
+      "estimated_count": 5,
+      "inference_time_ms": 29.21,
+      "total_time_ms": 48.77,
+      "detections": [
+        {
+          "box": [
+            606,
+            31,
+            926,
+            266
+          ],
+          "confidence": 0.9317,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            255,
+            1,
+            478,
+            241
+          ],
+          "confidence": 0.8601,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            168,
+            95,
+            305,
+            264
+          ],
+          "confidence": 0.8324,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            486,
+            31,
+            695,
+            248
+          ],
+          "confidence": 0.7359,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            0,
+            2,
+            101,
+            272
+          ],
+          "confidence": 0.4823,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "non_elephants/buffalo_01.jpg",
+      "category": "water_buffalo",
+      "has_elephant_ground_truth": false,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "TN (True Negative)",
+      "max_confidence": 0.0001,
+      "estimated_count": 0,
+      "inference_time_ms": 30.67,
+      "total_time_ms": 46.65,
+      "detections": []
+    },
+    {
+      "image": "non_elephants/train_01.jpg",
+      "category": "locomotive",
+      "has_elephant_ground_truth": false,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "TN (True Negative)",
+      "max_confidence": 0.0001,
+      "estimated_count": 0,
+      "inference_time_ms": 31.88,
+      "total_time_ms": 47.47,
+      "detections": []
+    },
+    {
+      "image": "non_elephants/dog_01.jpg",
+      "category": "canine",
+      "has_elephant_ground_truth": false,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "TN (True Negative)",
+      "max_confidence": 0.0,
+      "estimated_count": 0,
+      "inference_time_ms": 35.32,
+      "total_time_ms": 50.13,
+      "detections": []
+    },
+    {
+      "image": "non_elephants/vehicle_01.jpg",
+      "category": "vehicle",
+      "has_elephant_ground_truth": false,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "TN (True Negative)",
+      "max_confidence": 0.0,
+      "estimated_count": 0,
+      "inference_time_ms": 30.88,
+      "total_time_ms": 57.27,
+      "detections": []
+    },
+    {
+      "image": "non_elephants/landscape_01.jpg",
+      "category": "empty_landscape",
+      "has_elephant_ground_truth": false,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "TN (True Negative)",
+      "max_confidence": 0.0,
+      "estimated_count": 0,
+      "inference_time_ms": 32.79,
+      "total_time_ms": 44.07,
+      "detections": []
+    },
+    {
+      "image": "edge_cases/edge_01_low_light_elephant.jpg",
+      "category": "low_light_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Potential Elephant Detected",
+      "actual_classification": "Potential Elephant Detected",
+      "exact_match": true,
+      "outcome": "TP (True Positive)",
+      "max_confidence": 0.9187,
+      "estimated_count": 3,
+      "inference_time_ms": 30.65,
+      "total_time_ms": 46.99,
+      "detections": [
+        {
+          "box": [
+            167,
+            95,
+            306,
+            266
+          ],
+          "confidence": 0.9187,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            249,
+            0,
+            481,
+            242
+          ],
+          "confidence": 0.819,
+          "class_id": 20,
+          "class_name": "elephant"
+        },
+        {
+          "box": [
+            0,
+            1,
+            94,
+            274
+          ],
+          "confidence": 0.412,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    },
+    {
+      "image": "edge_cases/edge_02_blurry_elephant.jpg",
+      "category": "blurry_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "FN (False Negative)",
+      "max_confidence": 0.0721,
+      "estimated_count": 0,
+      "inference_time_ms": 32.66,
+      "total_time_ms": 44.9,
+      "detections": []
+    },
+    {
+      "image": "edge_cases/edge_03_blurry_buffalo.jpg",
+      "category": "blurry_non_elephant",
+      "has_elephant_ground_truth": false,
+      "expected_classification": "No Elephant Detected",
+      "actual_classification": "No Elephant Detected",
+      "exact_match": true,
+      "outcome": "TN (True Negative)",
+      "max_confidence": 0.0083,
+      "estimated_count": 0,
+      "inference_time_ms": 31.8,
+      "total_time_ms": 44.99,
+      "detections": []
+    },
+    {
+      "image": "edge_cases/edge_04_uncertain_elephant.jpg",
+      "category": "uncertain_elephant",
+      "has_elephant_ground_truth": true,
+      "expected_classification": "Uncertain Result",
+      "actual_classification": "Uncertain Result",
+      "exact_match": true,
+      "outcome": "UNCERTAIN (Advisory Flag)",
+      "max_confidence": 0.3742,
+      "estimated_count": 0,
+      "inference_time_ms": 29.71,
+      "total_time_ms": 42.21,
+      "detections": [
+        {
+          "box": [
+            166,
+            89,
+            311,
+            261
+          ],
+          "confidence": 0.3742,
+          "class_id": 20,
+          "class_name": "elephant"
+        }
+      ]
+    }
+  ]
+}
