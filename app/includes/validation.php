@@ -35,4 +35,19 @@ class Validation {
         }
         return null;
     }
+
+    public static function coordinate($latitude, $longitude) {
+        $errors = [];
+        if ($latitude !== null && $latitude !== '') {
+            if (!is_numeric($latitude) || (float)$latitude < -90 || (float)$latitude > 90) {
+                $errors['latitude'] = 'Latitude must be a valid number between -90 and 90.';
+            }
+        }
+        if ($longitude !== null && $longitude !== '') {
+            if (!is_numeric($longitude) || (float)$longitude < -180 || (float)$longitude > 180) {
+                $errors['longitude'] = 'Longitude must be a valid number between -180 and 180.';
+            }
+        }
+        return $errors;
+    }
 }

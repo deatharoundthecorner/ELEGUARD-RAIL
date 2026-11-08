@@ -42,7 +42,19 @@ $myReports = ReportService::getAll(null, null, null, $currentUser['id']);
                         <tr>
                             <td><?php echo format_date($rep['created_at']); ?></td>
                             <td><strong><?php echo e($rep['section_name']); ?></strong></td>
-                            <td><?php echo e($rep['location_description']); ?></td>
+                            <td>
+                                <?php echo e($rep['location_description']); ?>
+                                <?php if (!empty($rep['latitude']) && !empty($rep['longitude'])): ?>
+                                    <div style="margin-top:4px; font-size:0.8rem;">
+                                        <a href="https://www.google.com/maps?q=<?php echo urlencode($rep['latitude'] . ',' . $rep['longitude']); ?>" target="_blank" rel="noopener" style="color:var(--accent-color); text-decoration:underline;">
+                                            📍 <?php echo number_format($rep['latitude'], 5) . ', ' . number_format($rep['longitude'], 5); ?>
+                                        </a>
+                                        <?php if (!empty($rep['gps_accuracy_meters'])): ?>
+                                            <span class="text-muted">(&plusmn;<?php echo round($rep['gps_accuracy_meters']); ?>m)</span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </td>
                             <td><?php echo e($rep['elephant_count']); ?></td>
                             <td>
                                 <?php if (!empty($rep['image_path'])): ?>

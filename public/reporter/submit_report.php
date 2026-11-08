@@ -17,6 +17,9 @@ $sectionId = '';
 $elephantCount = '';
 $urgencyLevel = 'Medium';
 $locationDescription = '';
+$latitude = '';
+$longitude = '';
+$gpsAccuracy = '';
 $description = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -26,6 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $elephantCount = $_POST['elephant_count'] ?? '';
     $urgencyLevel = $_POST['urgency_level'] ?? 'Medium';
     $locationDescription = trim($_POST['location_description'] ?? '');
+    $latitude = trim($_POST['latitude'] ?? '');
+    $longitude = trim($_POST['longitude'] ?? '');
+    $gpsAccuracy = trim($_POST['gps_accuracy'] ?? '');
     $description = trim($_POST['description'] ?? '');
 
     // Validate fields
@@ -39,6 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ((int)$elephantCount <= 0) {
             $errors['elephant_count'] = 'Elephant count must be at least 1.';
         }
+    }
+
+    // Optional GPS coordinate validation
+    $coordErrors = Validation::coordinate($latitude, $longitude);
+    if (!empty($coordErrors)) {
+        $errors = array_merge($errors, $coordErrors);
     }
 
     $imagePath = null;
@@ -59,7 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $locationDescription,
             $urgencyLevel,
             $description,
-            $imagePath
+            $imagePath,
+            $latitude,
+            $longitude,
+            $gpsAccuracy
         );
 
         if ($success) {
@@ -136,6 +151,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
         </div>
 
+        <!-- GPS Coordinates Module (HTML5 Geolocation + Manual Fallback) -->
+        <div class="form-group gps-location-card">
+            <div class="gps-card-header">
+                <label class="form-label" style="margin-bottom:0;">
+                    <span class="gps-icon">📍</span> GPS Location Coordinates <small class="text-secondary">(Optional)</small>
+                </label>
+            </div>
+            
+            <p class="gps-hint">
+                Provide GPS coordinates to enable railway proximity calculations and alert nearby trains. You can capture them automatically with your phone/browser or type them manually.
+            </p>
+
+            <div class="gps-action-row">
+                <button type="button" id="btnGetLocation" class="btn btn-secondary btn-sm">
+                    <span class="btn-gps-icon">📡</span> Use Current GPS Location
+                </button>
+                <button type="button" id="btnClearLocation" class="btn btn-outline btn-sm" style="display:none;">
+                    Clear Coordinates
+                </button>
+                <span id="gpsStatusMessage" class="gps-status-text" aria-live="polite"></span>
+            </div>
+
+            <div class="grid grid-2col gps-coords-grid" style="gap:15px; margin-top:14px; margin-bottom:0;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="latitude" class="form-sublabel">Latitude (e.g. 8.035412)</label>
+                    <input type="number" step="any" min="-90" max="90" name="latitude" id="latitude" class="form-control" placeholder="e.g. 8.035412" value="<?php echo e($latitude); ?>">
+                    <?php if (isset($errors['latitude'])): ?>
+                        <span class="field-error"><?php echo e($errors['latitude']); ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="longitude" class="form-sublabel">Longitude (e.g. 80.751104)</label>
+                    <input type="number" step="any" min="-180" max="180" name="longitude" id="longitude" class="form-control" placeholder="e.g. 80.751104" value="<?php echo e($longitude); ?>">
+                    <?php if (isset($errors['longitude'])): ?>
+                        <span class="field-error"><?php echo e($errors['longitude']); ?></span>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <input type="hidden" name="gps_accuracy" id="gps_accuracy" value="<?php echo e($gpsAccuracy); ?>">
+            <div id="gpsAccuracyDisplay" class="gps-accuracy-info" style="<?php echo !empty($gpsAccuracy) ? '' : 'display:none;'; ?>">
+                Estimated Accuracy: &plusmn;<span id="accuracyVal"><?php echo e($gpsAccuracy); ?></span> meters
+            </div>
+        </div>
+
         <div class="form-group">
             <label for="description" class="form-label">Additional Observation Details</label>
             <textarea name="description" id="description" class="form-control" placeholder="e.g. Elephant seems to be alone and searching for water. Sighted walking north along forest corridor."><?php echo e($description); ?></textarea>
@@ -163,6 +224,175 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     display: block;
     margin-top: 5px;
 }
+.gps-location-card {
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+.gps-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.gps-hint {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+.gps-action-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.gps-status-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.gps-status-text.gps-loading {
+    color: var(--accent-color);
+}
+.gps-status-text.gps-success {
+    color: var(--success);
+}
+.gps-status-text.gps-warn {
+    color: var(--warning);
+}
+.form-sublabel {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 4px;
+}
+.gps-accuracy-info {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    display: inline-block;
+}
+@media (max-width: 600px) {
+    .gps-coords-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .gps-action-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnGet = document.getElementById('btnGetLocation');
+    const btnClear = document.getElementById('btnClearLocation');
+    const latInput = document.getElementById('latitude');
+    const lngInput = document.getElementById('longitude');
+    const accInput = document.getElementById('gps_accuracy');
+    const accDisplay = document.getElementById('gpsAccuracyDisplay');
+    const accVal = document.getElementById('accuracyVal');
+    const statusMsg = document.getElementById('gpsStatusMessage');
+
+    function updateClearButton() {
+        if (latInput.value.trim() !== '' || lngInput.value.trim() !== '') {
+            btnClear.style.display = 'inline-block';
+        } else {
+            btnClear.style.display = 'none';
+        }
+    }
+
+    latInput.addEventListener('input', function() {
+        // If user manually modifies, clear stale GPS accuracy
+        accInput.value = '';
+        accDisplay.style.display = 'none';
+        updateClearButton();
+    });
+    lngInput.addEventListener('input', function() {
+        accInput.value = '';
+        accDisplay.style.display = 'none';
+        updateClearButton();
+    });
+    updateClearButton();
+
+    if (btnClear) {
+        btnClear.addEventListener('click', function() {
+            latInput.value = '';
+            lngInput.value = '';
+            accInput.value = '';
+            accDisplay.style.display = 'none';
+            statusMsg.textContent = 'Coordinates cleared.';
+            statusMsg.className = 'gps-status-text';
+            updateClearButton();
+        });
+    }
+
+    if (btnGet) {
+        if (!navigator.geolocation) {
+            btnGet.disabled = true;
+            statusMsg.textContent = 'Geolocation not supported by this browser.';
+            statusMsg.className = 'gps-status-text gps-warn';
+            return;
+        }
+
+        btnGet.addEventListener('click', function() {
+            statusMsg.textContent = 'Acquiring GPS location...';
+            statusMsg.className = 'gps-status-text gps-loading';
+            btnGet.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    btnGet.disabled = false;
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    const acc = position.coords.accuracy ? Math.round(position.coords.accuracy) : null;
+
+                    latInput.value = lat;
+                    lngInput.value = lng;
+                    accInput.value = acc || '';
+
+                    if (acc !== null) {
+                        accVal.textContent = acc;
+                        accDisplay.style.display = 'inline-block';
+                    } else {
+                        accDisplay.style.display = 'none';
+                    }
+
+                    statusMsg.textContent = '✓ GPS location captured!';
+                    statusMsg.className = 'gps-status-text gps-success';
+                    updateClearButton();
+                },
+                function(error) {
+                    btnGet.disabled = false;
+                    let message = 'Unable to retrieve location.';
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            message = 'Location access denied. You can still type coordinates manually.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message = 'Position unavailable. Please enter coordinates manually.';
+                            break;
+                        case error.TIMEOUT:
+                            message = 'Location request timed out. Please try again.';
+                            break;
+                    }
+                    statusMsg.textContent = message;
+                    statusMsg.className = 'gps-status-text gps-warn';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 30000
+                }
+            );
+        });
+    }
+});
+</script>
 
 <?php require_once __DIR__ . '/../../app/layouts/dashboard_footer.php'; ?>

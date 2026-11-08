@@ -69,7 +69,19 @@ $sections = AlertService::getAllSections();
                     </tr>
                     <tr>
                         <td style="color:var(--text-secondary);">Exact Location:</td>
-                        <td><code><?php echo e($selectedReport['location_description']); ?></code></td>
+                        <td>
+                            <code><?php echo e($selectedReport['location_description']); ?></code>
+                            <?php if (!empty($selectedReport['latitude']) && !empty($selectedReport['longitude'])): ?>
+                                <div style="margin-top:4px;">
+                                    <a href="https://www.google.com/maps?q=<?php echo urlencode($selectedReport['latitude'] . ',' . $selectedReport['longitude']); ?>" target="_blank" rel="noopener" style="color:var(--accent-color); text-decoration:underline;">
+                                        📍 GPS: <?php echo number_format($selectedReport['latitude'], 6) . ', ' . number_format($selectedReport['longitude'], 6); ?>
+                                    </a>
+                                    <?php if (!empty($selectedReport['gps_accuracy_meters'])): ?>
+                                        <span class="text-muted" style="font-size:0.75rem;">(&plusmn;<?php echo round($selectedReport['gps_accuracy_meters']); ?>m)</span>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td style="color:var(--text-secondary);">Elephant Count:</td>
@@ -182,7 +194,19 @@ $sections = AlertService::getAllSections();
                             <td><?php echo format_date($rep['created_at']); ?></td>
                             <td><?php echo e($rep['reporter_name']); ?></td>
                             <td><strong><?php echo e($rep['section_name']); ?></strong></td>
-                            <td><?php echo e($rep['location_description']); ?></td>
+                            <td>
+                                <?php echo e($rep['location_description']); ?>
+                                <?php if (!empty($rep['latitude']) && !empty($rep['longitude'])): ?>
+                                    <div style="font-size:0.75rem; margin-top:2px;">
+                                        <a href="https://www.google.com/maps?q=<?php echo urlencode($rep['latitude'] . ',' . $rep['longitude']); ?>" target="_blank" rel="noopener" style="color:var(--accent-color);">
+                                            📍 <?php echo number_format($rep['latitude'], 4) . ', ' . number_format($rep['longitude'], 4); ?>
+                                        </a>
+                                        <?php if (!empty($rep['gps_accuracy_meters'])): ?>
+                                            <span class="text-muted">(&plusmn;<?php echo round($rep['gps_accuracy_meters']); ?>m)</span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </td>
                             <td><?php echo e($rep['elephant_count']); ?></td>
                             <td><span class="badge <?php echo get_risk_badge_class($rep['urgency_level']); ?>"><?php echo e($rep['urgency_level']); ?></span></td>
                             <td><span class="badge <?php echo get_risk_badge_class($rep['risk_score']); ?>"><?php echo e($rep['risk_score']); ?></span></td>

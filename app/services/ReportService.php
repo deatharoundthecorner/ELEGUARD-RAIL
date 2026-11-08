@@ -11,7 +11,7 @@ class ReportService {
     /**
      * Submits a new sighting report and automatically calculates the risk score
      */
-    public static function submitReport($sectionId, $reportedBy, $elephantCount, $locationDesc, $urgencyLevel, $description, $imagePath = null) {
+    public static function submitReport($sectionId, $reportedBy, $elephantCount, $locationDesc, $urgencyLevel, $description, $imagePath = null, $latitude = null, $longitude = null, $accuracy = null) {
         $db = Database::getInstance()->getConnection();
 
         // 1. Fetch section risk level
@@ -35,10 +35,23 @@ class ReportService {
             $hasActiveAlert
         );
 
+        // Sanitize coordinates (ensure valid numeric or NULL)
+        $latParam = ($latitude !== null && $latitude !== '' && is_numeric($latitude)) ? (float)$latitude : null;
+        $lngParam = ($longitude !== null && $longitude !== '' && is_numeric($longitude)) ? (float)$longitude : null;
+        $accParam = ($accuracy !== null && $accuracy !== '' && is_numeric($accuracy)) ? (float)$accuracy : null;
+
         // 4. Save to Database
         $stmt = $db->prepare("
-            INSERT INTO elephant_reports (section_id, reported_by, elephant_count, location_description, urgency_level, risk_score, report_status, description, image_path, created_at)
-            VALUES (:section_id, :reported_by, :elephant_count, :location_desc, :urgency_level, :risk_score, 'Pending', :description, :image_path, :created_at)
+            INSERT INTO elephant_reports (
+                section_id, reported_by, elephant_count, location_description, 
+                latitude, longitude, gps_accuracy_meters,
+                urgency_level, risk_score, report_status, description, image_path, created_at
+            )
+            VALUES (
+                :section_id, :reported_by, :elephant_count, :location_desc,
+                :latitude, :longitude, :gps_accuracy,
+                :urgency_level, :risk_score, 'Pending', :description, :image_path, :created_at
+            )
         ");
 
         $success = $stmt->execute([
@@ -46,6 +59,9 @@ class ReportService {
             ':reported_by' => $reportedBy,
             ':elephant_count' => $elephantCount,
             ':location_desc' => $locationDesc,
+            ':latitude' => $latParam,
+            ':longitude' => $lngParam,
+            ':gps_accuracy' => $accParam,
             ':urgency_level' => $urgencyLevel,
             ':risk_score' => $calculatedRisk,
             ':description' => $description,
