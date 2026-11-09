@@ -28,6 +28,7 @@ yarn-debug.log*
 yarn-error.log*
 tmp/
 temp/
+scratch/
 
 # Operating System Files
 Thumbs.db

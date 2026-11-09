@@ -1,0 +1,188 @@
+{
+    "milestone": "9C \u2014 Stage 1: Database Foundation Only",
+    "timestamp": "2026-11-09 03:51:53 CET",
+    "database": "eleguard_rail",
+    "host": "127.0.0.1:3308",
+    "checks": [],
+    "columns_verified": {
+        "sighting_date": {
+            "exists": true,
+            "type": "date",
+            "nullable": "YES",
+            "default": null,
+            "ordinal_position": 5,
+            "verified": true
+        },
+        "sighting_time": {
+            "exists": true,
+            "type": "time",
+            "nullable": "YES",
+            "default": null,
+            "ordinal_position": 6,
+            "verified": true
+        },
+        "sighting_time_precision": {
+            "exists": true,
+            "type": "enum('exact','approximate','unknown')",
+            "nullable": "NO",
+            "default": "unknown",
+            "ordinal_position": 7,
+            "verified": true
+        },
+        "sighting_time_window": {
+            "exists": true,
+            "type": "enum('dawn','morning','afternoon','dusk','night','custom')",
+            "nullable": "YES",
+            "default": null,
+            "ordinal_position": 8,
+            "verified": true
+        },
+        "sighting_time_uncertainty_minutes": {
+            "exists": true,
+            "type": "int(11)",
+            "nullable": "YES",
+            "default": null,
+            "ordinal_position": 9,
+            "verified": true
+        },
+        "sighting_timezone": {
+            "exists": true,
+            "type": "varchar(32)",
+            "nullable": "NO",
+            "default": "Asia/Colombo",
+            "ordinal_position": 10,
+            "verified": true
+        },
+        "gps_captured_at": {
+            "exists": true,
+            "type": "datetime",
+            "nullable": "YES",
+            "default": null,
+            "ordinal_position": 15,
+            "verified": true
+        }
+    },
+    "indexes_verified": {
+        "idx_elephant_reports_sighting_date": {
+            "exists": true,
+            "columns": [
+                "sighting_date"
+            ],
+            "verified": true
+        },
+        "idx_elephant_reports_temporal_hourly": {
+            "exists": true,
+            "columns": [
+                "sighting_date",
+                "sighting_time",
+                "sighting_time_precision"
+            ],
+            "verified": true
+        },
+        "idx_elephant_reports_section_temporal": {
+            "exists": true,
+            "columns": [
+                "section_id",
+                "sighting_date",
+                "sighting_time"
+            ],
+            "verified": true
+        },
+        "idx_elephant_reports_lag_analysis": {
+            "exists": true,
+            "columns": [
+                "sighting_date",
+                "created_at"
+            ],
+            "verified": true
+        }
+    },
+    "table_counts": {
+        "elephant_reports": {
+            "actual": 43,
+            "expected": 43,
+            "verified": true
+        },
+        "hotspots": {
+            "actual": 4,
+            "expected": 4,
+            "verified": true
+        },
+        "railway_sections": {
+            "actual": 4,
+            "expected": 4,
+            "verified": true
+        },
+        "incident_history": {
+            "actual": 3,
+            "expected": 3,
+            "verified": true
+        },
+        "alerts": {
+            "actual": 15,
+            "expected": 15,
+            "verified": true
+        },
+        "driver_acknowledgements": {
+            "actual": 13,
+            "expected": 13,
+            "verified": true
+        },
+        "users": {
+            "actual": 5,
+            "expected": 5,
+            "verified": true
+        },
+        "system_logs": {
+            "actual": 185,
+            "expected": 185,
+            "verified": true
+        }
+    },
+    "historical_preservation": {
+        "sighting_date_null_count": {
+            "actual": 43,
+            "expected": 43,
+            "description": "All 43 historical reports retain sighting_date = NULL (zero assumed dates)",
+            "verified": true
+        },
+        "sighting_time_null_count": {
+            "actual": 43,
+            "expected": 43,
+            "description": "All 43 historical reports retain sighting_time = NULL (zero assumed times)",
+            "verified": true
+        },
+        "sighting_time_precision_unknown_count": {
+            "actual": 43,
+            "expected": 43,
+            "description": "All 43 historical reports retain sighting_time_precision = \"unknown\"",
+            "verified": true
+        },
+        "sighting_time_window_null_count": {
+            "actual": 43,
+            "expected": 43,
+            "description": "All 43 historical reports retain sighting_time_window = NULL",
+            "verified": true
+        },
+        "sighting_time_uncertainty_null_count": {
+            "actual": 43,
+            "expected": 43,
+            "description": "All 43 historical reports retain uncertainty_minutes = NULL",
+            "verified": true
+        },
+        "sighting_timezone_default_count": {
+            "actual": 43,
+            "expected": 43,
+            "description": "All 43 historical reports have sighting_timezone = \"Asia/Colombo\"",
+            "verified": true
+        },
+        "gps_captured_at_null_count": {
+            "actual": 43,
+            "expected": 43,
+            "description": "All 43 historical reports retain gps_captured_at = NULL",
+            "verified": true
+        },
+        "seed_records_identical": true
+    },
+    "status": "VERIFIED_SUCCESS"
+}
