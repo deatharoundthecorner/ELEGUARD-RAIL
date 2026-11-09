@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../app/layouts/dashboard_header.php';
 require_once __DIR__ . '/../../app/services/ReportService.php';
 require_once __DIR__ . '/../../app/services/AlertService.php';
 require_once __DIR__ . '/../../app/services/AiDetectionService.php';
+require_once __DIR__ . '/../../app/services/TemporalService.php';
 
 $errors = [];
 
@@ -82,13 +83,81 @@ $sections = AlertService::getAllSections();
         <div class="grid grid-2col" style="gap:30px;">
             <div class="report-details-info">
                 <table class="data-table" style="font-size:0.95rem;">
+                    <!-- Sighting Observation Section (Ecological Event) -->
                     <tr>
-                        <td style="color:var(--text-secondary); width:40%;">Submitted By:</td>
-                        <td><strong><?php echo e($selectedReport['reporter_name']); ?></strong></td>
+                        <th colspan="2" style="background:rgba(255,255,255,0.04); color:var(--accent-color); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; padding:8px 12px;">
+                            🐘 Observation Details (Field Event)
+                        </th>
                     </tr>
                     <tr>
-                        <td style="color:var(--text-secondary);">Date / Time:</td>
-                        <td><?php echo format_date($selectedReport['created_at']); ?></td>
+                        <td style="color:var(--text-secondary); width:40%;">Observation Time:</td>
+                        <td>
+                            <strong><?php echo TemporalService::formatSightingSummary($selectedReport); ?></strong>
+                            <div style="margin-top:4px;">
+                                <?php echo TemporalService::renderPrecisionBadge($selectedReport['sighting_time_precision'], $selectedReport['sighting_time_window'], $selectedReport['sighting_time_uncertainty_minutes']); ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php 
+                    $delayInfo = TemporalService::calculateReportingDelay($selectedReport);
+                    if ($delayInfo): 
+                    ?>
+                    <tr>
+                        <td style="color:var(--text-secondary);">Reporting Delay:</td>
+                        <td>
+                            <span style="color:<?php echo $delayInfo['is_delayed'] ? 'var(--warning)' : 'var(--success)'; ?>; font-weight:500;">
+                                <?php echo $delayInfo['is_delayed'] ? '⏳ ' : '⚡ '; ?><?php echo e($delayInfo['label']); ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
+
+                    <!-- Operational Telemetry Section (System Ingestion) -->
+                    <tr>
+                        <th colspan="2" style="background:rgba(255,255,255,0.04); color:var(--text-secondary); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; padding:8px 12px;">
+                            📋 Operational Telemetry (System Ingestion)
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">Date Filed:</td>
+                        <td><code><?php echo format_date($selectedReport['created_at']); ?> SLST</code></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">GPS Acquisition:</td>
+                        <td>
+                            <?php if (!empty($selectedReport['gps_captured_at'])): ?>
+                                <code><?php echo date('Y-m-d H:i:s', strtotime($selectedReport['gps_captured_at'])); ?> SLST</code>
+                                <span class="badge badge-success" style="font-size:0.75rem; margin-left:4px;">Hardware GPS</span>
+                            <?php elseif (!empty($selectedReport['latitude']) && !empty($selectedReport['longitude'])): ?>
+                                <span class="text-muted" style="font-size:0.85rem;">Manual coordinates (No hardware GPS timestamp)</span>
+                            <?php else: ?>
+                                <span class="text-muted" style="font-size:0.85rem;">No GPS coordinates recorded</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">AI Advisory Execution:</td>
+                        <td>
+                            <?php if (!empty($selectedReport['ai_processed_at'])): ?>
+                                <code><?php echo date('Y-m-d H:i:s', strtotime($selectedReport['ai_processed_at'])); ?> SLST</code>
+                                <span class="badge badge-info" style="font-size:0.75rem; margin-left:4px;">Processed</span>
+                            <?php elseif (!empty($selectedReport['ai_analysis'])): ?>
+                                <span class="badge badge-secondary" style="font-size:0.75rem;">Legacy Ingestion</span>
+                            <?php else: ?>
+                                <span class="text-muted" style="font-size:0.85rem;">None (No photograph attached)</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+
+                    <!-- Location & Threat Details Section -->
+                    <tr>
+                        <th colspan="2" style="background:rgba(255,255,255,0.04); color:var(--text-secondary); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; padding:8px 12px;">
+                            📍 Sighting Context & Threat Assessment
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">Submitted By:</td>
+                        <td><strong><?php echo e($selectedReport['reporter_name']); ?></strong></td>
                     </tr>
                     <tr>
                         <td style="color:var(--text-secondary);">Railway Section:</td>
@@ -392,6 +461,7 @@ $sections = AlertService::getAllSections();
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th>Observation Time</th>
                         <th>Date Filed</th>
                         <th>Reporter</th>
                         <th>Railway Section</th>
@@ -407,7 +477,17 @@ $sections = AlertService::getAllSections();
                 <tbody>
                     <?php foreach ($reports as $rep): ?>
                         <tr>
-                            <td><?php echo format_date($rep['created_at']); ?></td>
+                            <td>
+                                <div style="font-size:0.85rem; font-weight:600;">
+                                    <?php echo TemporalService::formatSightingSummary($rep); ?>
+                                </div>
+                                <div style="margin-top:3px;">
+                                    <?php echo TemporalService::renderPrecisionBadge($rep['sighting_time_precision'], $rep['sighting_time_window'], $rep['sighting_time_uncertainty_minutes']); ?>
+                                </div>
+                            </td>
+                            <td style="font-size:0.85rem; color:var(--text-secondary); white-space:nowrap;">
+                                <?php echo format_date($rep['created_at']); ?>
+                            </td>
                             <td><?php echo e($rep['reporter_name']); ?></td>
                             <td>
                                 <strong><?php echo e($rep['section_name']); ?></strong>

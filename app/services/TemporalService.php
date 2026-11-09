@@ -474,4 +474,199 @@ class TemporalService {
             ]
         ];
     }
+
+    /**
+     * Format a human-readable summary of the elephant sighting observation.
+     * Segregates ecological observation timestamp from operational ingestion metadata.
+     * 
+     * @param array $report Report row with sighting_* columns
+     * @return string Human-readable observation summary
+     */
+    public static function formatSightingSummary(array $report) {
+        $date = !empty($report['sighting_date']) ? $report['sighting_date'] : null;
+        $time = !empty($report['sighting_time']) ? substr($report['sighting_time'], 0, 5) : null;
+        $precision = !empty($report['sighting_time_precision']) ? strtolower($report['sighting_time_precision']) : self::PRECISION_UNKNOWN;
+        $window = !empty($report['sighting_time_window']) ? strtolower($report['sighting_time_window']) : null;
+        $uncertainty = isset($report['sighting_time_uncertainty_minutes']) ? (int)$report['sighting_time_uncertainty_minutes'] : null;
+
+        if (!$date && !$time) {
+            return "Date and time unrecorded (Historical / Unknown)";
+        }
+
+        $formattedDate = $date ? date('j M Y', strtotime($date)) : 'Date unknown';
+
+        if ($precision === self::PRECISION_EXACT && $time) {
+            $uncText = ($uncertainty !== null) ? " (Exact \xc2\xb1{$uncertainty}m)" : " (Exact)";
+            return "{$formattedDate} at {$time}{$uncText}";
+        }
+
+        if ($precision === self::PRECISION_APPROXIMATE) {
+            if ($window && isset(self::PRESETS[$window])) {
+                $winName = ucfirst($window);
+                $uncText = ($uncertainty !== null) ? " (\xc2\xb1{$uncertainty}m)" : "";
+                return "{$formattedDate}, approx. {$winName} (~{$time}{$uncText})";
+            } elseif ($window === self::WINDOW_CUSTOM && $time) {
+                $uncText = ($uncertainty !== null) ? " (\xc2\xb1{$uncertainty}m)" : "";
+                return "{$formattedDate}, approx. {$time}{$uncText}";
+            } elseif ($time) {
+                $uncText = ($uncertainty !== null) ? " (\xc2\xb1{$uncertainty}m)" : "";
+                return "{$formattedDate}, approx. {$time}{$uncText}";
+            }
+            return "{$formattedDate}, approx. time window";
+        }
+
+        // Unknown precision
+        if ($date) {
+            return "{$formattedDate} (Time unrecorded)";
+        }
+
+        return "Date and time unrecorded (Historical / Unknown)";
+    }
+
+    /**
+     * Formats operational metadata (system ingestion, GPS capture, AI analysis).
+     * 
+     * @param array $report Report row
+     * @return array Associative array of formatted operational strings
+     */
+    public static function formatOperationalSummary(array $report) {
+        $filedAt = !empty($report['created_at'])
+            ? date('j M Y, h:i A', strtotime($report['created_at'])) . ' SLST'
+            : 'Unknown';
+
+        if (!empty($report['gps_captured_at'])) {
+            $gpsCaptured = date('j M Y, h:i:s A', strtotime($report['gps_captured_at'])) . ' SLST (Hardware Sensor)';
+        } elseif (!empty($report['latitude']) && !empty($report['longitude'])) {
+            $gpsCaptured = 'Coordinates entered manually / No hardware GPS timestamp';
+        } else {
+            $gpsCaptured = 'No GPS coordinates recorded';
+        }
+
+        $aiStatus = $report['ai_status'] ?? null;
+        if (!empty($report['ai_processed_at'])) {
+            $aiProcessed = date('j M Y, h:i A', strtotime($report['ai_processed_at'])) . ' SLST (' . ucfirst($aiStatus ?: 'processed') . ')';
+        } elseif (!empty($report['ai_analysis'])) {
+            $aiProcessed = 'Completed (Legacy / Ingestion)';
+        } elseif ($aiStatus === 'pending') {
+            $aiProcessed = 'Pending Processing';
+        } elseif ($aiStatus === 'failed') {
+            $aiProcessed = 'Analysis Failed';
+        } else {
+            $aiProcessed = 'N/A (No image)';
+        }
+
+        return [
+            'filed_at' => $filedAt,
+            'gps_captured_at' => $gpsCaptured,
+            'ai_processed_at' => $aiProcessed
+        ];
+    }
+
+    /**
+     * Renders a badge indicating precision class.
+     * 
+     * @param string|null $precision
+     * @param string|null $window
+     * @param int|null $uncertainty
+     * @return string HTML badge markup
+     */
+    public static function renderPrecisionBadge($precision, $window = null, $uncertainty = null) {
+        $p = strtolower(trim((string)$precision));
+        if ($p === self::PRECISION_EXACT) {
+            $unc = $uncertainty !== null ? " (\xc2\xb1{$uncertainty}m)" : " (\xc2\xb15m)";
+            return '<span class="badge badge-success" title="Exact observation time' . htmlspecialchars($unc, ENT_QUOTES, 'UTF-8') . '">Exact' . htmlspecialchars($unc, ENT_QUOTES, 'UTF-8') . '</span>';
+        } elseif ($p === self::PRECISION_APPROXIMATE) {
+            $winLabel = $window ? ucfirst($window) : 'Window';
+            $unc = $uncertainty !== null ? " \xc2\xb1{$uncertainty}m" : '';
+            return '<span class="badge badge-warning" title="Approximate diurnal window">Approx (' . htmlspecialchars($winLabel . $unc, ENT_QUOTES, 'UTF-8') . ')</span>';
+        } else {
+            return '<span class="badge" style="background-color:rgba(158,158,158,0.2); color:#bdbdbd; border:1px solid rgba(158,158,158,0.3);" title="Observation time not recorded">Time Unknown</span>';
+        }
+    }
+
+    /**
+     * Calculates the ingestion delay between actual observation and system filing.
+     * 
+     * @param array $report
+     * @return array|null Null if observation timestamp unknown, else delay details
+     */
+    public static function calculateReportingDelay(array $report) {
+        if (empty($report['sighting_date']) || empty($report['created_at'])) {
+            return null;
+        }
+
+        $createdAt = strtotime($report['created_at']);
+        if (!$createdAt) {
+            return null;
+        }
+
+        if (!empty($report['sighting_time'])) {
+            $sightingStr = $report['sighting_date'] . ' ' . $report['sighting_time'];
+            $sightingTs = strtotime($sightingStr);
+            if (!$sightingTs) {
+                return null;
+            }
+
+            $diffSeconds = $createdAt - $sightingTs;
+            $diffMinutes = (int)round($diffSeconds / 60);
+
+            if ($diffMinutes < 0) {
+                // Sighting recorded in future relative to created_at (skew)
+                return [
+                    'minutes' => $diffMinutes,
+                    'is_delayed' => false,
+                    'is_realtime' => true,
+                    'label' => 'Real-time observation'
+                ];
+            }
+
+            if ($diffMinutes <= 15) {
+                return [
+                    'minutes' => $diffMinutes,
+                    'is_delayed' => false,
+                    'is_realtime' => true,
+                    'label' => "Real-time (< {$diffMinutes}m delay)"
+                ];
+            }
+
+            $hours = floor($diffMinutes / 60);
+            $mins = $diffMinutes % 60;
+
+            if ($hours < 24) {
+                $label = "Delayed by {$hours}h {$mins}m";
+            } else {
+                $days = floor($hours / 24);
+                $remHours = $hours % 24;
+                $label = "Delayed by {$days}d {$remHours}h";
+            }
+
+            return [
+                'minutes' => $diffMinutes,
+                'is_delayed' => true,
+                'is_realtime' => false,
+                'label' => $label
+            ];
+        } else {
+            // Only date is known
+            $sightingDateTs = strtotime($report['sighting_date']);
+            $createdDateTs = strtotime(date('Y-m-d', $createdAt));
+            $diffDays = (int)round(($createdDateTs - $sightingDateTs) / 86400);
+
+            if ($diffDays <= 0) {
+                return [
+                    'minutes' => null,
+                    'is_delayed' => false,
+                    'is_realtime' => false,
+                    'label' => 'Filed same day (time unknown)'
+                ];
+            } else {
+                return [
+                    'minutes' => null,
+                    'is_delayed' => true,
+                    'is_realtime' => false,
+                    'label' => "Filed {$diffDays} day" . ($diffDays > 1 ? 's' : '') . " later (time unknown)"
+                ];
+            }
+        }
+    }
 }

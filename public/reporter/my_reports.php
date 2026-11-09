@@ -6,6 +6,7 @@ $pageTitle = "My Sighting Reports";
 $allowed_roles = 'reporter';
 require_once __DIR__ . '/../../app/layouts/dashboard_header.php';
 require_once __DIR__ . '/../../app/services/ReportService.php';
+require_once __DIR__ . '/../../app/services/TemporalService.php';
 
 $myReports = ReportService::getAll(null, null, null, $currentUser['id']);
 ?>
@@ -26,7 +27,8 @@ $myReports = ReportService::getAll(null, null, null, $currentUser['id']);
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Date/Time</th>
+                        <th>Observation Time</th>
+                        <th>Date Filed</th>
                         <th>Railway Section</th>
                         <th>Location Details</th>
                         <th>Count</th>
@@ -40,7 +42,17 @@ $myReports = ReportService::getAll(null, null, null, $currentUser['id']);
                 <tbody>
                     <?php foreach ($myReports as $rep): ?>
                         <tr>
-                            <td><?php echo format_date($rep['created_at']); ?></td>
+                            <td>
+                                <div style="font-size:0.85rem; font-weight:600;">
+                                    <?php echo TemporalService::formatSightingSummary($rep); ?>
+                                </div>
+                                <div style="margin-top:3px;">
+                                    <?php echo TemporalService::renderPrecisionBadge($rep['sighting_time_precision'], $rep['sighting_time_window'], $rep['sighting_time_uncertainty_minutes']); ?>
+                                </div>
+                            </td>
+                            <td style="font-size:0.85rem; color:var(--text-secondary); white-space:nowrap;">
+                                <?php echo format_date($rep['created_at']); ?>
+                            </td>
                             <td><strong><?php echo e($rep['section_name']); ?></strong></td>
                             <td>
                                 <?php echo e($rep['location_description']); ?>
