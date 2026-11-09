@@ -61,7 +61,7 @@ def main():
             'empirical_evidence_tier': 'Insufficient Empirical Evidence',
             'historical_baseline_alignment': 'Qualitative Match (Report ID 1: "Near mile post 127/4", no GPS)',
             'synthetic_test_coverage': '1 demo report at 562m; 4 E2E audit reports at 109m (verification tests)',
-            'recommendation': 'Retain in database; priority section for optical/thermal camera integration.'
+            'recommendation': 'Retain in database; recommend authorized environmental and railway field assessment before any trackside interventions.'
         },
         {
             'hotspot_id': 3,

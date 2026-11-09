@@ -87,7 +87,7 @@ Each of the four hotspots in the `hotspots` table was evaluated against this fra
 | Hotspot ID | Hotspot Name | Risk Level | Administrative Tier | Empirical Evidence Tier | Genuine Historical Sighting Support | Synthetic Test Artifacts ($N$) | Actionable Recommendation |
 |:---:|:---|:---:|:---:|:---:|:---|:---:|:---|
 | **1** | Minneriya Elephant Crossing | Critical | **Tier 1 (Mapped)** | **Tier 4 (Insufficient)** | Qualitative match (Report ID 2: "Near Minneriya reservoir bund", no GPS) | $N=12$ (11 test, 1 demo) | Retain in GIS map; deploy mobile app for GPS field verification. |
-| **2** | Habarana Forest Edge | High | **Tier 1 (Mapped)** | **Tier 4 (Insufficient)** | Qualitative match (Report ID 1: "Near mile post 127/4", no GPS) | $N=5$ (1 demo, 4 audit) | Retain in GIS map; priority corridor for clearing trackside scrub. |
+| **2** | Habarana Forest Edge | High | **Tier 1 (Mapped)** | **Tier 4 (Insufficient)** | Qualitative match (Report ID 1: "Near mile post 127/4", no GPS) | $N=5$ (1 demo, 4 audit) | Retain in GIS map; conduct authorized environmental and railway field assessment before interventions. |
 | **3** | Gal Oya Corridor | High | **Tier 1 (Mapped)** | **Tier 4 (Insufficient)** | Qualitative match (Report ID 3: "Near Gal Oya junction approach", no GPS) | $N=11$ (11 test) | Retain in GIS map; clarify junction section boundary. |
 | **4** | Night Movement Zone 01 | Medium | **Tier 1 (Mapped)** | **Tier 4 (Zero Support)** | None ($0$ reports in database for Section 3) | $N=0$ | Retain in GIS map; conduct field survey to re-verify seasonal usage. |
 
