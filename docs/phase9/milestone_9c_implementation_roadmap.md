@@ -1,4 +1,4 @@
-# EleGuard Rail — Milestone 9C: Implementation Roadmap & Execution Plan
+# EleGuard Rail — Milestone 9C: Implementation Roadmap & Execution Plan (Refined)
 
 **Document:** `docs/phase9/milestone_9c_implementation_roadmap.md`  
 **Phase:** 9 — Historical Elephant Sighting Intelligence  
@@ -17,7 +17,7 @@ This roadmap outlines the sequenced, zero-downtime implementation plan for intro
 
 The roadmap is structured into **8 discrete execution phases** designed to ensure:
 - Zero operational regressions.
-- Absolute data preservation for the 43 existing elephant sighting records.
+- Absolute data preservation for the 43 existing elephant sighting records (`sighting_date` and `sighting_time` retain `NULL`).
 - Complete backward compatibility with text-only and offline-first workflows.
 - Strict isolation of development testing from production data.
 
@@ -40,7 +40,7 @@ gantt
     Phase 6: Python Temporal Analytics Engine     :p6, 5, 6
     
     section Quality & Release
-    Phase 7: Full 154-Test Platform Regression    :p7, 6, 7
+    Phase 7: Full 156-Test Platform Regression    :p7, 6, 7
     Phase 8: XAMPP Deployment & Final Audit       :p8, 7, 8
 ```
 
@@ -53,10 +53,10 @@ gantt
 - **Tasks:**
   1. Pre-migration database backup (`scratch/backup_before_9c_migration/`).
   2. Verify operational row counts prior to execution (`elephant_reports = 43`).
-  3. Apply Migration 03:
-     - Add `sighting_date`, `sighting_time`, `sighting_time_precision`, `sighting_timezone`, and `gps_captured_at`.
+  3. Apply Refined Migration 03:
+     - Add `sighting_date`, `sighting_time`, `sighting_time_precision`, `sighting_time_window`, `sighting_time_uncertainty_minutes`, `sighting_timezone`, and `gps_captured_at`.
      - Create 4 performance indexes.
-     - Backfill existing 43 records: `sighting_date = DATE(created_at)`, `sighting_time = NULL`, `sighting_time_precision = 'unknown'`.
+     - **Preservation Policy:** Do NOT backfill `DATE(created_at)`. All 43 existing records retain `sighting_date = NULL`, `sighting_time = NULL`, and `sighting_time_precision = 'unknown'`.
   4. Verify post-migration schema integrity and row count parity (assert 43 records remain intact).
   5. Dry-run rollback script on isolated clone to verify reversal capability.
 - **Deliverables:** `database/migrations/03_add_temporal_intelligence_to_elephant_reports.sql`, `database/migrations/rollback_03_temporal_intelligence.sql`.
@@ -65,15 +65,17 @@ gantt
 - **Objectives:** Update backend business logic and validation handlers to accept and process temporal parameters.
 - **Tasks:**
   1. Update `app/includes/validation.php`:
-     - Implement `Validation::sightingTemporal($date, $time, $precision)`.
+     - Implement `Validation::sightingTemporal($date, $time, $precision, $window, $uncertainty)`.
      - Enforce date format, non-future dates, historical limits, and precision consistency.
   2. Update `app/services/ReportService.php`:
-     - Expand `submitReport()` signature to accept `$sightingDate`, `$sightingTime`, `$sightingPrecision`, and `$gpsCapturedAt`.
+     - Expand `submitReport()` signature to accept `$sightingDate`, `$sightingTime`, `$sightingPrecision`, `$sightingWindow`, `$sightingUncertainty`, and `$gpsCapturedAt`.
      - Decouple `$sightingTime` from `$reportTime` (`created_at`).
      - Persist temporal parameters into MariaDB.
   3. Update `app/services/RiskService.php`:
-     - Update `calculateRiskScore()` to evaluate actual `$sightingTime` instead of submission timestamp for the +2 Night Hazard Bonus.
-     - Maintain daytime baseline for `precision = 'unknown'`.
+     - Update `calculateRiskScore()` to evaluate actual `$sightingTime` and uncertainty window.
+     - Award +2 night bonus ONLY for verified nocturnal exact sightings or approximate windows that fall entirely within 18:00–06:00.
+     - Adopt conservative non-bonus policy for dusk/dawn straddling intervals and unknown times.
+     - Strictly prohibit using `created_at` as a proxy for sighting time.
 - **Deliverables:** Modified `app/includes/validation.php`, `app/services/ReportService.php`, `app/services/RiskService.php`.
 
 ### Phase 3: Sighting Submission Forms (Web UI)
@@ -82,7 +84,7 @@ gantt
   1. Update `public/reporter/submit_report.php`:
      - Add Sighting Date picker (pre-filled with today in `Asia/Colombo`, max today).
      - Add Sighting Time input with Precision radio controls (`Exact`, `Approximate`, `Unknown`).
-     - Add quick preset buttons for approximate windows (Dawn, Morning, Afternoon, Dusk, Night).
+     - Add quick preset buttons for approximate windows (Dawn, Morning, Afternoon, Dusk, Night) with auto-calculated uncertainty intervals.
      - Update Geolocation JavaScript to capture `position.timestamp` into hidden field `gps_captured_at`.
   2. Update `public/wildlife/submit_report.php`:
      - Implement identical temporal controls for ranger patrol field submissions.
@@ -94,7 +96,7 @@ gantt
 - **Tasks:**
   1. Update `public/wildlife/reports.php`:
      - Replace generic "Date / Time" with the dual-timeline **Temporal Verification Panel**.
-     - Display Sighting Date, Clock Time, Precision Badge, Device GPS Timestamp, and calculated reporting lag.
+     - Display Sighting Date, Clock Time, Precision Badge, Uncertainty Window, Device GPS Timestamp, and calculated reporting lag.
   2. Update `public/control/reports.php` and `public/admin/reports.php`:
      - Display actual sighting time in data tables to give railway controllers real-time context on hazard recency.
 - **Deliverables:** Modified `public/wildlife/reports.php`, `public/control/reports.php`, `public/admin/reports.php`.
@@ -115,7 +117,7 @@ gantt
   1. Author `ai/analytics/temporal_analytics.py`:
      - Extract temporal fields from live database in strict read-only mode.
      - Implement strict data provenance filters (`genuine_only` vs `all`).
-     - Compute 24-hour circadian hourly distributions.
+     - Compute 24-hour circadian hourly distributions (with fractional uncertainty attribution).
      - Compute diurnal vs nocturnal risk ratios.
      - Compute reporting lag telemetry histograms.
      - Classify observations into Sri Lankan agro-ecological seasons (Yala vs Maha).
@@ -128,10 +130,10 @@ gantt
      - `temporal_provenance_stratification.png`
 - **Deliverables:** `ai/analytics/temporal_analytics.py`, 6 visualization PNG artifacts.
 
-### Phase 7: Full 154-Test Platform Regression
+### Phase 7: Full 156-Test Platform Regression
 - **Objectives:** Execute the comprehensive automated test matrix.
 - **Tasks:**
-  1. Develop `tests/test_milestone_9c_temporal.php` implementing all 30 test cases specified in the test strategy.
+  1. Develop `tests/test_milestone_9c_temporal.php` implementing all 32 test cases specified in the test strategy.
   2. Execute all 7 test suites:
      - Python AI Detector Suite (24 tests)
      - Core GPS & Workflow Suite (19 tests)
@@ -139,8 +141,8 @@ gantt
      - Milestone 7C Map Integration Suite (12 tests)
      - Milestone 8C AI Integration Suite (25 tests)
      - Milestone 9B Analytics Suite (23 tests)
-     - **Milestone 9C Temporal Suite (30 tests)**
-  3. Assert **154 / 154 tests pass (100%)**.
+     - **Milestone 9C Temporal Suite (32 tests)**
+  3. Assert **156 / 156 tests pass (100%)**.
   4. Verify operational database row counts remain completely unchanged.
 - **Deliverables:** `tests/test_milestone_9c_temporal.php`, test execution logs.
 
@@ -156,29 +158,9 @@ gantt
 
 ---
 
-## 3. Risk Assessment & Fallback Matrix
+## 3. Stop Condition & Authorization Gate
 
-| Risk Scenario | Probability | Impact | Mitigation / Fallback Procedure |
-|:---|:---:|:---:|:---|
-| **Migration syntax error during `ALTER TABLE`** | Low | High | Migration is dry-run on isolated test database first. `rollback_03_temporal_intelligence.sql` ready for instantaneous reversal. |
-| **User enters invalid historical date (e.g. year 0026)** | Medium | Low | Client HTML5 `min="1900-01-01"` and server `Validation::sightingTemporal()` strictly reject dates prior to 1900. |
-| **Legacy code calls `submitReport()` without new temporal args** | Medium | Medium | Default parameter values assigned in method signature (`$sightingDate = null`, etc.); defaults to current date/time transparently. |
-| **Browser timezone offset confusion** | Low | Medium | Canonical timezone enforced as `Asia/Colombo` in PHP backend. Client sends local string `YYYY-MM-DD` and `HH:MM`, preventing client timezone skew. |
-| **Misinterpretation of test timestamps as seasonal peaks** | High | High | Provenance filter hardcoded into `temporal_analytics.py`. Warning banners embedded in all generated charts. |
-
----
-
-## 4. Hardware & Resource Budget
-
-- **Financial Cost:** **\$0.00 (Zero Budget)**.
-- **Software Dependencies:** 100% open-source local stack (PHP 8.2+, MariaDB 10.4+, Python 3.13, Matplotlib, HTML5 Geolocation).
-- **Execution Overhead:** Database schema expansion adds 5 nullable columns (~20 bytes per row); index overhead is < 64 KB across 1,000 records. Query execution overhead is negligible (< 1 ms).
-
----
-
-## 5. Stop Condition & Authorization Gate
-
-**Milestone 9C technical design and architectural planning is complete.**
+**Milestone 9C refined technical design and roadmap is complete.**
 
 In accordance with strict project rules:
 - **No application code has been modified.**

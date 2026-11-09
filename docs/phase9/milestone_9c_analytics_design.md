@@ -1,4 +1,4 @@
-# EleGuard Rail — Milestone 9C: Temporal & Seasonal Analytics Design
+# EleGuard Rail — Milestone 9C: Temporal & Seasonal Analytics Design (Refined)
 
 **Document:** `docs/phase9/milestone_9c_analytics_design.md`  
 **Phase:** 9 — Historical Elephant Sighting Intelligence  
@@ -18,51 +18,46 @@ This document designs the mathematical algorithms, SQL queries, and visualizatio
 
 ---
 
-## 2. Core Temporal Analytics Dimensions
+## 2. Treatment of Approximate & Unknown Values in Analytics
 
-The analytics engine models six orthogonal temporal dimensions:
+A critical design refinement is ensuring that approximate presets and unknown timestamps do not distort scientific analytics:
 
-```
-+----------------------------------------------------------------------------------------------------+
-|                                    TEMPORAL ANALYTICS ENGINE                                       |
-+----------------------------------------------------------------------------------------------------+
-|                                                                                                    |
-|  [ 1. CIRCADIAN HOURLY DISTRIBUTION ]                                                              |
-|  24-hour binning [00:00 - 23:59]. Identifies peak crossing windows for train timetable advisories. |
-|                                                                                                    |
-|  [ 2. DAY VS NIGHT RISK PARTITIONING ]                                                             |
-|  Bimodal split: Daytime (06:00 - 17:59) vs Nocturnal (18:00 - 05:59). Direct input to RiskService. |
-|                                                                                                    |
-|  [ 3. DAY-OF-WEEK / CYCLICAL PATTERNS ]                                                            |
-|  Sunday through Saturday. Correlates human agricultural/railway traffic with wildlife activity.   |
-|                                                                                                    |
-|  [ 4. REPORTING TELEMETRY LAG ]                                                                    |
-|  Delta (created_at - sighting_time). Measures dispatch alert latency and offline lag.              |
-|                                                                                                    |
-|  [ 5. MONTHLY TRENDS ]                                                                             |
-|  Calendar month progression [Jan - Dec]. Tracks inter-annual population pressures.                 |
-|                                                                                                    |
-|  [ 6. MONSOONAL / SEASONAL AGRO-ECOLOGICAL REGIMES ]                                               |
-|  Yala (Dry) vs Maha (Wet) vs Inter-monsoons. Models long-range landscape migrations.               |
-|                                                                                                    |
-+----------------------------------------------------------------------------------------------------+
-```
+### 2.1 Handling Unknown Values (`sighting_time IS NULL` or `sighting_date IS NULL`)
+- **Hourly Circadian Distribution:**
+  - Records where `sighting_time IS NULL` or `sighting_time_precision = 'unknown'` are **strictly excluded** from 24-hour histogram binning.
+  - They are **never defaulted to 00:00:00** (midnight).
+  - The visualization subtitle explicitly states the effective sample size: e.g. `(N=X records with confirmed time; N=Y excluded due to unrecorded time)`.
+- **Seasonal Analysis:**
+  - Records where `sighting_date IS NULL` are **strictly excluded** from monthly and monsoonal graphs.
+  - The 43 existing historical/test records currently have `sighting_date = NULL` and are therefore safely excluded from genuine seasonal curves.
+
+### 2.2 Handling Approximate Values (`sighting_time_precision = 'approximate'`)
+Approximate sightings represent an uncertainty interval $[\text{time} - \Delta t, \text{time} + \Delta t]$ (e.g. Dusk = $18:15 \pm 45\text{ mins} \implies [17:30, 19:00]$).
+Two analytical modes are provided:
+1. **Discrete 1-Hour Circadian Binning (Fractional Window Attribution):**
+   - When an observation's uncertainty window spans multiple hour bins (e.g., 17:30 to 19:00 spans Hour 17 [30 mins], Hour 18 [60 mins], and Hour 19 [0 mins]), weight is distributed proportionally:
+     $$\text{Weight}(h) = \frac{\text{Duration of intersection of } [t-\Delta, t+\Delta] \text{ with hour } h}{2\Delta t}$$
+   - This prevents artificial spiky peaks while accurately reflecting density probability across twilight.
+2. **Broad Ecological Band Analysis (Recommended Primary View):**
+   - Rather than 24 discrete 1-hour bins, approximate sightings are analyzed across four standard ecological periods:
+     - **Dawn Crepuscular:** 04:30 – 07:00
+     - **Daytime Foraging:** 07:00 – 17:30
+     - **Dusk Crepuscular:** 17:30 – 19:30
+     - **Night Crossing:** 19:30 – 04:30
+   - Categorical presets (`dawn`, `dusk`, `night`) map cleanly into these broad bands with zero mathematical distortion.
 
 ---
 
 ## 3. Mathematical & Algorithmic Formulations
 
 ### 3.1 Circadian Hourly Distribution Engine
-Calculates the hourly observation frequency $H(h)$ across all 24 hours of the day ($h \in [0, 23]$):
+Calculates the effective observation density $D(h)$ across all 24 hours of the day ($h \in [0, 23]$):
 
-$$H(h) = \sum_{i=1}^{N} \mathbb{I}(\text{HOUR}(\text{sighting\_time}_i) = h \land \text{precision}_i \in \{\text{'exact'}, \text{'approximate'}\})$$
+$$D(h) = \sum_{i \in \text{Exact}} \mathbb{I}(\text{HOUR}(t_i) = h) + \sum_{j \in \text{Approx}} W_j(h)$$
 
-- Sightings where `sighting_time_precision = 'unknown'` are explicitly excluded from the denominator to avoid contaminating the 00:00 bin.
-- Confidence intervals are computed assuming a Poisson arrival process for each hourly bin:
-$$\text{CI}_{95\%}(H(h)) = H(h) \pm 1.96 \sqrt{H(h)}$$
+Where $W_j(h)$ is the fractional overlap weight of approximate sighting $j$ within hour $h$.
 
 ### 3.2 Nocturnal vs Diurnal Risk Partitioning
-Sri Lanka's equatorial latitude ($\approx 8^\circ\text{ N}$) exhibits minimal seasonal variation in solar dusk/dawn ($\pm 20\text{ mins}$ year-round). Therefore, standardized operational boundaries are defined:
 - **Diurnal (Daytime):** 06:00:00 to 17:59:59 (Full ambient visibility for locomotive drivers).
 - **Nocturnal (Night-time):** 18:00:00 to 05:59:59 (Requires locomotive high-beam headlights; +2 Risk Score bonus).
 
@@ -79,7 +74,7 @@ Stratified into actionable operational tiers:
 
 ## 4. Sri Lankan Seasonal & Monsoonal Regimes
 
-Sri Lanka's climate does not follow temperate four-season cycles (Spring/Summer/Autumn/Winter). In the North-Central railway corridor, elephant movements are strictly governed by **four distinct agro-climatic seasons**:
+Sri Lanka's climate in the North-Central Dry Zone exhibits four distinct agro-climatic seasons:
 
 | Monsoonal / Agro-Ecological Season | Calendar Months | Regional Climate (North-Central Dry Zone) | Elephant Ecological Behavior & Railway Risk |
 |:---|:---:|:---|:---|
@@ -88,65 +83,20 @@ Sri Lanka's climate does not follow temperate four-season cycles (Spring/Summer/
 | **Yala Season**<br>(South-West Monsoon / Dry Period) | **May – August / September** | **Severe dry season and drought in Dry Zone.** Peripheral forest streams, minor culverts, and tanks dry up completely. | **Peak Human-Elephant-Railway Conflict Period.** Massive gathering of elephants around perennial reservoirs (notably the world-famous *Minneriya Elephant Gathering*). Herds repeatedly cross railway tracks between Minneriya National Park, Kaudulla, and Habarana in search of water and fresh grasses. |
 | **Second Inter-Monsoon (SIM)** | **October – November** | Tropical depressions and heavy cyclonic downpours. | Herds begin seasonal dispersal away from major reservoirs back into expansive forest sanctuaries. |
 
-### Seasonal SQL Classification Function
-```sql
-SELECT 
-    CASE 
-        WHEN MONTH(sighting_date) IN (10, 11, 12, 1) THEN 'Maha Season (NE Monsoon - Wet)'
-        WHEN MONTH(sighting_date) IN (2, 3, 4) THEN 'First Inter-Monsoon (Transitional)'
-        WHEN MONTH(sighting_date) IN (5, 6, 7, 8, 9) THEN 'Yala Season (SW Monsoon - Severe Dry / Gathering)'
-        ELSE 'Unclassified'
-    END AS agro_ecological_season,
-    COUNT(*) AS total_sightings,
-    SUM(elephant_count) AS total_elephants_observed
-FROM elephant_reports
-WHERE sighting_date IS NOT NULL
-GROUP BY agro_ecological_season;
-```
-
 ---
 
 ## 5. Strict Provenance Filtering & Scientific Honesty
 
-A critical rule of Milestone 9C analytics design is **strict data provenance filtering**.
-
-### The Population Composition Reality
-As established in Milestones 9A and 9B:
-- **Total Reports:** 43
-- **Confirmed Historical Baseline:** $N=3$ (IDs 1, 2, 3) — Text-only, zero GPS, zero specific sighting hours.
-- **Automated Test Harness Artifacts:** $N=33$ (IDs 4–33, 38–40) — Created in batch by automated test executions.
-- **Demonstration Cases:** $N=3$ (IDs 41–43) — Created during UI demonstrations.
-- **E2E Audit Verification Runs:** $N=4$ (IDs 53–56) — Created during Milestone 8C testing.
-
-### Mandatory Analytical Safeguards
-1. **Never Conflate Test Timestamps with Sighting Times:**
-   The 33 automated test reports and 4 audit reports have `created_at` timestamps clustered between 07:00 AM and 09:00 AM purely because the test scripts were executed in the morning. **These must NEVER be plotted as "morning elephant activity peaks"**.
-2. **No Seasonal Claims on $N=3$ Records:**
-   The three genuine historical baseline records cannot produce statistically significant seasonal trends.
-3. **Engine Filter Specification:**
-   Any production analytics engine must implement a strict provenance filter:
-   ```python
-   # Mandatory filter in temporal_analytics.py
-   def filter_population(records, population_type='all'):
-       if population_type == 'genuine_only':
-           # In current DB, genuine records are IDs 1-3 only
-           return [r for r in records if r['id'] in [1, 2, 3]]
-       elif population_type == 'operational_synthetic':
-           return [r for r in records if r['id'] not in [1, 2, 3]]
-       return records
-   ```
-4. **Visual Warning Banners:**
-   Every generated chart must clearly display:
-   > *"Sample Size Warning: Historical baseline N=3 is insufficient for empirical seasonal or circadian modeling. Chart illustrates system analytical capability using synthetic test fixtures."*
-
----
-
-## 6. Target Visualization Deliverables (For Future Milestone 9C Implementation)
-
-When authorized for implementation, the module will generate 6 standardized analytical visualizations under `docs/phase9/visualizations/`:
-1. `temporal_hourly_circadian_distribution.png`: 24-hour histogram illustrating crepuscular and nocturnal peaks.
-2. `temporal_day_vs_night_risk_split.png`: Bimodal pie and bar breakdown of day vs night sightings.
-3. `temporal_seasonal_yala_vs_maha.png`: Seasonal comparison bar chart (Maha vs Yala vs Inter-monsoons).
-4. `temporal_reporting_lag_distribution.png`: Histogram of reporting delays (real-time vs delayed reports).
-5. `temporal_section_seasonal_heatmap.png`: Matrix heatmap of railway section crossings across the 4 seasons.
-6. `temporal_provenance_stratification.png`: Visual audit demonstrating separation of genuine vs test timelines.
+### Population Stratification Rule
+- **Primary Baseline ($N=3$):** Retains `sighting_date = NULL`, `sighting_time = NULL`. Cannot be used to construct seasonal or hourly curves.
+- **Automated Test Harness ($N=33$):** Contains batch morning timestamps (`07:00 - 09:00 AM`). Must NEVER be plotted as wild elephant activity.
+- **Demo & Audit Cases ($N=7$):** Isolated from authentic wildlife analytics.
+- **Production Analytics Code:**
+  ```python
+  def get_analyzable_records(records, analysis_type='circadian'):
+      if analysis_type == 'circadian':
+          return [r for r in records if r.get('sighting_time') is not None and r.get('sighting_time_precision') in ['exact', 'approximate']]
+      elif analysis_type == 'seasonal':
+          return [r for r in records if r.get('sighting_date') is not None]
+      return records
+  ```
