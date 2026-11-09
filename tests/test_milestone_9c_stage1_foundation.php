@@ -94,6 +94,20 @@ class Milestone9CStage1TestSuite {
 
         $count = (int)$this->pdo->query("SELECT COUNT(*) FROM `{$this->testDbName}`.elephant_reports")->fetchColumn();
         $this->assert($count === 43, "1.1 Cloned 43 existing reports into isolated test database");
+
+        // If clone inherited post-migration columns from operational DB, roll back test clone to pre-migration state
+        $cols = $this->pdo->query("SHOW COLUMNS FROM `{$this->testDbName}`.elephant_reports LIKE 'sighting_date'")->fetchAll();
+        if (!empty($cols)) {
+            $rollbackFile = __DIR__ . '/../database/migrations/rollback_03_temporal_intelligence.sql';
+            $sql = file_get_contents($rollbackFile);
+            $sql = str_replace('USE eleguard_rail;', "USE `{$this->testDbName}`;", $sql);
+            $sql = preg_replace('/--.*$/m', '', $sql);
+            $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
+            foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
+                if (!empty($stmt)) $this->pdo->exec($stmt);
+            }
+        }
+
         echo "\n";
     }
 

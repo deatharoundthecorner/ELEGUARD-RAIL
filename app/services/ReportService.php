@@ -6,13 +6,34 @@
 require_once __DIR__ . '/../core/Database.php';
 require_once __DIR__ . '/../services/RiskService.php';
 require_once __DIR__ . '/../services/AiDetectionService.php';
+require_once __DIR__ . '/../services/TemporalService.php';
 
 class ReportService {
 
     /**
-     * Submits a new sighting report and automatically calculates the risk score
+     * Submits a new sighting report, validates temporal metadata, and calculates risk score
+     * 
+     * Supports both legacy callers (without temporal arguments) and new temporal callers
+     * (passing an associative array or positional temporal arguments).
      */
-    public static function submitReport($sectionId, $reportedBy, $elephantCount, $locationDesc, $urgencyLevel, $description, $imagePath = null, $latitude = null, $longitude = null, $accuracy = null) {
+    public static function submitReport(
+        $sectionId, 
+        $reportedBy, 
+        $elephantCount, 
+        $locationDesc, 
+        $urgencyLevel, 
+        $description, 
+        $imagePath = null, 
+        $latitude = null, 
+        $longitude = null, 
+        $accuracy = null,
+        $temporalData = null,
+        $sightingTime = null,
+        $sightingPrecision = null,
+        $sightingWindow = null,
+        $sightingUncertainty = null,
+        $gpsCapturedAt = null
+    ) {
         $db = Database::getInstance()->getConnection();
 
         // 1. Fetch section risk level
@@ -26,7 +47,7 @@ class ReportService {
         $alertStmt->execute([':sec_id' => $sectionId]);
         $hasActiveAlert = ((int)$alertStmt->fetchColumn()) > 0;
 
-        // 3. Compute dynamic risk level using RiskService
+        // 3. Compute dynamic risk level using RiskService (strictly preserving existing behavior)
         $reportTime = date('Y-m-d H:i:s');
         $calculatedRisk = RiskService::calculateRiskScore(
             $sectionRisk, 
@@ -41,20 +62,45 @@ class ReportService {
         $lngParam = ($longitude !== null && $longitude !== '' && is_numeric($longitude)) ? (float)$longitude : null;
         $accParam = ($accuracy !== null && $accuracy !== '' && is_numeric($accuracy)) ? (float)$accuracy : null;
 
-        // 4. Save to Database with initial AI status
+        // 4. Validate and Normalize Temporal Metadata via TemporalService
+        if (is_array($temporalData)) {
+            $temporalInput = $temporalData;
+        } else {
+            $temporalInput = [
+                'sighting_date' => $temporalData,
+                'sighting_time' => $sightingTime,
+                'sighting_time_precision' => $sightingPrecision,
+                'sighting_time_window' => $sightingWindow,
+                'sighting_time_uncertainty_minutes' => $sightingUncertainty,
+                'gps_captured_at' => $gpsCapturedAt
+            ];
+        }
+
+        $temporalResult = TemporalService::validateAndNormalizeTemporalInput($temporalInput);
+        if (!$temporalResult['valid']) {
+            error_log("ReportService::submitReport Temporal Validation Error: " . json_encode($temporalResult['errors']));
+            return false;
+        }
+        $t = $temporalResult['data'];
+
+        // 5. Save to Database with initial AI status and temporal columns
         $initialAiStatus = !empty($imagePath) ? 'pending' : 'skipped';
         $initialAiNotes = !empty($imagePath) ? 'Awaiting AI advisory inference.' : 'No photograph attached to report.';
 
         $stmt = $db->prepare("
             INSERT INTO elephant_reports (
-                section_id, reported_by, elephant_count, location_description, 
-                latitude, longitude, gps_accuracy_meters,
+                section_id, reported_by, elephant_count,
+                sighting_date, sighting_time, sighting_time_precision,
+                sighting_time_window, sighting_time_uncertainty_minutes, sighting_timezone,
+                location_description, latitude, longitude, gps_accuracy_meters, gps_captured_at,
                 urgency_level, risk_score, report_status, description, image_path,
                 ai_status, ai_detection_notes, created_at
             )
             VALUES (
-                :section_id, :reported_by, :elephant_count, :location_desc,
-                :latitude, :longitude, :gps_accuracy,
+                :section_id, :reported_by, :elephant_count,
+                :sighting_date, :sighting_time, :sighting_time_precision,
+                :sighting_time_window, :sighting_time_uncertainty_minutes, :sighting_timezone,
+                :location_desc, :latitude, :longitude, :gps_accuracy, :gps_captured_at,
                 :urgency_level, :risk_score, 'Pending', :description, :image_path,
                 :ai_status, :ai_notes, :created_at
             )
@@ -64,10 +110,17 @@ class ReportService {
             ':section_id' => $sectionId,
             ':reported_by' => $reportedBy,
             ':elephant_count' => $elephantCount,
+            ':sighting_date' => $t['sighting_date'],
+            ':sighting_time' => $t['sighting_time'],
+            ':sighting_time_precision' => $t['sighting_time_precision'],
+            ':sighting_time_window' => $t['sighting_time_window'],
+            ':sighting_time_uncertainty_minutes' => $t['sighting_time_uncertainty_minutes'],
+            ':sighting_timezone' => $t['sighting_timezone'],
             ':location_desc' => $locationDesc,
             ':latitude' => $latParam,
             ':longitude' => $lngParam,
             ':gps_accuracy' => $accParam,
+            ':gps_captured_at' => $t['gps_captured_at'],
             ':urgency_level' => $urgencyLevel,
             ':risk_score' => $calculatedRisk,
             ':description' => $description,

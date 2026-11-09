@@ -1,0 +1,92 @@
+{
+    "timestamp": "2026-11-09 04:00:43 CET",
+    "operational_db": "eleguard_rail",
+    "compare_db": "eleguard_rail_audit_compare",
+    "backup_file": "C:/Users/user/Desktop/Railway/eleguard-rail/database/backups/backup_before_9c_stage1.sql",
+    "backup_sha256": "cb311bbda4afba105b990bfb9b19cc1d4275ba8b900b2617c3b584ff157d0435",
+    "tables": {
+        "alerts": {
+            "backup_rows": 15,
+            "operational_rows": 15,
+            "missing_ids": [],
+            "extra_ids": [],
+            "field_differences_count": 0,
+            "field_differences": [],
+            "schema_valid": true,
+            "passed": true
+        },
+        "driver_acknowledgements": {
+            "backup_rows": 13,
+            "operational_rows": 13,
+            "missing_ids": [],
+            "extra_ids": [],
+            "field_differences_count": 0,
+            "field_differences": [],
+            "schema_valid": true,
+            "passed": true
+        },
+        "elephant_reports": {
+            "backup_rows": 43,
+            "operational_rows": 43,
+            "missing_ids": [],
+            "extra_ids": [],
+            "field_differences_count": 0,
+            "field_differences": [],
+            "schema_valid": true,
+            "passed": true
+        },
+        "hotspots": {
+            "backup_rows": 4,
+            "operational_rows": 4,
+            "missing_ids": [],
+            "extra_ids": [],
+            "field_differences_count": 0,
+            "field_differences": [],
+            "schema_valid": true,
+            "passed": true
+        },
+        "incident_history": {
+            "backup_rows": 3,
+            "operational_rows": 3,
+            "missing_ids": [],
+            "extra_ids": [],
+            "field_differences_count": 0,
+            "field_differences": [],
+            "schema_valid": true,
+            "passed": true
+        },
+        "railway_sections": {
+            "backup_rows": 4,
+            "operational_rows": 4,
+            "missing_ids": [],
+            "extra_ids": [],
+            "field_differences_count": 0,
+            "field_differences": [],
+            "schema_valid": true,
+            "passed": true
+        },
+        "system_logs": {
+            "backup_rows": 185,
+            "operational_rows": 185,
+            "missing_ids": [],
+            "extra_ids": [],
+            "field_differences_count": 0,
+            "field_differences": [],
+            "schema_valid": true,
+            "passed": true
+        },
+        "users": {
+            "backup_rows": 5,
+            "operational_rows": 5,
+            "missing_ids": [],
+            "extra_ids": [],
+            "field_differences_count": 0,
+            "field_differences": [],
+            "schema_valid": true,
+            "passed": true
+        }
+    },
+    "differences_found": false,
+    "summary": [],
+    "elephant_reports_temporal_invariant": "PASSED_ZERO_ASSUMED_DATES"
+}
