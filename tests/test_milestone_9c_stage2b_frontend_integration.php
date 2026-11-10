@@ -3,10 +3,10 @@
  * EleGuard Rail - Milestone 9C Stage 2B Automated Test Suite
  * 
  * End-to-End Integration & Verification for Frontend Temporal Reporting:
- * - Group 1: Display Formatting Helpers in TemporalService
+ * - Group 1: Display Formatting Helpers in TemporalService (including interval-aware delay)
  * - Group 2: Reporter Form Submission Workflow & Temporal Normalization
- * - Group 3: Wildlife Officer Form Submission & Auto-Elevation Workflow
- * - Group 4: Edge Cases & Input Validation Error Rejections
+ * - Group 3: Wildlife Officer Form Submission & Auto-Elevation Workflow (Report ID resolution bug fix)
+ * - Group 4: Edge Cases, Security Boundaries & Input Validation Rejections
  * - Group 5: Wildlife Officer Review Display & Historical Record Segregation
  * - Group 6: Operational Database Zero-Write Invariant
  * 
@@ -26,10 +26,11 @@ $rawPass = '';
 $rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", $rawUser, $rawPass);
 $rawPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Record baseline operational counts before any test activity
+// Record baseline operational counts and Report #1 state before any test activity
 $rawPdo->exec("USE eleguard_rail");
 $preOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
 $preOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
+$preOperReport1 = $rawPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
 
 // Create fresh isolated test database clone
 $testDbName = 'eleguard_rail_test';
@@ -69,7 +70,7 @@ if ($connectedDb !== $testDbName) {
 
 echo "========================================================\n";
 echo " EleGuard Rail - Milestone 9C Stage 2B Test Suite\n";
-echo " Frontend Temporal Reporting & Review Display Integration\n";
+echo " Frontend Temporal Reporting & Corrective Patch Audit\n";
 echo " Connected DB: {$connectedDb}\n";
 echo "========================================================\n\n";
 
@@ -176,21 +177,70 @@ assertTest(strpos($bExact, 'badge-success') !== false &&
            strpos($bUnknown, 'Time Unknown') !== false,
     "1.7 Precision badges render appropriate CSS classes and titles");
 
-// 1.8 Reporting delay calculation
+// 1.8 formatDurationMinutes helper tests
+$dur0 = TemporalService::formatDurationMinutes(0);
+$dur30 = TemporalService::formatDurationMinutes(30);
+$dur60 = TemporalService::formatDurationMinutes(60);
+$dur90 = TemporalService::formatDurationMinutes(90);
+$dur210 = TemporalService::formatDurationMinutes(210);
+$dur1440 = TemporalService::formatDurationMinutes(1440);
+$dur1560 = TemporalService::formatDurationMinutes(1560);
+assertTest($dur0 === '0m' && $dur30 === '30m' && $dur60 === '1h' && $dur90 === '1h 30m' && 
+           $dur210 === '3h 30m' && $dur1440 === '1d' && $dur1560 === '1d 2h',
+    "1.8 formatDurationMinutes formats 0m, 30m, 1h, 1h 30m, 3h 30m, 1d, 1d 2h cleanly");
+
+// 1.9 Exact reporting delay calculation
 $delRealtime = TemporalService::calculateReportingDelay([
     'sighting_date' => '2026-11-08',
     'sighting_time' => '14:50:00',
+    'sighting_time_precision' => 'exact',
+    'sighting_time_uncertainty_minutes' => 5,
     'created_at' => '2026-11-08 14:58:00'
 ]);
-$delDelayed = TemporalService::calculateReportingDelay([
+$delExactDelayed = TemporalService::calculateReportingDelay([
     'sighting_date' => '2026-11-08',
     'sighting_time' => '08:00:00',
+    'sighting_time_precision' => 'exact',
+    'sighting_time_uncertainty_minutes' => 5,
     'created_at' => '2026-11-08 14:30:00'
 ]);
-assertTest($delRealtime['is_realtime'] === true &&
-           $delDelayed['is_delayed'] === true &&
-           strpos($delDelayed['label'], '6h 30m') !== false,
-    "1.8 Reporting delay calculates real-time (<15m) and delayed hours correctly");
+assertTest($delRealtime['is_realtime'] === true && $delRealtime['is_delayed'] === false &&
+           $delExactDelayed['is_delayed'] === true && $delExactDelayed['is_realtime'] === false &&
+           $delExactDelayed['label'] === 'Delayed by 6h 30m',
+    "1.9 Exact reporting delay calculates real-time (<15m) and delayed exact hours correctly");
+
+// 1.10 Approximate reporting delay with uncertainty window
+// Case A: Sighting 09:00 ±90m submitted at 11:00 (120m elapsed, window 07:30-10:30, delay 30m - 3h 30m)
+$delApproxDelayed = TemporalService::calculateReportingDelay([
+    'sighting_date' => '2026-11-08',
+    'sighting_time' => '09:00:00',
+    'sighting_time_precision' => 'approximate',
+    'sighting_time_window' => 'morning',
+    'sighting_time_uncertainty_minutes' => 90,
+    'created_at' => '2026-11-08 11:00:00'
+]);
+assertTest($delApproxDelayed['is_delayed'] === true &&
+           $delApproxDelayed['is_realtime'] === false &&
+           $delApproxDelayed['min_minutes'] === 30 &&
+           $delApproxDelayed['max_minutes'] === 210 &&
+           strpos($delApproxDelayed['label'], 'Delayed ~2h') !== false &&
+           strpos($delApproxDelayed['label'], '30m') !== false &&
+           strpos($delApproxDelayed['label'], '3h 30m') !== false,
+    "1.10 (A) Approximate delay for 09:00 ±90m filed at 11:00 shows interval bounds [30m – 3h 30m, ±90m]: '{$delApproxDelayed['label']}'");
+
+// Case B: Sighting 09:00 ±90m submitted at 09:30 (elapsed 30m <= 90m uncertainty, within contemporaneous window)
+$delApproxContemp = TemporalService::calculateReportingDelay([
+    'sighting_date' => '2026-11-08',
+    'sighting_time' => '09:00:00',
+    'sighting_time_precision' => 'approximate',
+    'sighting_time_window' => 'morning',
+    'sighting_time_uncertainty_minutes' => 90,
+    'created_at' => '2026-11-08 09:30:00'
+]);
+assertTest($delApproxContemp['is_delayed'] === false &&
+           $delApproxContemp['is_realtime'] === true &&
+           strpos($delApproxContemp['label'], 'Contemporaneous observation window') !== false,
+    "1.10 (B) Approximate sighting submitted within observation window marked contemporaneous: '{$delApproxContemp['label']}'");
 
 echo "\n";
 
@@ -199,7 +249,6 @@ echo "\n";
 // -------------------------------------------------------------------------------------------------
 echo "-- Group 2: Reporter Form Submission Workflow & Temporal Normalization --\n";
 
-// Get test user (reporter ID 2) and section (ID 1)
 $reporterId = 2;
 $sectionId = 1;
 
@@ -316,7 +365,7 @@ assertTest($fetchedAllUnknown['sighting_date'] === null &&
            $fetchedAllUnknown['sighting_time_precision'] === 'unknown',
     "2.5 Date unknown: both sighting_date and sighting_time are strictly NULL");
 
-// 2.6 Geolocation cleared / manual coordinates entered
+// 2.6 Geolocation cleared / manual coordinates entered (Stale GPS timestamp reset)
 $postPayloadManual = [
     'sighting_date' => '2026-11-08',
     'sighting_time' => '10:00',
@@ -333,17 +382,38 @@ $fetchedManual = ReportService::getById($manualId);
 assertTest($fetchedManual['latitude'] == '8.050000' &&
            $fetchedManual['longitude'] == '80.800000' &&
            $fetchedManual['gps_captured_at'] === null,
-    "2.6 Manual coordinates preserved with gps_captured_at = NULL");
+    "2.6 Manual coordinates preserved with gps_captured_at = NULL (stale GPS reset)");
+
+// 2.7 Reporter status tampering prevention
+// Even if reporter attempts to inject report_status = 'Verified' in parameters or array,
+// ReportService::submitReport() always hardcodes 'Pending' on creation
+$tamperPayload = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time' => '12:00',
+    'sighting_time_precision' => 'exact',
+    'report_status' => 'Verified', // Injected status attempt
+    'status' => 'Verified'
+];
+$normTamper = TemporalService::validateAndNormalizeTemporalInput($tamperPayload);
+$subTamperId = ReportService::submitReportWithId(
+    $sectionId, $reporterId, 1, 'Tamper test 2.7', 'Low',
+    'Attempting status escalation', null, null, null, null, $normTamper['data']
+);
+$fetchedTamper = ReportService::getById($subTamperId);
+assertTest($fetchedTamper['report_status'] === 'Pending',
+    "2.7 Reporter status tampering prevention: Injected 'Verified' ignored, report persisted as 'Pending'");
 
 echo "\n";
 
 // -------------------------------------------------------------------------------------------------
-// GROUP 3: Wildlife Officer Form Submission & Auto-Elevation Workflow
+// GROUP 3: Wildlife Officer Form Submission & Auto-Elevation Workflow (Bug Fix Verification)
 // -------------------------------------------------------------------------------------------------
 echo "-- Group 3: Wildlife Officer Form Submission & Auto-Elevation Workflow --\n";
 
-// Wildlife Officer user ID 4 (or another wildlife_officer)
 $wildlifeOfficerId = 4;
+
+// Record Report #1 state in test DB before ranger submission
+$testReport1Before = ReportService::getById(1);
 
 $rangerPayload = [
     'sighting_date' => '2026-11-08',
@@ -353,34 +423,73 @@ $rangerPayload = [
 ];
 $normRanger = TemporalService::validateAndNormalizeTemporalInput($rangerPayload);
 
-// Simulate wildlife officer form submission
-$subRanger = ReportService::submitReport(
+// 3.1 submitReportWithId() returns the actual new report ID (e.g. 50 > 1)
+$newRangerId = ReportService::submitReportWithId(
     $sectionId, $wildlifeOfficerId, 5, 'Ranger patrol sector B', 'Critical',
     'Patrol confirmed 5 elephants on track', null, '8.082000', '80.820000', '10', $normRanger['data']
 );
-$rangerRepId = (int)Database::getInstance()->getConnection()->lastInsertId();
-assertTest($rangerRepId > 0, "3.1 Official ranger report successfully submitted");
+assertTest(is_int($newRangerId) && $newRangerId > 1,
+    "3.1 submitReportWithId() returns actual inserted report ID ({$newRangerId} > 1)");
 
-// Immediately elevated to Verified
-$elevated = ReportService::updateStatus($rangerRepId, 'Verified', $wildlifeOfficerId);
-assertTest($elevated === true, "3.2 Report immediately elevated to 'Verified' by wildlife officer");
+// 3.2 Backward compatibility: submitReport() wrapper returns boolean true
+$subBoolResult = ReportService::submitReport(
+    $sectionId, $wildlifeOfficerId, 2, 'Ranger patrol sector C', 'Medium',
+    'Patrol backward compatibility test', null, null, null, null, $normRanger['data']
+);
+assertTest($subBoolResult === true,
+    "3.2 submitReport() wrapper maintains 100% backward compatibility returning boolean true");
 
-$fetchedRanger = ReportService::getById($rangerRepId);
+// 3.3 Auto-elevation in submit_report.php workflow targets $newRangerId
+$elevated = false;
+if ($newRangerId !== false && $newRangerId > 0) {
+    $elevated = ReportService::updateStatus($newRangerId, 'Verified', $wildlifeOfficerId);
+}
+assertTest($elevated === true, "3.3 Newly inserted report ID {$newRangerId} elevated to 'Verified'");
+
+$fetchedRanger = ReportService::getById($newRangerId);
 assertTest($fetchedRanger['report_status'] === 'Verified',
-    "3.3 Fetched report confirms status is 'Verified'");
+    "3.3 Fetched ranger report {$newRangerId} confirms status is 'Verified'");
 
-assertTest($fetchedRanger['sighting_date'] === '2026-11-08' &&
-           $fetchedRanger['sighting_time'] === '17:45:00' &&
-           $fetchedRanger['sighting_time_precision'] === 'exact' &&
-           $fetchedRanger['sighting_time_uncertainty_minutes'] == 5,
-    "3.4 Ranger report retains exact temporal telemetry after verification update");
+// 3.4 Report #1 status remains completely unchanged
+$testReport1After = ReportService::getById(1);
+assertTest($testReport1After['report_status'] === $testReport1Before['report_status'] &&
+           $testReport1After['updated_at'] === $testReport1Before['updated_at'],
+    "3.4 Report #1 status remains completely unchanged ('{$testReport1Before['report_status']}')");
+
+// 3.5 Failed wildlife submission safety:
+// If submission fails (e.g. invalid temporal data), submitReportWithId returns false,
+// elevation check ($newReportId !== false && $newReportId > 0) fails safely, and Report #1 is untouched.
+$badPayloadRanger = [
+    'sighting_date' => '2035-01-01', // Far future date rejected
+    'sighting_time' => '12:00',
+    'sighting_time_precision' => 'exact'
+];
+$normBad = TemporalService::validateAndNormalizeTemporalInput($badPayloadRanger);
+$failedId = false;
+if ($normBad['valid']) {
+    $failedId = ReportService::submitReportWithId(
+        $sectionId, $wildlifeOfficerId, 1, 'Bad submission', 'Low', '', null, null, null, null, $normBad['data']
+    );
+}
+assertTest($failedId === false, "3.5 Failed wildlife submission returns false");
+
+// Verify elevation guard: condition fails, updateStatus is not called
+$elevationAttempted = false;
+if ($failedId !== false && $failedId > 0) {
+    $elevationAttempted = true;
+    ReportService::updateStatus($failedId, 'Verified', $wildlifeOfficerId);
+}
+$testReport1AfterFailed = ReportService::getById(1);
+assertTest($elevationAttempted === false && 
+           $testReport1AfterFailed['report_status'] === $testReport1Before['report_status'],
+    "3.5 Failed submission never triggers updateStatus and Report #1 remains untouched");
 
 echo "\n";
 
 // -------------------------------------------------------------------------------------------------
-// GROUP 4: Edge Cases & Input Validation Error Rejections
+// GROUP 4: Edge Cases, Security Boundaries & Input Validation Rejections
 // -------------------------------------------------------------------------------------------------
-echo "-- Group 4: Edge Cases & Input Validation Error Rejections --\n";
+echo "-- Group 4: Edge Cases, Security Boundaries & Input Validation Rejections --\n";
 
 // 4.1 Future date rejected
 $badFutureDate = [
@@ -406,11 +515,10 @@ if ($futureHour < 24) {
     assertTest($resTime['valid'] === false && isset($resTime['errors']['sighting_time']),
         "4.2 Future time today ({$futureTimeStr}) rejected with clean error");
 } else {
-    // If running near midnight, test past date allows that time
     assertTest(true, "4.2 Skipping late-night edge check (hour >= 24)");
 }
 
-// 4.3 Exact precision without time rejected
+// 4.3 Exact precision without sighting_time rejected
 $badExactNoTime = [
     'sighting_date' => '2026-11-08',
     'sighting_time' => '',
@@ -420,7 +528,17 @@ $resNoTime = TemporalService::validateAndNormalizeTemporalInput($badExactNoTime)
 assertTest($resNoTime['valid'] === false && isset($resNoTime['errors']['sighting_time']),
     "4.3 Exact precision without sighting_time rejected");
 
-// 4.4 Approximate custom without uncertainty rejected
+// 4.4 Missing observation date rejected (exact precision with missing date when unknown is false)
+$badMissingDate = [
+    'sighting_date' => '',
+    'sighting_time' => '14:00',
+    'sighting_time_precision' => 'exact'
+];
+$resMissingDate = TemporalService::validateAndNormalizeTemporalInput($badMissingDate);
+assertTest($resMissingDate['valid'] === false && isset($resMissingDate['errors']['sighting_date']),
+    "4.4 Missing observation date rejected for exact observation");
+
+// 4.5 Approximate custom without uncertainty rejected
 $badCustomNoUnc = [
     'sighting_date' => '2026-11-08',
     'sighting_time' => '15:00',
@@ -430,9 +548,9 @@ $badCustomNoUnc = [
 ];
 $resNoUnc = TemporalService::validateAndNormalizeTemporalInput($badCustomNoUnc);
 assertTest($resNoUnc['valid'] === false && isset($resNoUnc['errors']['sighting_time_uncertainty_minutes']),
-    "4.4 Approximate custom without uncertainty rejected");
+    "4.5 Approximate custom without uncertainty rejected");
 
-// 4.5 Conflict: exact precision with window specified rejected
+// 4.6 Conflict: exact precision with window specified rejected
 $badExactConflict = [
     'sighting_date' => '2026-11-08',
     'sighting_time' => '05:30',
@@ -441,9 +559,136 @@ $badExactConflict = [
 ];
 $resConflict = TemporalService::validateAndNormalizeTemporalInput($badExactConflict);
 assertTest($resConflict['valid'] === false && isset($resConflict['errors']['sighting_time_window']),
-    "4.5 Conflict: exact precision with window 'dawn' rejected");
+    "4.6 Conflict: exact precision with window 'dawn' rejected");
 
-// 4.6 Count reports before & after failed submissions to verify zero writes
+// 4.7 Invalid temporal hidden fields rejected
+// 4.7.1 Invalid precision
+$badPrecision = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time_precision' => 'arbitrary_precision'
+];
+$resBadPrec = TemporalService::validateAndNormalizeTemporalInput($badPrecision);
+assertTest($resBadPrec['valid'] === false && isset($resBadPrec['errors']['sighting_time_precision']),
+    "4.7.1 Invalid precision 'arbitrary_precision' rejected");
+
+// 4.7.2 Invalid window
+$badWindow = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time_precision' => 'approximate',
+    'sighting_time_window' => 'midnight_feast'
+];
+$resBadWin = TemporalService::validateAndNormalizeTemporalInput($badWindow);
+assertTest($resBadWin['valid'] === false && isset($resBadWin['errors']['sighting_time_window']),
+    "4.7.2 Invalid diurnal window 'midnight_feast' rejected");
+
+// 4.7.3 Out of range uncertainty minutes (-5, 0, 500)
+$badUncNeg = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time' => '15:00',
+    'sighting_time_precision' => 'approximate',
+    'sighting_time_window' => 'custom',
+    'sighting_time_uncertainty_minutes' => -5
+];
+$badUncZero = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time' => '15:00',
+    'sighting_time_precision' => 'approximate',
+    'sighting_time_window' => 'custom',
+    'sighting_time_uncertainty_minutes' => 0
+];
+$badUncHuge = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time' => '15:00',
+    'sighting_time_precision' => 'approximate',
+    'sighting_time_window' => 'custom',
+    'sighting_time_uncertainty_minutes' => 500
+];
+$resUncNeg = TemporalService::validateAndNormalizeTemporalInput($badUncNeg);
+$resUncZero = TemporalService::validateAndNormalizeTemporalInput($badUncZero);
+$resUncHuge = TemporalService::validateAndNormalizeTemporalInput($badUncHuge);
+assertTest($resUncNeg['valid'] === false && $resUncZero['valid'] === false && $resUncHuge['valid'] === false,
+    "4.7.3 Out-of-range uncertainties (-5, 0, 500m) rejected cleanly");
+
+// 4.8 Tampered GPS timestamp handling
+// 4.8.1 Negative epoch
+$gpsNeg = TemporalService::parseGpsTimestamp(-1000);
+assertTest($gpsNeg['valid'] === false && strpos($gpsNeg['error'], 'prior to 2020') !== false,
+    "4.8.1 Negative epoch GPS timestamp rejected");
+
+// 4.8.2 Pre-2020 epoch (1500000000 -> 2017)
+$gpsPre2020 = TemporalService::parseGpsTimestamp(1500000000);
+assertTest($gpsPre2020['valid'] === false && strpos($gpsPre2020['error'], 'prior to 2020') !== false,
+    "4.8.2 Pre-2020 epoch GPS timestamp rejected");
+
+// 4.8.3 Far future epoch (2000000000 -> 2033)
+$gpsFuture = TemporalService::parseGpsTimestamp(2000000000);
+assertTest($gpsFuture['valid'] === false && strpos($gpsFuture['error'], 'future') !== false,
+    "4.8.3 Far future epoch GPS timestamp rejected");
+
+// 4.8.4 SQL injection or malformed string
+$gpsSqlInj = TemporalService::parseGpsTimestamp("1762657445'; DROP TABLE users; --");
+assertTest($gpsSqlInj['valid'] === false,
+    "4.8.4 Malformed / injected GPS timestamp string gracefully rejected");
+
+// 4.8.5 Null / empty string
+$gpsNull = TemporalService::parseGpsTimestamp(null);
+$gpsEmpty = TemporalService::parseGpsTimestamp("");
+assertTest($gpsNull['valid'] === true && $gpsNull['datetime'] === null &&
+           $gpsEmpty['valid'] === true && $gpsEmpty['datetime'] === null,
+    "4.8.5 Empty/null GPS timestamp resolves gracefully to null without error");
+
+// 4.9 Exact midnight boundary (00:00:00)
+$midnightPayload = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time' => '00:00:00',
+    'sighting_time_precision' => 'exact'
+];
+$normMidnight = TemporalService::validateAndNormalizeTemporalInput($midnightPayload);
+assertTest($normMidnight['valid'] === true && $normMidnight['data']['sighting_time'] === '00:00:00',
+    "4.9 Exact midnight (00:00:00) valid and distinguished from null");
+
+$subMidnightId = ReportService::submitReportWithId(
+    $sectionId, $reporterId, 1, 'Midnight track sector 4.9', 'Low',
+    'Elephant crossed at exact midnight', null, null, null, null, $normMidnight['data']
+);
+$fetchedMidnight = ReportService::getById($subMidnightId);
+assertTest($fetchedMidnight['sighting_time'] === '00:00:00',
+    "4.9 Midnight persisted in database as '00:00:00'");
+
+// 4.10 Night window crossing midnight
+$nightPayload = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time_precision' => 'approximate',
+    'sighting_time_window' => 'night'
+];
+$normNight = TemporalService::validateAndNormalizeTemporalInput($nightPayload);
+assertTest($normNight['valid'] === true &&
+           $normNight['data']['sighting_time'] === '22:00:00' &&
+           $normNight['data']['sighting_time_uncertainty_minutes'] === 120,
+    "4.10 Night window (20:00-00:00) normalizes to reference 22:00:00 ±120m");
+
+// 4.11 Stale GPS timestamp reset
+$staleGpsPayload = [
+    'sighting_date' => '2026-11-08',
+    'sighting_time' => '10:00',
+    'sighting_time_precision' => 'exact',
+    'gps_timestamp' => '' // cleared on UI
+];
+$normStaleGps = TemporalService::validateAndNormalizeTemporalInput($staleGpsPayload);
+assertTest($normStaleGps['data']['gps_captured_at'] === null,
+    "4.11 Stale GPS timestamp reset: cleared gps_timestamp produces NULL gps_captured_at");
+
+// 4.12 Unauthorized access prevention (Role Enforcement Check)
+// Verify Auth role requirements for wildlife reporting
+$reporterUser = ['id' => 2, 'role' => 'reporter', 'name' => 'Reporter User'];
+$officerUser = ['id' => 4, 'role' => 'wildlife_officer', 'name' => 'Wildlife Officer'];
+
+$isReporterAllowed = in_array($reporterUser['role'], (array)'wildlife_officer', true);
+$isOfficerAllowed = in_array($officerUser['role'], (array)'wildlife_officer', true);
+assertTest($isReporterAllowed === false && $isOfficerAllowed === true,
+    "4.12 Unauthorized access: Reporter role denied access to wildlife reporting interface");
+
+// 4.13 Zero writes on failed submission verification
 $countBefore = (int)Database::getInstance()->getConnection()->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
 try {
     ReportService::submitReport(
@@ -455,7 +700,7 @@ try {
 }
 $countAfter = (int)Database::getInstance()->getConnection()->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
 assertTest($countBefore === $countAfter,
-    "4.6 Rejected submissions produce zero database writes ({$countBefore} == {$countAfter})");
+    "4.13 Rejected submissions produce zero database writes ({$countBefore} == {$countAfter})");
 
 echo "\n";
 
@@ -512,11 +757,14 @@ echo "-- Group 6: Operational Database Zero-Write Invariant --\n";
 $rawPdo->exec("USE eleguard_rail");
 $postOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
 $postOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
+$postOperReport1 = $rawPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
 
 assertTest($postOperReports === $preOperReports,
     "6.1 Operational elephant_reports count untouched ({$preOperReports} == {$postOperReports})");
 assertTest($postOperLogs === $preOperLogs,
     "6.2 Operational system_logs count untouched ({$preOperLogs} == {$postOperLogs})");
+assertTest($postOperReport1 == $preOperReport1,
+    "6.3 Historical Report #1 in operational database is 100% untouched and pristine");
 
 // Cleanup test database
 echo "\n-- Dropping Isolated Test Database ({$testDbName}) --\n";

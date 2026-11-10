@@ -102,8 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        // 1. Submit Sighting (saves as Pending initially)
-        $success = ReportService::submitReport(
+        // 1. Submit Sighting using submitReportWithId() to reliably retrieve the new report ID
+        $newReportId = ReportService::submitReportWithId(
             (int)$sectionId,
             $currentUser['id'],
             (int)$elephantCount,
@@ -117,11 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tempNorm['data']
         );
 
-        if ($success) {
-            // Get the inserted ID to update status to 'Verified' immediately
-            $newReportId = (int)$success;
-            
-            // 2. Elevate to 'Verified' because submitter is a Wildlife Officer
+        if ($newReportId !== false && $newReportId > 0) {
+            // 2. Elevate ONLY the newly inserted report to 'Verified' because submitter is a Wildlife Officer
             ReportService::updateStatus($newReportId, 'Verified', $currentUser['id']);
             
             // Log ranger submit action

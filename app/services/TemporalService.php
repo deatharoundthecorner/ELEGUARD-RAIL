@@ -585,7 +585,42 @@ class TemporalService {
     }
 
     /**
+     * Helper to format duration in minutes to human readable string (e.g. "30m", "2h", "3h 30m", "1d 2h").
+     *
+     * @param int|float $minutes
+     * @return string
+     */
+    public static function formatDurationMinutes($minutes) {
+        $minutes = max(0, (int)round($minutes));
+        $hours = (int)floor($minutes / 60);
+        $mins = (int)($minutes % 60);
+
+        if ($hours < 1) {
+            return "{$mins}m";
+        } elseif ($mins === 0) {
+            if ($hours < 24) {
+                return "{$hours}h";
+            }
+            $days = (int)floor($hours / 24);
+            $remHours = $hours % 24;
+            return ($remHours === 0) ? "{$days}d" : "{$days}d {$remHours}h";
+        } elseif ($hours < 24) {
+            return "{$hours}h {$mins}m";
+        } else {
+            $days = (int)floor($hours / 24);
+            $remHours = $hours % 24;
+            return ($remHours === 0) ? "{$days}d" : "{$days}d {$remHours}h";
+        }
+    }
+
+    /**
      * Calculates the ingestion delay between actual observation and system filing.
+     * Takes precision and uncertainty intervals into account:
+     * - 'exact': computes exact difference.
+     * - 'approximate': computes uncertainty window. If submission occurs within the
+     *   uncertainty window of reference time, flags as contemporaneous. Otherwise
+     *   provides interval-aware bounds [min, max] rather than misleading exact latency.
+     * - 'unknown': handles date-only or completely unrecorded timestamps.
      * 
      * @param array $report
      * @return array|null Null if observation timestamp unknown, else delay details
@@ -600,6 +635,13 @@ class TemporalService {
             return null;
         }
 
+        $precision = !empty($report['sighting_time_precision']) 
+            ? strtolower(trim((string)$report['sighting_time_precision'])) 
+            : self::PRECISION_UNKNOWN;
+        $uncertainty = isset($report['sighting_time_uncertainty_minutes']) && $report['sighting_time_uncertainty_minutes'] !== '' && $report['sighting_time_uncertainty_minutes'] !== null
+            ? (int)$report['sighting_time_uncertainty_minutes']
+            : null;
+
         if (!empty($report['sighting_time'])) {
             $sightingStr = $report['sighting_date'] . ' ' . $report['sighting_time'];
             $sightingTs = strtotime($sightingStr);
@@ -610,10 +652,49 @@ class TemporalService {
             $diffSeconds = $createdAt - $sightingTs;
             $diffMinutes = (int)round($diffSeconds / 60);
 
-            if ($diffMinutes < 0) {
-                // Sighting recorded in future relative to created_at (skew)
+            // Approximate precision handling
+            if ($precision === self::PRECISION_APPROXIMATE) {
+                $unc = $uncertainty ?? 60; // fallback uncertainty if unspecified
+                $minMinutes = max(0, $diffMinutes - $unc);
+                $maxMinutes = max(0, $diffMinutes + $unc);
+
+                // If filing occurs within the uncertainty interval of reference time (or before it)
+                if ($diffMinutes <= $unc) {
+                    return [
+                        'minutes' => $diffMinutes,
+                        'min_minutes' => $minMinutes,
+                        'max_minutes' => $maxMinutes,
+                        'uncertainty_minutes' => $unc,
+                        'is_delayed' => false,
+                        'is_realtime' => true,
+                        'label' => "Contemporaneous observation window (filed within \xc2\xb1{$unc}m window)"
+                    ];
+                }
+
+                // Observation window has completely lapsed prior to filing
+                $centralFormatted = self::formatDurationMinutes($diffMinutes);
+                $minFormatted = self::formatDurationMinutes($minMinutes);
+                $maxFormatted = self::formatDurationMinutes($maxMinutes);
+
                 return [
                     'minutes' => $diffMinutes,
+                    'min_minutes' => $minMinutes,
+                    'max_minutes' => $maxMinutes,
+                    'uncertainty_minutes' => $unc,
+                    'is_delayed' => true,
+                    'is_realtime' => false,
+                    'label' => "Delayed ~{$centralFormatted} (approx. {$minFormatted} \xe2\x80\x93 {$maxFormatted}, \xc2\xb1{$unc}m)"
+                ];
+            }
+
+            // Exact precision handling
+            if ($diffMinutes < 0) {
+                // Sighting recorded slightly in future relative to created_at (clock skew)
+                return [
+                    'minutes' => $diffMinutes,
+                    'min_minutes' => 0,
+                    'max_minutes' => 0,
+                    'uncertainty_minutes' => $uncertainty ?? 5,
                     'is_delayed' => false,
                     'is_realtime' => true,
                     'label' => 'Real-time observation'
@@ -623,28 +704,25 @@ class TemporalService {
             if ($diffMinutes <= 15) {
                 return [
                     'minutes' => $diffMinutes,
+                    'min_minutes' => max(0, $diffMinutes - ($uncertainty ?? 5)),
+                    'max_minutes' => $diffMinutes + ($uncertainty ?? 5),
+                    'uncertainty_minutes' => $uncertainty ?? 5,
                     'is_delayed' => false,
                     'is_realtime' => true,
                     'label' => "Real-time (< {$diffMinutes}m delay)"
                 ];
             }
 
-            $hours = floor($diffMinutes / 60);
-            $mins = $diffMinutes % 60;
-
-            if ($hours < 24) {
-                $label = "Delayed by {$hours}h {$mins}m";
-            } else {
-                $days = floor($hours / 24);
-                $remHours = $hours % 24;
-                $label = "Delayed by {$days}d {$remHours}h";
-            }
+            $centralFormatted = self::formatDurationMinutes($diffMinutes);
 
             return [
                 'minutes' => $diffMinutes,
+                'min_minutes' => max(0, $diffMinutes - ($uncertainty ?? 5)),
+                'max_minutes' => $diffMinutes + ($uncertainty ?? 5),
+                'uncertainty_minutes' => $uncertainty ?? 5,
                 'is_delayed' => true,
                 'is_realtime' => false,
-                'label' => $label
+                'label' => "Delayed by {$centralFormatted}"
             ];
         } else {
             // Only date is known
@@ -655,6 +733,9 @@ class TemporalService {
             if ($diffDays <= 0) {
                 return [
                     'minutes' => null,
+                    'min_minutes' => null,
+                    'max_minutes' => null,
+                    'uncertainty_minutes' => null,
                     'is_delayed' => false,
                     'is_realtime' => false,
                     'label' => 'Filed same day (time unknown)'
@@ -662,6 +743,9 @@ class TemporalService {
             } else {
                 return [
                     'minutes' => null,
+                    'min_minutes' => null,
+                    'max_minutes' => null,
+                    'uncertainty_minutes' => null,
                     'is_delayed' => true,
                     'is_realtime' => false,
                     'label' => "Filed {$diffDays} day" . ($diffDays > 1 ? 's' : '') . " later (time unknown)"

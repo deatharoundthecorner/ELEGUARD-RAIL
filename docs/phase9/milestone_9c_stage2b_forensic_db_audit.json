@@ -1,0 +1,132 @@
+{
+    "elephant_reports": {
+        "primary_key": "id",
+        "backup_rows": 43,
+        "operational_rows": 43,
+        "row_count_match": true,
+        "columns_compared": 24,
+        "missing_rows": [],
+        "extra_rows": [],
+        "field_mismatches": []
+    },
+    "system_logs": {
+        "primary_key": "id",
+        "backup_rows": 185,
+        "operational_rows": 185,
+        "row_count_match": true,
+        "columns_compared": 5,
+        "missing_rows": [],
+        "extra_rows": [],
+        "field_mismatches": []
+    },
+    "alerts": {
+        "primary_key": "id",
+        "backup_rows": 15,
+        "operational_rows": 15,
+        "row_count_match": true,
+        "columns_compared": 9,
+        "missing_rows": [],
+        "extra_rows": [],
+        "field_mismatches": []
+    },
+    "driver_acknowledgements": {
+        "primary_key": "id",
+        "backup_rows": 13,
+        "operational_rows": 13,
+        "row_count_match": true,
+        "columns_compared": 6,
+        "missing_rows": [],
+        "extra_rows": [],
+        "field_mismatches": []
+    },
+    "hotspots": {
+        "primary_key": "id",
+        "backup_rows": 4,
+        "operational_rows": 4,
+        "row_count_match": true,
+        "columns_compared": 8,
+        "missing_rows": [],
+        "extra_rows": [],
+        "field_mismatches": []
+    },
+    "railway_sections": {
+        "primary_key": "id",
+        "backup_rows": 4,
+        "operational_rows": 4,
+        "row_count_match": true,
+        "columns_compared": 8,
+        "missing_rows": [],
+        "extra_rows": [],
+        "field_mismatches": []
+    },
+    "users": {
+        "primary_key": "id",
+        "backup_rows": 5,
+        "operational_rows": 5,
+        "row_count_match": true,
+        "columns_compared": 7,
+        "missing_rows": [],
+        "extra_rows": [],
+        "field_mismatches": []
+    },
+    "incident_history": {
+        "primary_key": "id",
+        "backup_rows": 3,
+        "operational_rows": 3,
+        "row_count_match": true,
+        "columns_compared": 7,
+        "missing_rows": [],
+        "extra_rows": [],
+        "field_mismatches": []
+    },
+    "elephant_reports_temporal_preservation": {
+        "total_reports": 43,
+        "non_null_dates": "0",
+        "non_null_times": "0",
+        "non_unknown_precision": "0",
+        "non_null_windows": "0",
+        "non_null_uncertainties": "0",
+        "non_colombo_timezones": "0",
+        "non_null_gps_captured": "0"
+    },
+    "system_logs_forensics": {
+        "auto_increment": 186,
+        "latest_logs": [
+            {
+                "id": 185,
+                "user_id": 4,
+                "action": "Report Updated",
+                "description": "Report #84 status changed to 'Rejected'.",
+                "created_at": "2026-11-08 20:59:53"
+            },
+            {
+                "id": 184,
+                "user_id": 4,
+                "action": "Report Updated",
+                "description": "Report #84 status changed to 'Verified'.",
+                "created_at": "2026-11-08 20:59:53"
+            },
+            {
+                "id": 183,
+                "user_id": 3,
+                "action": "Driver Acknowledged Alert",
+                "description": "Driver acknowledged Alert #15 as 'Slowing Down'.",
+                "created_at": "2026-11-08 20:59:49"
+            },
+            {
+                "id": 182,
+                "user_id": 2,
+                "action": "Alert Created",
+                "description": "Alert #15 (Critical) created for railway section #2.",
+                "created_at": "2026-11-08 20:59:49"
+            },
+            {
+                "id": 181,
+                "user_id": 4,
+                "action": "Report Updated",
+                "description": "Report #82 status changed to 'Verified'.",
+                "created_at": "2026-11-08 20:59:49"
+            }
+        ]
+    }
+}

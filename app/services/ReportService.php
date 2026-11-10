@@ -16,7 +16,12 @@ class ReportService {
      * Supports both legacy callers (without temporal arguments) and new temporal callers
      * (passing an associative array or positional temporal arguments).
      */
-    public static function submitReport(
+    /**
+     * Submits a new elephant sighting report and returns the inserted report primary key ID.
+     * 
+     * @return int|false Inserted report ID (> 0) on success, or false on failure/validation error.
+     */
+    public static function submitReportWithId(
         $sectionId, 
         $reportedBy, 
         $elephantCount, 
@@ -130,20 +135,72 @@ class ReportService {
             ':created_at' => $reportTime
         ]);
 
-        // 5. Trigger AI advisory inference asynchronously/synchronously if image is provided
+        if (!$success) {
+            return false;
+        }
+
+        $reportId = (int)$db->lastInsertId();
+        if ($reportId <= 0) {
+            return false;
+        }
+
+        // 6. Trigger AI advisory inference asynchronously/synchronously if image is provided
         // Failure of AI must NEVER block, invalidate, or duplicate report submission
-        if ($success) {
-            $reportId = (int)$db->lastInsertId();
-            if ($reportId > 0 && !empty($imagePath)) {
-                try {
-                    AiDetectionService::processReportAi($reportId, $imagePath);
-                } catch (Throwable $e) {
-                    error_log("EleGuard AI Detection Error on Report #{$reportId}: " . $e->getMessage());
-                }
+        if (!empty($imagePath)) {
+            try {
+                AiDetectionService::processReportAi($reportId, $imagePath);
+            } catch (Throwable $e) {
+                error_log("EleGuard AI Detection Error on Report #{$reportId}: " . $e->getMessage());
             }
         }
 
-        return $success;
+        return $reportId;
+    }
+
+    /**
+     * Submits a new elephant sighting report and returns boolean true on success.
+     * Preserves strict backward compatibility with all existing callers expecting a boolean.
+     * 
+     * @return bool True on success, false on failure.
+     */
+    public static function submitReport(
+        $sectionId, 
+        $reportedBy, 
+        $elephantCount, 
+        $locationDesc, 
+        $urgencyLevel, 
+        $description, 
+        $imagePath = null, 
+        $latitude = null, 
+        $longitude = null, 
+        $accuracy = null,
+        $temporalData = null,
+        $sightingTime = null,
+        $sightingPrecision = null,
+        $sightingWindow = null,
+        $sightingUncertainty = null,
+        $gpsCapturedAt = null
+    ) {
+        $result = self::submitReportWithId(
+            $sectionId, 
+            $reportedBy, 
+            $elephantCount, 
+            $locationDesc, 
+            $urgencyLevel, 
+            $description, 
+            $imagePath, 
+            $latitude, 
+            $longitude, 
+            $accuracy,
+            $temporalData,
+            $sightingTime,
+            $sightingPrecision,
+            $sightingWindow,
+            $sightingUncertainty,
+            $gpsCapturedAt
+        );
+
+        return ($result !== false && $result > 0);
     }
 
     /**
