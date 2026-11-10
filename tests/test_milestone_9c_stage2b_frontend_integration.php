@@ -209,38 +209,93 @@ assertTest($delRealtime['is_realtime'] === true && $delRealtime['is_delayed'] ==
            $delExactDelayed['label'] === 'Delayed by 6h 30m',
     "1.9 Exact reporting delay calculates real-time (<15m) and delayed exact hours correctly");
 
-// 1.10 Approximate reporting delay with uncertainty window
-// Case A: Sighting 09:00 ±90m submitted at 11:00 (120m elapsed, window 07:30-10:30, delay 30m - 3h 30m)
-$delApproxDelayed = TemporalService::calculateReportingDelay([
+// 1.10 Approximate reporting delay with uncertainty window & chronology boundaries
+// Baseline test report: Observation reference: 09:00, Precision: approximate, Uncertainty: ±90m
+// Plausible observation window: 07:30 – 10:30
+$baseApproxRep = [
     'sighting_date' => '2026-11-08',
     'sighting_time' => '09:00:00',
     'sighting_time_precision' => 'approximate',
     'sighting_time_window' => 'morning',
-    'sighting_time_uncertainty_minutes' => 90,
-    'created_at' => '2026-11-08 11:00:00'
-]);
-assertTest($delApproxDelayed['is_delayed'] === true &&
-           $delApproxDelayed['is_realtime'] === false &&
-           $delApproxDelayed['min_minutes'] === 30 &&
-           $delApproxDelayed['max_minutes'] === 210 &&
-           strpos($delApproxDelayed['label'], 'Delayed ~2h') !== false &&
-           strpos($delApproxDelayed['label'], '30m') !== false &&
-           strpos($delApproxDelayed['label'], '3h 30m') !== false,
-    "1.10 (A) Approximate delay for 09:00 ±90m filed at 11:00 shows interval bounds [30m – 3h 30m, ±90m]: '{$delApproxDelayed['label']}'");
+    'sighting_time_uncertainty_minutes' => 90
+];
 
-// Case B: Sighting 09:00 ±90m submitted at 09:30 (elapsed 30m <= 90m uncertainty, within contemporaneous window)
-$delApproxContemp = TemporalService::calculateReportingDelay([
+// 1.10.1: 06:00 — before possible observation interval (diff = -180m < -90m)
+$del0600 = TemporalService::calculateReportingDelay(array_merge($baseApproxRep, ['created_at' => '2026-11-08 06:00:00']));
+assertTest($del0600['is_chronology_inconsistent'] === true &&
+           $del0600['is_delayed'] === false &&
+           $del0600['is_realtime'] === false &&
+           strpos($del0600['label'], 'Chronology inconsistency') !== false,
+    "1.10.1 (06:00) Before 07:30 window flagged as chronology inconsistency: '{$del0600['label']}'");
+
+// 1.10.2: 07:30 — earliest interval boundary (diff = -90m = -unc)
+$del0730 = TemporalService::calculateReportingDelay(array_merge($baseApproxRep, ['created_at' => '2026-11-08 07:30:00']));
+assertTest($del0730['is_chronology_inconsistent'] === false &&
+           $del0730['is_delayed'] === false &&
+           $del0730['is_realtime'] === true &&
+           strpos($del0730['label'], 'Within observation uncertainty interval') !== false,
+    "1.10.2 (07:30) Earliest boundary classified within observation uncertainty interval: '{$del0730['label']}'");
+
+// 1.10.3: 08:00 — inside interval (diff = -60m)
+$del0800 = TemporalService::calculateReportingDelay(array_merge($baseApproxRep, ['created_at' => '2026-11-08 08:00:00']));
+assertTest($del0800['is_chronology_inconsistent'] === false &&
+           $del0800['is_delayed'] === false &&
+           $del0800['is_realtime'] === true &&
+           strpos($del0800['label'], 'Within observation uncertainty interval') !== false,
+    "1.10.3 (08:00) Inside interval classified within observation uncertainty interval: '{$del0800['label']}'");
+
+// 1.10.4: 09:30 — inside interval (diff = +30m)
+$del0930 = TemporalService::calculateReportingDelay(array_merge($baseApproxRep, ['created_at' => '2026-11-08 09:30:00']));
+assertTest($del0930['is_chronology_inconsistent'] === false &&
+           $del0930['is_delayed'] === false &&
+           $del0930['is_realtime'] === true &&
+           strpos($del0930['label'], 'Within observation uncertainty interval') !== false,
+    "1.10.4 (09:30) Inside interval classified within observation uncertainty interval: '{$del0930['label']}'");
+
+// 1.10.5: 10:30 — latest interval boundary (diff = +90m = +unc)
+$del1030 = TemporalService::calculateReportingDelay(array_merge($baseApproxRep, ['created_at' => '2026-11-08 10:30:00']));
+assertTest($del1030['is_chronology_inconsistent'] === false &&
+           $del1030['is_delayed'] === false &&
+           $del1030['is_realtime'] === true &&
+           strpos($del1030['label'], 'Within observation uncertainty interval') !== false,
+    "1.10.5 (10:30) Latest boundary classified within observation uncertainty interval: '{$del1030['label']}'");
+
+// 1.10.6: 11:00 — after interval (diff = +120m > +90m)
+$del1100 = TemporalService::calculateReportingDelay(array_merge($baseApproxRep, ['created_at' => '2026-11-08 11:00:00']));
+assertTest($del1100['is_chronology_inconsistent'] === false &&
+           $del1100['is_delayed'] === true &&
+           $del1100['is_realtime'] === false &&
+           $del1100['min_minutes'] === 30 &&
+           $del1100['max_minutes'] === 210 &&
+           strpos($del1100['label'], 'Delayed ~2h') !== false &&
+           strpos($del1100['label'], '30m') !== false &&
+           strpos($del1100['label'], '3h 30m') !== false,
+    "1.10.6 (11:00) After interval classified as delayed [30m – 3h 30m, ±90m]: '{$del1100['label']}'");
+
+// 1.10.7: 12:00 — after interval (diff = +180m > +90m)
+$del1200 = TemporalService::calculateReportingDelay(array_merge($baseApproxRep, ['created_at' => '2026-11-08 12:00:00']));
+assertTest($del1200['is_chronology_inconsistent'] === false &&
+           $del1200['is_delayed'] === true &&
+           $del1200['is_realtime'] === false &&
+           $del1200['min_minutes'] === 90 &&
+           $del1200['max_minutes'] === 270 &&
+           strpos($del1200['label'], 'Delayed ~3h') !== false &&
+           strpos($del1200['label'], '1h 30m') !== false &&
+           strpos($del1200['label'], '4h 30m') !== false,
+    "1.10.7 (12:00) After interval classified as delayed [1h 30m – 4h 30m, ±90m]: '{$del1200['label']}'");
+
+// 1.10.8: Exact observation future timestamp chronology inconsistency check
+$delExactInconsistent = TemporalService::calculateReportingDelay([
     'sighting_date' => '2026-11-08',
-    'sighting_time' => '09:00:00',
-    'sighting_time_precision' => 'approximate',
-    'sighting_time_window' => 'morning',
-    'sighting_time_uncertainty_minutes' => 90,
-    'created_at' => '2026-11-08 09:30:00'
+    'sighting_time' => '14:00:00',
+    'sighting_time_precision' => 'exact',
+    'sighting_time_uncertainty_minutes' => 5,
+    'created_at' => '2026-11-08 12:00:00' // filed 2h before sighting
 ]);
-assertTest($delApproxContemp['is_delayed'] === false &&
-           $delApproxContemp['is_realtime'] === true &&
-           strpos($delApproxContemp['label'], 'Contemporaneous observation window') !== false,
-    "1.10 (B) Approximate sighting submitted within observation window marked contemporaneous: '{$delApproxContemp['label']}'");
+assertTest($delExactInconsistent['is_chronology_inconsistent'] === true &&
+           $delExactInconsistent['is_delayed'] === false &&
+           strpos($delExactInconsistent['label'], 'Chronology inconsistency') !== false,
+    "1.10.8 Exact observation with future timestamp flagged as chronology inconsistency: '{$delExactInconsistent['label']}'");
 
 echo "\n";
 

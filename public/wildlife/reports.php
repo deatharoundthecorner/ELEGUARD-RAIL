@@ -105,8 +105,12 @@ $sections = AlertService::getAllSections();
                     <tr>
                         <td style="color:var(--text-secondary);">Reporting Delay:</td>
                         <td>
-                            <span style="color:<?php echo $delayInfo['is_delayed'] ? 'var(--warning)' : 'var(--success)'; ?>; font-weight:500;">
-                                <?php echo $delayInfo['is_delayed'] ? '⏳ ' : '⚡ '; ?><?php echo e($delayInfo['label']); ?>
+                            <?php 
+                            $badgeColor = !empty($delayInfo['is_chronology_inconsistent']) ? 'var(--danger)' : ($delayInfo['is_delayed'] ? 'var(--warning)' : 'var(--success)');
+                            $badgeIcon = !empty($delayInfo['is_chronology_inconsistent']) ? '⚠️ ' : ($delayInfo['is_delayed'] ? '⏳ ' : '⚡ ');
+                            ?>
+                            <span style="color:<?php echo $badgeColor; ?>; font-weight:500;">
+                                <?php echo $badgeIcon; ?><?php echo e($delayInfo['label']); ?>
                             </span>
                         </td>
                     </tr>

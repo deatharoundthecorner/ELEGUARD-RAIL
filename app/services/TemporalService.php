@@ -658,20 +658,35 @@ class TemporalService {
                 $minMinutes = max(0, $diffMinutes - $unc);
                 $maxMinutes = max(0, $diffMinutes + $unc);
 
-                // If filing occurs within the uncertainty interval of reference time (or before it)
+                // Case 1: Chronology inconsistency (filed strictly before the earliest possible observation window)
+                if ($diffMinutes < -$unc) {
+                    return [
+                        'minutes' => $diffMinutes,
+                        'min_minutes' => null,
+                        'max_minutes' => null,
+                        'uncertainty_minutes' => $unc,
+                        'is_delayed' => false,
+                        'is_realtime' => false,
+                        'is_chronology_inconsistent' => true,
+                        'label' => "Chronology inconsistency (filed before plausible observation window)"
+                    ];
+                }
+
+                // Case 2: Within observation uncertainty interval (contemporaneous window: -$unc <= diffMinutes <= $unc)
                 if ($diffMinutes <= $unc) {
                     return [
                         'minutes' => $diffMinutes,
-                        'min_minutes' => $minMinutes,
+                        'min_minutes' => 0,
                         'max_minutes' => $maxMinutes,
                         'uncertainty_minutes' => $unc,
                         'is_delayed' => false,
                         'is_realtime' => true,
-                        'label' => "Contemporaneous observation window (filed within \xc2\xb1{$unc}m window)"
+                        'is_chronology_inconsistent' => false,
+                        'label' => "Within observation uncertainty interval (contemporaneous \xc2\xb1{$unc}m window)"
                     ];
                 }
 
-                // Observation window has completely lapsed prior to filing
+                // Case 3: Observation window has completely lapsed prior to filing (diffMinutes > $unc)
                 $centralFormatted = self::formatDurationMinutes($diffMinutes);
                 $minFormatted = self::formatDurationMinutes($minMinutes);
                 $maxFormatted = self::formatDurationMinutes($maxMinutes);
@@ -683,13 +698,28 @@ class TemporalService {
                     'uncertainty_minutes' => $unc,
                     'is_delayed' => true,
                     'is_realtime' => false,
+                    'is_chronology_inconsistent' => false,
                     'label' => "Delayed ~{$centralFormatted} (approx. {$minFormatted} \xe2\x80\x93 {$maxFormatted}, \xc2\xb1{$unc}m)"
                 ];
             }
 
             // Exact precision handling
-            if ($diffMinutes < 0) {
-                // Sighting recorded slightly in future relative to created_at (clock skew)
+            if ($diffMinutes < -5) {
+                // Sighting recorded significantly in future relative to created_at
+                return [
+                    'minutes' => $diffMinutes,
+                    'min_minutes' => null,
+                    'max_minutes' => null,
+                    'uncertainty_minutes' => $uncertainty ?? 5,
+                    'is_delayed' => false,
+                    'is_realtime' => false,
+                    'is_chronology_inconsistent' => true,
+                    'label' => 'Chronology inconsistency (sighting recorded after filing time)'
+                ];
+            }
+
+            if ($diffMinutes <= 0) {
+                // Slight clock skew up to 5 minutes
                 return [
                     'minutes' => $diffMinutes,
                     'min_minutes' => 0,
@@ -697,6 +727,7 @@ class TemporalService {
                     'uncertainty_minutes' => $uncertainty ?? 5,
                     'is_delayed' => false,
                     'is_realtime' => true,
+                    'is_chronology_inconsistent' => false,
                     'label' => 'Real-time observation'
                 ];
             }
@@ -709,6 +740,7 @@ class TemporalService {
                     'uncertainty_minutes' => $uncertainty ?? 5,
                     'is_delayed' => false,
                     'is_realtime' => true,
+                    'is_chronology_inconsistent' => false,
                     'label' => "Real-time (< {$diffMinutes}m delay)"
                 ];
             }
@@ -722,6 +754,7 @@ class TemporalService {
                 'uncertainty_minutes' => $uncertainty ?? 5,
                 'is_delayed' => true,
                 'is_realtime' => false,
+                'is_chronology_inconsistent' => false,
                 'label' => "Delayed by {$centralFormatted}"
             ];
         } else {
@@ -730,7 +763,7 @@ class TemporalService {
             $createdDateTs = strtotime(date('Y-m-d', $createdAt));
             $diffDays = (int)round(($createdDateTs - $sightingDateTs) / 86400);
 
-            if ($diffDays <= 0) {
+            if ($diffDays < 0) {
                 return [
                     'minutes' => null,
                     'min_minutes' => null,
@@ -738,6 +771,18 @@ class TemporalService {
                     'uncertainty_minutes' => null,
                     'is_delayed' => false,
                     'is_realtime' => false,
+                    'is_chronology_inconsistent' => true,
+                    'label' => 'Chronology inconsistency (filed before sighting date)'
+                ];
+            } elseif ($diffDays === 0) {
+                return [
+                    'minutes' => null,
+                    'min_minutes' => null,
+                    'max_minutes' => null,
+                    'uncertainty_minutes' => null,
+                    'is_delayed' => false,
+                    'is_realtime' => false,
+                    'is_chronology_inconsistent' => false,
                     'label' => 'Filed same day (time unknown)'
                 ];
             } else {
@@ -748,6 +793,7 @@ class TemporalService {
                     'uncertainty_minutes' => null,
                     'is_delayed' => true,
                     'is_realtime' => false,
+                    'is_chronology_inconsistent' => false,
                     'label' => "Filed {$diffDays} day" . ($diffDays > 1 ? 's' : '') . " later (time unknown)"
                 ];
             }
