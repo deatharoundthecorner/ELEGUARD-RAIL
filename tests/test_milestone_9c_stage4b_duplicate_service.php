@@ -451,14 +451,16 @@ $rep12A = [
 ];
 $rep12B = [
     'id' => 102, // Genuine report
+    'reported_by' => 5,
     'section_id' => 1,
+    'location_description' => 'Habarana Milestone 142',
     'elephant_count' => 3,
     'sighting_date' => '2026-11-10',
     'sighting_time' => '09:00:00',
     'sighting_time_precision' => 'exact',
     'latitude' => 8.041200,
     'longitude' => 80.825600,
-    'description' => 'Genuine field report'
+    'description' => 'Genuine field report of adult herd'
 ];
 $eval12 = DuplicateService::evaluateDuplicateCandidate($rep12A, $rep12B);
 
@@ -661,6 +663,244 @@ try {
 } catch (Exception $e) {
     runTest("18.4 Isolated test DB clustering failed", false, $totalTests, $passedTests, $failedTests, $e->getMessage());
 }
+
+// -------------------------------------------------------------------------
+// STAGE 4B.1 HARDENING AUDIT & INDEPENDENT SECURITY VERIFICATION
+// -------------------------------------------------------------------------
+echo "\n--- 20. STAGE 4B.1 HARDENING AUDIT & INDEPENDENT SECURITY VERIFICATION ---\n";
+
+// 20.1 Future genuine report IDs are NOT excluded by hardcoded ID ranges
+$repFuture12 = [
+    'id' => 12, // Formerly in 4-40 range
+    'reported_by' => 5,
+    'section_id' => 1,
+    'location_description' => 'Habarana Milestone 142',
+    'latitude' => 8.0412,
+    'longitude' => 80.8256,
+    'description' => 'Wild bull elephant observed by track inspector crossing track safely'
+];
+$provFuture12 = DuplicateService::classifyProvenance($repFuture12);
+runTest("20.1 Future genuine report with ID 12 is classified as genuine_field (not dev_test)", $provFuture12 === DuplicateService::PROVENANCE_GENUINE_FIELD, $totalTests, $passedTests, $failedTests, "Got: $provFuture12");
+
+$repFuture42 = [
+    'id' => 42, // Formerly in 41-43 range
+    'reported_by' => 4,
+    'section_id' => 2,
+    'location_description' => 'Minneriya National Park border',
+    'latitude' => 8.0425,
+    'longitude' => 80.8260,
+    'description' => 'Adult female elephant with two subadults grazing near culvert'
+];
+$provFuture42 = DuplicateService::classifyProvenance($repFuture42);
+runTest("20.2 Future genuine report with ID 42 is classified as genuine_field (not ai_test)", $provFuture42 === DuplicateService::PROVENANCE_GENUINE_FIELD, $totalTests, $passedTests, $failedTests, "Got: $provFuture42");
+
+$repFuture54 = [
+    'id' => 54, // Formerly in 53-56 range
+    'reported_by' => 3,
+    'section_id' => 1,
+    'location_description' => 'Gal Oya Junction South',
+    'latitude' => 8.0430,
+    'longitude' => 80.8265,
+    'description' => 'Lone elephant moving away from railway corridor towards scrub'
+];
+$provFuture54 = DuplicateService::classifyProvenance($repFuture54);
+runTest("20.3 Future genuine report with ID 54 is classified as genuine_field (not e2e_audit)", $provFuture54 === DuplicateService::PROVENANCE_GENUINE_FIELD, $totalTests, $passedTests, $failedTests, "Got: $provFuture54");
+
+// 20.4 Unknown provenance is neither falsely classified as genuine nor as test
+$repUnknown = [
+    'id' => 9999,
+    'description' => '',
+    'location_description' => '',
+    'reported_by' => null,
+    'latitude' => null
+];
+$provUnknown = DuplicateService::classifyProvenance($repUnknown);
+runTest("20.4 Incomplete metadata report classifies as unknown (not genuine)", $provUnknown === DuplicateService::PROVENANCE_UNKNOWN, $totalTests, $passedTests, $failedTests);
+runTest("20.5 Unknown provenance report is not excluded as a test/demo artifact", DuplicateService::isTestOrDemoProvenance($provUnknown) === false, $totalTests, $passedTests, $failedTests);
+
+// 20.6 Known test triad text signature identifies as development_test regardless of ID
+$repTestTriadAnyId = [
+    'id' => 8888, // Arbitrary non-triad ID
+    'description' => 'Testing text-only submission.',
+    'reported_by' => 5
+];
+runTest("20.6 Known test triad description identified as development_test regardless of ID", DuplicateService::classifyProvenance($repTestTriadAnyId) === DuplicateService::PROVENANCE_DEV_TEST, $totalTests, $passedTests, $failedTests);
+
+// 20.7 Known AI test signature identifies as ai_test regardless of ID
+$repAiTestAnyId = [
+    'id' => 7777,
+    'image_path' => 'assets/uploads/reports/qa_test_elephant_001.jpg',
+    'description' => 'AI model evaluation image'
+];
+runTest("20.7 Known AI test image identified as ai_test regardless of ID", DuplicateService::classifyProvenance($repAiTestAnyId) === DuplicateService::PROVENANCE_AI_TEST, $totalTests, $passedTests, $failedTests);
+
+// 20.8 Known E2E audit signature identifies as e2e_audit regardless of ID
+$repE2EAnyId = [
+    'id' => 6666,
+    'location_description' => 'E2E-AUDIT-ELEPHANT-VERIFY',
+    'description' => 'Automated governance test'
+];
+runTest("20.8 Known E2E audit signature identified as e2e_audit regardless of ID", DuplicateService::classifyProvenance($repE2EAnyId) === DuplicateService::PROVENANCE_E2E_AUDIT, $totalTests, $passedTests, $failedTests);
+
+// 20.9 Unauthorized API access check (public/api/gis_data.php access control)
+$gisApiSource = file_get_contents(__DIR__ . '/../public/api/gis_data.php');
+$hasAuthCheck = strpos($gisApiSource, 'Auth::check()') !== false;
+$hasRoleCheck = strpos($gisApiSource, "['wildlife_officer', 'control_officer', 'admin']") !== false;
+$has403Response = strpos($gisApiSource, '403') !== false;
+runTest("20.9 GIS Data API requires session authentication", $hasAuthCheck === true, $totalTests, $passedTests, $failedTests);
+runTest("20.10 GIS Data API restricts access to authorized roles and rejects unauthorized with 403", $hasRoleCheck === true && $has403Response === true, $totalTests, $passedTests, $failedTests);
+
+// 20.11 Coordinate masking geographic precision in Sri Lanka (~8° N)
+// 1° lat = 111.195 km => 0.01° lat = 1.112 km.
+// At lat 8° N, 1° lon = 111.195 * cos(8°) = 110.113 km => 0.01° lon = 1.101 km.
+// Fuzzing to 2 decimal places creates an uncertainty box of ~1.11 km x ~1.10 km (~122 hectares).
+$exactLat = 8.041234;
+$exactLon = 80.825678;
+$maskedCoord = DuplicateService::maskCoordinates($exactLat, $exactLon, 'driver');
+$latErrorMeters = abs($exactLat - $maskedCoord['latitude']) * 111195.0;
+$lonErrorMeters = abs($exactLon - $maskedCoord['longitude']) * (111195.0 * cos(deg2rad(8.0)));
+runTest("20.11 Two-decimal coordinate masking introduces >100m spatial fuzzing in latitude", $latErrorMeters > 100.0, $totalTests, $passedTests, $failedTests, "Lat error: {$latErrorMeters}m");
+runTest("20.12 Two-decimal coordinate masking introduces >50m spatial fuzzing in longitude", $lonErrorMeters > 50.0, $totalTests, $passedTests, $failedTests, "Lon error: {$lonErrorMeters}m");
+
+// 20.13 Cluster diameter boundary tests (threshold = 750m)
+$baseLat = 8.041200;
+$baseLon = 80.825600;
+$deltaLat755 = 755.0 / 111195.0;
+$latAt755 = $baseLat + $deltaLat755;
+$dist755 = DuplicateService::calculateGeodesicDistance($baseLat, $baseLon, $latAt755, $baseLon);
+
+$repBoundA = [
+    'id' => 2001,
+    'section_id' => 1,
+    'elephant_count' => 2,
+    'sighting_date' => '2026-11-10',
+    'sighting_time' => '09:00:00',
+    'sighting_time_precision' => 'exact',
+    'latitude' => $baseLat,
+    'longitude' => $baseLon
+];
+$repBoundB = [
+    'id' => 2002,
+    'section_id' => 1,
+    'elephant_count' => 2,
+    'sighting_date' => '2026-11-10',
+    'sighting_time' => '09:10:00',
+    'sighting_time_precision' => 'exact',
+    'latitude' => $latAt755, // > 750m away!
+    'longitude' => $baseLon
+];
+runTest("20.13 Boundary point exceeds 750m diameter threshold", $dist755 > 750.0, $totalTests, $passedTests, $failedTests, "Dist: {$dist755}m");
+
+$clusterBoundRes = DuplicateService::clusterReports([$repBoundA, $repBoundB], [
+    'spatial_threshold_meters' => 800.0,
+    'max_cluster_diameter_meters' => 750.0
+]);
+runTest("20.14 Reports exceeding 750m max cluster diameter are rejected from joining same cluster", 
+    empty($clusterBoundRes['clusters']) || $clusterBoundRes['clusters'][0]['member_count'] < 2, 
+    $totalTests, $passedTests, $failedTests
+);
+
+// 20.15 Cluster temporal boundary test (threshold = 90 min)
+$repTimeA = [
+    'id' => 2011,
+    'section_id' => 1,
+    'elephant_count' => 2,
+    'sighting_date' => '2026-11-10',
+    'sighting_time' => '09:00:00',
+    'sighting_time_precision' => 'exact',
+    'latitude' => $baseLat,
+    'longitude' => $baseLon
+];
+$repTimeB = [
+    'id' => 2012,
+    'section_id' => 1,
+    'elephant_count' => 2,
+    'sighting_date' => '2026-11-10',
+    'sighting_time' => '10:35:00', // 95 minutes later (> 90m cluster span)
+    'sighting_time_precision' => 'exact',
+    'latitude' => $baseLat,
+    'longitude' => $baseLon
+];
+$clusterTimeRes = DuplicateService::clusterReports([$repTimeA, $repTimeB], [
+    'temporal_threshold_minutes' => 100,
+    'max_cluster_span_minutes' => 90
+]);
+runTest("20.15 Reports exceeding 90 min max cluster temporal span are rejected from clustering", 
+    empty($clusterTimeRes['clusters']) || $clusterTimeRes['clusters'][0]['member_count'] < 2, 
+    $totalTests, $passedTests, $failedTests
+);
+
+// 20.16 Missing observation time report strictly barred from joining a cluster
+$repMissingTime = [
+    'id' => 2021,
+    'section_id' => 1,
+    'elephant_count' => 2,
+    'sighting_date' => null,
+    'sighting_time' => null,
+    'sighting_time_precision' => 'unknown',
+    'latitude' => $baseLat,
+    'longitude' => $baseLon
+];
+$repValidTime = [
+    'id' => 2022,
+    'section_id' => 1,
+    'elephant_count' => 2,
+    'sighting_date' => '2026-11-10',
+    'sighting_time' => '09:00:00',
+    'sighting_time_precision' => 'exact',
+    'latitude' => $baseLat,
+    'longitude' => $baseLon
+];
+$clusterMissingTimeRes = DuplicateService::clusterReports([$repMissingTime, $repValidTime]);
+runTest("20.16 Report with missing observation time is strictly placed in unclustered_reports", 
+    count($clusterMissingTimeRes['clusters']) === 0 && count($clusterMissingTimeRes['unclustered_reports']) === 2, 
+    $totalTests, $passedTests, $failedTests
+);
+
+// 20.17 clusterReports automatically sanitizes coordinates for unauthorized role
+$clusterSanitizedRes = DuplicateService::clusterReports([$rep1A, $rep1B], ['user_role' => 'reporter']);
+$clusteredMember1 = $clusterSanitizedRes['clusters'][0]['reports'][0];
+runTest("20.17 clusterReports sanitizes member report coordinates when requested by unauthorized role", 
+    $clusteredMember1['is_coordinates_masked'] === true && $clusteredMember1['latitude'] === 8.04, 
+    $totalTests, $passedTests, $failedTests
+);
+
+// 20.18 Cross-provenance comparison: genuine field vs unknown provenance emits review warning
+$repCrossGen = [
+    'id' => 2031,
+    'reported_by' => 5,
+    'section_id' => 1,
+    'elephant_count' => 2,
+    'sighting_date' => '2026-11-10',
+    'sighting_time' => '09:00:00',
+    'sighting_time_precision' => 'exact',
+    'location_description' => 'Habarana Corridor',
+    'latitude' => $baseLat,
+    'longitude' => $baseLon,
+    'description' => 'Wild herd observed crossing'
+];
+$repCrossUnk = [
+    'id' => 2032,
+    'reported_by' => null, // Unauthenticated/unknown reporter
+    'section_id' => 1,
+    'elephant_count' => 2,
+    'sighting_date' => '2026-11-10',
+    'sighting_time' => '09:05:00',
+    'sighting_time_precision' => 'exact',
+    'location_description' => '',
+    'latitude' => $baseLat,
+    'longitude' => $baseLon,
+    'description' => '' // Empty description
+];
+$evalCross = DuplicateService::evaluateDuplicateCandidate($repCrossGen, $repCrossUnk);
+runTest("20.18 Cross-provenance comparison between genuine and unknown emits observer credentials warning", 
+    strpos(implode(';', $evalCross['provenance_warnings']), 'unverified provenance') !== false, 
+    $totalTests, $passedTests, $failedTests
+);
+runTest("20.19 Cross-provenance comparison does NOT exclude candidate (is_test_comparison is false)", 
+    $evalCross['provenance']['is_test_comparison'] === false, 
+    $totalTests, $passedTests, $failedTests
+);
 
 // -------------------------------------------------------------------------
 // POST-TEST AUDIT: Verify Operational Database Remains Pristine

@@ -280,59 +280,91 @@ class DuplicateService {
     }
 
     /**
-     * Classifies report provenance based on report ID, text patterns, and operational metadata.
-     * Prevents automated test scripts, mock triads, and seeded AI datasets from polluting field intelligence.
+     * Classifies report provenance based on affirmative signatures and operational metadata.
+     * STRICT CONSTRAINTS (Milestone 9C Stage 4B.1):
+     * 1. Never relies on hardcoded ID ranges (such as 4-40, 41-43, 53-56) as a permanent mechanism.
+     * 2. Future genuine reports must never be excluded because of their IDs.
+     * 3. Unknown reports are never automatically classified as genuine.
+     * 4. Unknown reports are never automatically classified as test records.
+     * 5. Never invents provenance; defaults strictly to 'unknown' when evidence is insufficient.
      * 
-     * @param array $report
+     * @param array $report Sighting report telemetry
      * @return string One of PROVENANCE_* constants
      */
     public static function classifyProvenance(array $report) {
-        $id = isset($report['id']) ? (int)$report['id'] : null;
+        // 1. Explicit provenance field (if caller, database, or test harness explicitly supplies it)
+        if (!empty($report['provenance'])) {
+            $prov = strtolower(trim((string)$report['provenance']));
+            if (in_array($prov, [
+                self::PROVENANCE_GENUINE_BASELINE,
+                self::PROVENANCE_GENUINE_FIELD,
+                self::PROVENANCE_DEV_TEST,
+                self::PROVENANCE_AI_TEST,
+                self::PROVENANCE_E2E_AUDIT
+            ], true)) {
+                return $prov;
+            }
+        }
+
         $desc = !empty($report['description']) ? strtolower((string)$report['description']) : '';
         $loc = !empty($report['location_description']) ? strtolower((string)$report['location_description']) : '';
         $aiNotes = !empty($report['ai_detection_notes']) ? strtolower((string)$report['ai_detection_notes']) : '';
         $img = !empty($report['image_path']) ? strtolower((string)$report['image_path']) : '';
 
-        // 1. Initial 3 genuine baseline reports in historical schema (IDs 1-3)
-        if ($id !== null && in_array($id, [1, 2, 3], true)) {
-            return self::PROVENANCE_GENUINE_BASELINE;
+        // 2. E2E Audit Signatures (highest priority for audit scripts)
+        if (strpos($loc, 'e2e-audit') !== false ||
+            strpos($desc, 'e2e audit') !== false ||
+            strpos($desc, 'governance test') !== false ||
+            strpos($desc, 'governance audit') !== false) {
+            return self::PROVENANCE_E2E_AUDIT;
         }
 
-        // 2. Automated test triads (IDs 4 to 40, or test keywords)
-        if (($id !== null && $id >= 4 && $id <= 40) ||
+        // 3. Automated Development Test Signatures (automated triads, mock test descriptions)
+        if (strpos($desc, 'testing text-only submission') !== false ||
+            strpos($desc, 'testing gps-enabled submission') !== false ||
+            strpos($desc, 'testing manual coordinate entry') !== false ||
+            strpos($desc, 'automated test') !== false ||
+            strpos($desc, 'test triad') !== false ||
+            strpos($desc, 'test sighting') !== false ||
             strpos($desc, 'minneriya track observation') !== false ||
             strpos($desc, 'gal oya wildlife sighting') !== false ||
-            strpos($desc, 'test sighting') !== false ||
-            strpos($desc, 'automated test') !== false ||
-            strpos($loc, 'test location') !== false) {
+            strpos($loc, 'test location') !== false ||
+            strpos($desc, 'dummy') !== false ||
+            strpos($desc, 'mock') !== false ||
+            strpos($desc, 'sample test') !== false) {
             return self::PROVENANCE_DEV_TEST;
         }
 
-        // 3. Seeded photograph AI model test records (IDs 41-43, or ai_elephant_ images)
-        if (($id !== null && in_array($id, [41, 42, 43], true)) ||
+        // 4. Seeded AI Model Test Signatures
+        if (strpos($img, 'report_habarana_herd.jpg') !== false ||
+            strpos($img, 'report_ambewela_track.jpg') !== false ||
+            strpos($img, 'report_minneriya_dusk.jpg') !== false ||
             strpos($img, 'ai_elephant_') !== false ||
+            strpos($img, 'qa_test_elephant') !== false ||
             strpos($desc, 'ai model test') !== false ||
             strpos($aiNotes, 'seeded ai test') !== false) {
             return self::PROVENANCE_AI_TEST;
         }
 
-        // 4. Governance and E2E audit test reports (IDs 53-56)
-        if (($id !== null && in_array($id, [53, 54, 55, 56], true)) ||
-            strpos($desc, 'e2e audit') !== false ||
-            strpos($desc, 'governance test') !== false) {
-            return self::PROVENANCE_E2E_AUDIT;
+        // 5. Genuine Baseline Records (historical commissioning records)
+        // Identified by historical baseline text signatures
+        if (strpos($desc, 'two adult elephants spotted drinking water') !== false ||
+            strpos($desc, 'herd of 5 elephants including a calf') !== false ||
+            strpos($desc, 'large bull elephant standing directly on the track') !== false) {
+            return self::PROVENANCE_GENUINE_BASELINE;
         }
 
-        // 5. Explicit mock or developer dummy keywords
-        if (strpos($desc, 'dummy') !== false || strpos($desc, 'mock') !== false || strpos($desc, 'sample test') !== false) {
-            return self::PROVENANCE_DEV_TEST;
-        }
-
-        // 6. Genuine field records
-        if (!empty($report['location_description']) || !empty($report['latitude'])) {
+        // 6. Genuine Field Records:
+        // Must have affirmative operational evidence:
+        // non-empty description, valid coordinates or location, and a valid reported_by user,
+        // WITHOUT any test signatures
+        if (!empty($report['reported_by']) && is_numeric($report['reported_by']) &&
+            (!empty($report['location_description']) || !empty($report['latitude'])) &&
+            !empty($report['description'])) {
             return self::PROVENANCE_GENUINE_FIELD;
         }
 
+        // 7. Unknown Provenance: default when metadata is insufficient or unverified
         return self::PROVENANCE_UNKNOWN;
     }
 
@@ -384,6 +416,48 @@ class DuplicateService {
     }
 
     /**
+     * Sanitizes a report record according to the requesting user's authorization role.
+     * Unauthorized roles (driver, reporter, public, unauthenticated) have their GPS coordinates
+     * fuzzed to 2 decimal places (~1.1 km blur) to protect elephants from poachers.
+     * 
+     * @param array $report Report record
+     * @param string|null $userRole User role
+     * @return array Sanitized report record
+     */
+    public static function sanitizeReportForRole(array $report, $userRole = null) {
+        $isAuthorized = ($userRole !== null && in_array(strtolower(trim($userRole)), self::AUTHORIZED_ROLES, true));
+        $sanitized = $report;
+
+        if (!$isAuthorized) {
+            $masked = self::maskCoordinates($report['latitude'] ?? null, $report['longitude'] ?? null, $userRole);
+            $sanitized['latitude'] = $masked['latitude'];
+            $sanitized['longitude'] = $masked['longitude'];
+            $sanitized['is_coordinates_masked'] = true;
+            $sanitized['coordinate_masking_notice'] = $masked['masking_notice'];
+        } else {
+            $sanitized['is_coordinates_masked'] = false;
+            $sanitized['coordinate_masking_notice'] = null;
+        }
+
+        return $sanitized;
+    }
+
+    /**
+     * Sanitizes a list of report records according to the requesting user's authorization role.
+     * 
+     * @param array $reports List of report records
+     * @param string|null $userRole User role
+     * @return array List of sanitized report records
+     */
+    public static function sanitizeReportsForRole(array $reports, $userRole = null) {
+        $out = [];
+        foreach ($reports as $r) {
+            $out[] = self::sanitizeReportForRole($r, $userRole);
+        }
+        return $out;
+    }
+
+    /**
      * Evaluates whether two reports represent a potential duplicate sighting candidate.
      * Produces a fully explainable recommendation for authorized human reviewers.
      * 
@@ -416,6 +490,8 @@ class DuplicateService {
 
         if ($isTestComparison) {
             $provenanceWarnings[] = "One or both reports are identified as non-operational test/demo artifacts (Report A: {$provA}, Report B: {$provB}).";
+        } elseif ($provA === self::PROVENANCE_UNKNOWN || $provB === self::PROVENANCE_UNKNOWN) {
+            $provenanceWarnings[] = "One or both reports have unverified provenance (unknown); observer credentials should be reviewed during verification.";
         }
 
         // 2. Geographic & GPS Comparison
@@ -779,21 +855,29 @@ class DuplicateService {
             $cI = $assignedCluster[$i];
             $cJ = $assignedCluster[$j];
 
-            // Case 1: Neither report is clustered yet -> Create new cluster
+            // Case 1: Neither report is clustered yet -> Create new cluster if within diameter & span
             if ($cI === null && $cJ === null) {
-                $clusterIdx = count($clusters);
-                $clusters[$clusterIdx] = [
-                    'cluster_id' => $nextClusterId++,
-                    'indices' => [$i, $j],
-                    'report_ids' => [
-                        isset($reports[$i]['id']) ? $reports[$i]['id'] : "index_$i",
-                        isset($reports[$j]['id']) ? $reports[$j]['id'] : "index_$j"
-                    ],
-                    'candidate_classification' => $p['eval']['candidate_classification'],
-                    'evaluations' => [$p['eval']]
-                ];
-                $assignedCluster[$i] = $clusterIdx;
-                $assignedCluster[$j] = $clusterIdx;
+                if (self::validateClusterDiameterAndSpan([$i, $j], $reports, $maxDiameter, $maxSpan)) {
+                    $clusterIdx = count($clusters);
+                    $clusters[$clusterIdx] = [
+                        'cluster_id' => $nextClusterId++,
+                        'indices' => [$i, $j],
+                        'report_ids' => [
+                            isset($reports[$i]['id']) ? $reports[$i]['id'] : "index_$i",
+                            isset($reports[$j]['id']) ? $reports[$j]['id'] : "index_$j"
+                        ],
+                        'candidate_classification' => $p['eval']['candidate_classification'],
+                        'evaluations' => [$p['eval']]
+                    ];
+                    $assignedCluster[$i] = $clusterIdx;
+                    $assignedCluster[$j] = $clusterIdx;
+                } else {
+                    $transitiveSplits[] = [
+                        'candidate_a' => $i,
+                        'candidate_b' => $j,
+                        'reason' => "Pair rejected from cluster formation: exceeds maximum diameter ({$maxDiameter}m) or temporal span ({$maxSpan}m) limit."
+                    ];
+                }
                 continue;
             }
 
@@ -852,6 +936,8 @@ class DuplicateService {
             }
         }
 
+        $userRole = isset($options['user_role']) ? $options['user_role'] : null;
+
         // 4. Assemble final cluster summaries
         $finalClusters = [];
         $clusteredCount = 0;
@@ -866,7 +952,7 @@ class DuplicateService {
 
             $memberReports = [];
             foreach ($memberIndices as $idx) {
-                $memberReports[] = $reports[$idx];
+                $memberReports[] = self::sanitizeReportForRole($reports[$idx], $userRole);
             }
 
             $finalClusters[] = [
@@ -885,7 +971,7 @@ class DuplicateService {
         $unclustered = [];
         for ($i = 0; $i < $n; $i++) {
             if ($assignedCluster[$i] === null) {
-                $unclustered[] = $reports[$i];
+                $unclustered[] = self::sanitizeReportForRole($reports[$i], $userRole);
             }
         }
 
@@ -903,9 +989,23 @@ class DuplicateService {
      */
     private static function canJoinCluster($candidateIdx, array $clusterIndices, array $reports, $maxDiameter, $maxSpan, array $options) {
         $candidate = $reports[$candidateIdx];
+        $candInt = self::extractObservationInterval($candidate);
+
+        // A report with unknown observation time CANNOT join a temporal cluster
+        if (!$candInt['has_interval']) {
+            return false;
+        }
+
+        $allStarts = [$candInt['start_timestamp']];
+        $allEnds = [$candInt['end_timestamp']];
 
         foreach ($clusterIndices as $cIdx) {
             $existing = $reports[$cIdx];
+            $existInt = self::extractObservationInterval($existing);
+
+            if (!$existInt['has_interval']) {
+                return false;
+            }
 
             // 1. Distance check
             $dist = self::calculateGeodesicDistance(
@@ -916,16 +1016,15 @@ class DuplicateService {
                 return false;
             }
 
-            // 2. Temporal span check
-            $intA = self::extractObservationInterval($candidate);
-            $intB = self::extractObservationInterval($existing);
-            if ($intA['has_interval'] && $intB['has_interval']) {
-                $gapSec = max(0, max($intA['start_timestamp'], $intB['start_timestamp']) - min($intA['end_timestamp'], $intB['end_timestamp']));
-                $gapMin = (int)round($gapSec / 60);
-                if ($gapMin > $maxSpan) {
-                    return false;
-                }
-            }
+            $allStarts[] = $existInt['start_timestamp'];
+            $allEnds[] = $existInt['end_timestamp'];
+        }
+
+        // 2. Overall cluster temporal span check: (max(allEnds) - min(allStarts))
+        $totalClusterSpanSec = max($allEnds) - min($allStarts);
+        $totalClusterSpanMin = (int)round($totalClusterSpanSec / 60);
+        if ($totalClusterSpanMin > $maxSpan) {
+            return false;
         }
 
         return true;
@@ -936,7 +1035,17 @@ class DuplicateService {
      */
     private static function validateClusterDiameterAndSpan(array $indices, array $reports, $maxDiameter, $maxSpan) {
         $k = count($indices);
+        $allStarts = [];
+        $allEnds = [];
+
         for ($a = 0; $a < $k; $a++) {
+            $intA = self::extractObservationInterval($reports[$indices[$a]]);
+            if (!$intA['has_interval']) {
+                return false;
+            }
+            $allStarts[] = $intA['start_timestamp'];
+            $allEnds[] = $intA['end_timestamp'];
+
             for ($b = $a + 1; $b < $k; $b++) {
                 $repA = $reports[$indices[$a]];
                 $repB = $reports[$indices[$b]];
@@ -948,18 +1057,15 @@ class DuplicateService {
                 if ($dist === null || $dist > $maxDiameter) {
                     return false;
                 }
-
-                $intA = self::extractObservationInterval($repA);
-                $intB = self::extractObservationInterval($repB);
-                if ($intA['has_interval'] && $intB['has_interval']) {
-                    $gapSec = max(0, max($intA['start_timestamp'], $intB['start_timestamp']) - min($intA['end_timestamp'], $intB['end_timestamp']));
-                    $gapMin = (int)round($gapSec / 60);
-                    if ($gapMin > $maxSpan) {
-                        return false;
-                    }
-                }
             }
         }
+
+        $totalClusterSpanSec = max($allEnds) - min($allStarts);
+        $totalClusterSpanMin = (int)round($totalClusterSpanSec / 60);
+        if ($totalClusterSpanMin > $maxSpan) {
+            return false;
+        }
+
         return true;
     }
 
@@ -968,14 +1074,20 @@ class DuplicateService {
      */
     private static function computeClusterMetrics(array $indices, array $reports) {
         $maxDist = 0.0;
-        $maxSpanMin = 0;
         $k = count($indices);
+        $allStarts = [];
+        $allEnds = [];
 
         for ($a = 0; $a < $k; $a++) {
-            for ($b = $a + 1; $b < $k; $b++) {
-                $repA = $reports[$indices[$a]];
-                $repB = $reports[$indices[$b]];
+            $repA = $reports[$indices[$a]];
+            $intA = self::extractObservationInterval($repA);
+            if ($intA['has_interval']) {
+                $allStarts[] = $intA['start_timestamp'];
+                $allEnds[] = $intA['end_timestamp'];
+            }
 
+            for ($b = $a + 1; $b < $k; $b++) {
+                $repB = $reports[$indices[$b]];
                 $d = self::calculateGeodesicDistance(
                     $repA['latitude'] ?? null, $repA['longitude'] ?? null,
                     $repB['latitude'] ?? null, $repB['longitude'] ?? null
@@ -983,18 +1095,12 @@ class DuplicateService {
                 if ($d !== null && $d > $maxDist) {
                     $maxDist = $d;
                 }
-
-                $intA = self::extractObservationInterval($repA);
-                $intB = self::extractObservationInterval($repB);
-                if ($intA['has_interval'] && $intB['has_interval']) {
-                    $gapSec = max(0, max($intA['start_timestamp'], $intB['start_timestamp']) - min($intA['end_timestamp'], $intB['end_timestamp']));
-                    $gapMin = (int)round($gapSec / 60);
-                    if ($gapMin > $maxSpanMin) {
-                        $maxSpanMin = $gapMin;
-                    }
-                }
             }
         }
+
+        $maxSpanMin = (!empty($allStarts) && !empty($allEnds))
+            ? (int)round((max($allEnds) - min($allStarts)) / 60)
+            : 0;
 
         return [
             'max_distance_meters' => round($maxDist, 2),

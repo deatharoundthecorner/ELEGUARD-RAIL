@@ -97,15 +97,15 @@ Two sighting reports $R_A$ and $R_B$ are evaluated across five orthogonal dimens
 - If $|N_A - N_B| > 2$, candidate is preserved with an informative variance warning (reflecting potential herd splitting, calf occlusion, or differing vantage points).
 
 #### 2.5 Provenance Awareness & Isolation
-To prevent artificial test data from contaminating operational wildlife clusters, reports are automatically classified into provenance categories:
-- `genuine_baseline`: Historical records (IDs 1–3).
-- `genuine_field`: Authenticated field submissions from wildlife rangers or public users.
-- `development_test`: Automated test triads (IDs 4–40, or test keywords like "Minneriya Track Observation").
-- `ai_test`: Seeded photograph AI model test records (IDs 41–43, or `ai_elephant_` filenames).
-- `e2e_audit`: Governance and E2E audit test reports (IDs 53–56).
-- `unknown`: Missing metadata.
+To prevent artificial test data from contaminating operational wildlife clusters, reports are automatically classified into provenance categories based on affirmative signatures and authenticated metadata (strictly without hardcoding primary key ID ranges):
+- `genuine_baseline`: Historical commissioning records identified by narrative descriptions (e.g. "two adult elephants spotted drinking water", etc.).
+- `genuine_field`: Authenticated field submissions from verified users (`reported_by`) with affirmative field descriptions, valid coordinates, and zero test markers.
+- `development_test`: Automated test triads identified by specific test narrative signatures (`Testing text-only submission.`, `Testing GPS-enabled submission.`, `Testing manual coordinate entry.`, `automated test`, `test triad`, `minneriya track observation`, `gal oya wildlife sighting`, `mock`, `dummy`).
+- `ai_test`: Seeded photograph AI model test records identified by seeded image filenames (`report_habarana_herd.jpg`, `report_ambewela_track.jpg`, `report_minneriya_dusk.jpg`, `qa_test_elephant`, `ai_elephant_`) or AI test notes.
+- `e2e_audit`: Governance and E2E audit test reports identified by `e2e-audit`, `e2e audit`, or `governance test` in location or description.
+- `unknown`: Reports lacking verifiable credentials or affirmative text signatures default strictly to `unknown` without being falsely assumed genuine or falsely assumed test.
 
-**Invariant Rule:** Comparisons involving any test/demo provenance are immediately classified as `Excluded test/demo comparison` and blocked from operational clustering.
+**Invariant Rule:** Comparisons involving any test/demo provenance are immediately classified as `Excluded test/demo comparison` and blocked from operational clustering. Comparisons involving unknown provenance emit an explicit observer credential review warning without dropping the candidate. Future genuine reports are never excluded based on ID numbers.
 
 ---
 
@@ -176,8 +176,9 @@ The automated test suite `tests/test_milestone_9c_stage4b_duplicate_service.php`
 | **16. Empty Result** | Empty candidate pools and empty report arrays handled gracefully | 2 | **PASS** |
 | **17. RBAC & Masking** | Reporter/Driver/Public coordinates fuzzed to 2 decimals; Wildlife/Control/Admin exact | 8 | **PASS** |
 | **18. DB Immutability** | `assignClustersInDatabase` throws exception on operational DB; 0 risk score changes in test DB | 6 | **PASS** |
+| **20. Hardening Audit** | Provenance ID independence, coordinate precision, cluster diameter/span limits, API RBAC | 19 | **PASS** |
 | **19. Post-Test Audit** | Operational DB row counts remain strictly `43`, `185`, `15`; Report #1 pristine | 6 | **PASS** |
-| **TOTAL** | **19 Test Groups Across All Requirements** | **76 / 76** | **100% PASS** |
+| **TOTAL** | **20 Test Groups Across All Requirements** | **95 / 95** | **100% PASS** |
 
 ---
 
