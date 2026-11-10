@@ -1,0 +1,900 @@
+{
+    "metadata": {
+        "generated_at": "2026-11-10 16:30:19",
+        "purpose": "Milestone 9C Stage 3E Controlled Scenario Simulation Dataset",
+        "total_scenarios": 20,
+        "summary": {
+            "concordant": 17,
+            "promoted": 1,
+            "demoted": 2
+        },
+        "decay_sensitivity_matrix": {
+            "2": {
+                "0.5": 0.8409,
+                "1": 0.7071,
+                "2": 0.5,
+                "4": 0.25,
+                "8": 0.0625,
+                "12": 0.0156,
+                "24": 0.0002
+            },
+            "4": {
+                "0.5": 0.917,
+                "1": 0.8409,
+                "2": 0.7071,
+                "4": 0.5,
+                "8": 0.25,
+                "12": 0.125,
+                "24": 0.0156
+            },
+            "6": {
+                "0.5": 0.9439,
+                "1": 0.8909,
+                "2": 0.7937,
+                "4": 0.63,
+                "8": 0.3969,
+                "12": 0.25,
+                "24": 0.0625
+            },
+            "8": {
+                "0.5": 0.9576,
+                "1": 0.917,
+                "2": 0.8409,
+                "4": 0.7071,
+                "8": 0.5,
+                "12": 0.3536,
+                "24": 0.125
+            }
+        }
+    },
+    "scenarios": [
+        {
+            "scenario": {
+                "id": "SCN-01",
+                "title": "Daytime Single Elephant in Low Risk Section (On-Time Filing)",
+                "section_name": "Colombo-Fort",
+                "section_risk": "Low",
+                "urgency_level": "Low",
+                "elephant_count": 1,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "11:30:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 11:35:00"
+            },
+            "operational": {
+                "base_section": 1,
+                "urgency": 1,
+                "count": 1,
+                "alert": 0,
+                "night_bonus": 0,
+                "raw_total": 3,
+                "classification": "Low"
+            },
+            "experimental": {
+                "base_section": 1,
+                "urgency": 1,
+                "count": 1,
+                "alert": 0,
+                "diurnal_adjustment": 0,
+                "unrounded_total": 3,
+                "final_score": 3,
+                "classification": "Low",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-02",
+                "title": "Daytime Small Group in Medium Risk Section",
+                "section_name": "Polgahawela-Kurunegala",
+                "section_risk": "Medium",
+                "urgency_level": "Medium",
+                "elephant_count": 3,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "14:15:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 14:20:00"
+            },
+            "operational": {
+                "base_section": 2,
+                "urgency": 2,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 0,
+                "raw_total": 6,
+                "classification": "Medium"
+            },
+            "experimental": {
+                "base_section": 2,
+                "urgency": 2,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 0,
+                "unrounded_total": 6,
+                "final_score": 6,
+                "classification": "Medium",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-03",
+                "title": "Daytime Large Herd in High Risk Section",
+                "section_name": "Maho-Anuradhapura",
+                "section_risk": "High",
+                "urgency_level": "High",
+                "elephant_count": 6,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "10:00:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 10:15:00"
+            },
+            "operational": {
+                "base_section": 3,
+                "urgency": 3,
+                "count": 3,
+                "alert": 0,
+                "night_bonus": 0,
+                "raw_total": 9,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 3,
+                "urgency": 3,
+                "count": 3,
+                "alert": 0,
+                "diurnal_adjustment": 0,
+                "unrounded_total": 9,
+                "final_score": 9,
+                "classification": "High",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-04",
+                "title": "Nighttime Solitary Sighting in Low Risk Section",
+                "section_name": "Colombo-Fort",
+                "section_risk": "Low",
+                "urgency_level": "Low",
+                "elephant_count": 1,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "21:00:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 21:05:00"
+            },
+            "operational": {
+                "base_section": 1,
+                "urgency": 1,
+                "count": 1,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 5,
+                "classification": "Medium"
+            },
+            "experimental": {
+                "base_section": 1,
+                "urgency": 1,
+                "count": 1,
+                "alert": 0,
+                "diurnal_adjustment": 2,
+                "unrounded_total": 5,
+                "final_score": 5,
+                "classification": "Medium",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-05",
+                "title": "Nighttime High-Urgency Sighting in Medium Risk Corridor",
+                "section_name": "Polgahawela-Kurunegala",
+                "section_risk": "Medium",
+                "urgency_level": "High",
+                "elephant_count": 2,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "23:30:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 23:45:00"
+            },
+            "operational": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 9,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 2,
+                "unrounded_total": 9,
+                "final_score": 9,
+                "classification": "High",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-06",
+                "title": "Nighttime Maximum Hazard Herd with Active Section Alert",
+                "section_name": "Gal Oya-Habarana",
+                "section_risk": "Critical",
+                "urgency_level": "Critical",
+                "elephant_count": 8,
+                "active_alerts": true,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "20:45:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 20:50:00"
+            },
+            "operational": {
+                "base_section": 4,
+                "urgency": 4,
+                "count": 3,
+                "alert": 2,
+                "night_bonus": 2,
+                "raw_total": 15,
+                "classification": "Critical"
+            },
+            "experimental": {
+                "base_section": 4,
+                "urgency": 4,
+                "count": 3,
+                "alert": 2,
+                "diurnal_adjustment": 2,
+                "unrounded_total": 15,
+                "final_score": 15,
+                "classification": "Critical",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-07",
+                "title": "Dawn Twilight Point Sighting (05:45 SLST)",
+                "section_name": "Polgahawela-Kurunegala",
+                "section_risk": "Medium",
+                "urgency_level": "Medium",
+                "elephant_count": 1,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "05:45:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 05:50:00"
+            },
+            "operational": {
+                "base_section": 2,
+                "urgency": 2,
+                "count": 1,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 7,
+                "classification": "Medium"
+            },
+            "experimental": {
+                "base_section": 2,
+                "urgency": 2,
+                "count": 1,
+                "alert": 0,
+                "diurnal_adjustment": 1.25,
+                "unrounded_total": 6.25,
+                "final_score": 6,
+                "classification": "Medium",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": -0.75,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-08",
+                "title": "Dawn Twilight Approximate Preset Window Sighting",
+                "section_name": "Maho-Anuradhapura",
+                "section_risk": "High",
+                "urgency_level": "High",
+                "elephant_count": 4,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "05:30:00",
+                    "precision": "approximate",
+                    "window": "dawn",
+                    "uncertainty": 60
+                },
+                "filing_time": "2026-11-10 07:00:00"
+            },
+            "operational": {
+                "base_section": 3,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 0,
+                "raw_total": 8,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 3,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 1.4375,
+                "unrounded_total": 9.438,
+                "final_score": 9,
+                "classification": "High",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 1.44,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-09",
+                "title": "Dusk Twilight Point Sighting (18:15 SLST)",
+                "section_name": "Polgahawela-Kurunegala",
+                "section_risk": "Medium",
+                "urgency_level": "High",
+                "elephant_count": 2,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "18:15:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 18:20:00"
+            },
+            "operational": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 9,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 1.25,
+                "unrounded_total": 8.25,
+                "final_score": 8,
+                "classification": "High",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": -0.75,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-10",
+                "title": "Dusk Twilight Approximate Preset Window in Critical Corridor",
+                "section_name": "Gal Oya-Habarana",
+                "section_risk": "Critical",
+                "urgency_level": "Medium",
+                "elephant_count": 3,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "18:15:00",
+                    "precision": "approximate",
+                    "window": "dusk",
+                    "uncertainty": 45
+                },
+                "filing_time": "2026-11-10 19:15:00"
+            },
+            "operational": {
+                "base_section": 4,
+                "urgency": 2,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 10,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 4,
+                "urgency": 2,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 1.25,
+                "unrounded_total": 9.25,
+                "final_score": 9,
+                "classification": "High",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": -0.75,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-11",
+                "title": "Solitary Elephant at Night in Low Risk Section",
+                "section_name": "Colombo-Fort",
+                "section_risk": "Low",
+                "urgency_level": "Low",
+                "elephant_count": 1,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "22:15:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 22:20:00"
+            },
+            "operational": {
+                "base_section": 1,
+                "urgency": 1,
+                "count": 1,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 5,
+                "classification": "Medium"
+            },
+            "experimental": {
+                "base_section": 1,
+                "urgency": 1,
+                "count": 1,
+                "alert": 0,
+                "diurnal_adjustment": 2,
+                "unrounded_total": 5,
+                "final_score": 5,
+                "classification": "Medium",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-12",
+                "title": "Large Herd Crossing during Daylight Hours",
+                "section_name": "Polgahawela-Kurunegala",
+                "section_risk": "Medium",
+                "urgency_level": "High",
+                "elephant_count": 10,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "13:30:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 13:40:00"
+            },
+            "operational": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 3,
+                "alert": 0,
+                "night_bonus": 0,
+                "raw_total": 8,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 3,
+                "alert": 0,
+                "diurnal_adjustment": 0,
+                "unrounded_total": 8,
+                "final_score": 8,
+                "classification": "High",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-13",
+                "title": "Very Large Herd at Night in Critical Section with Pre-existing Alert",
+                "section_name": "Gal Oya-Habarana",
+                "section_risk": "Critical",
+                "urgency_level": "Critical",
+                "elephant_count": 12,
+                "active_alerts": true,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "01:30:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 01:45:00"
+            },
+            "operational": {
+                "base_section": 4,
+                "urgency": 4,
+                "count": 3,
+                "alert": 2,
+                "night_bonus": 2,
+                "raw_total": 15,
+                "classification": "Critical"
+            },
+            "experimental": {
+                "base_section": 4,
+                "urgency": 4,
+                "count": 3,
+                "alert": 2,
+                "diurnal_adjustment": 2,
+                "unrounded_total": 15,
+                "final_score": 15,
+                "classification": "Critical",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-14",
+                "title": "Passive Daytime Sighting in High Risk Section",
+                "section_name": "Maho-Anuradhapura",
+                "section_risk": "High",
+                "urgency_level": "Low",
+                "elephant_count": 1,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "11:00:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 11:15:00"
+            },
+            "operational": {
+                "base_section": 3,
+                "urgency": 1,
+                "count": 1,
+                "alert": 0,
+                "night_bonus": 0,
+                "raw_total": 5,
+                "classification": "Medium"
+            },
+            "experimental": {
+                "base_section": 3,
+                "urgency": 1,
+                "count": 1,
+                "alert": 0,
+                "diurnal_adjustment": 0,
+                "unrounded_total": 5,
+                "final_score": 5,
+                "classification": "Medium",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-15",
+                "title": "High Severity Night Event in Low Risk Section",
+                "section_name": "Colombo-Fort",
+                "section_risk": "Low",
+                "urgency_level": "Critical",
+                "elephant_count": 5,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "23:00:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 23:10:00"
+            },
+            "operational": {
+                "base_section": 1,
+                "urgency": 4,
+                "count": 3,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 10,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 1,
+                "urgency": 4,
+                "count": 3,
+                "alert": 0,
+                "diurnal_adjustment": 2,
+                "unrounded_total": 10,
+                "final_score": 10,
+                "classification": "High",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-16",
+                "title": "Morning Observation Ingestion-Delayed to Nighttime Filing",
+                "section_name": "Polgahawela-Kurunegala",
+                "section_risk": "Medium",
+                "urgency_level": "High",
+                "elephant_count": 2,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "08:00:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 19:30:00"
+            },
+            "operational": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 9,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 0,
+                "unrounded_total": 7,
+                "final_score": 7,
+                "classification": "Medium",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": -2,
+                "shift": "Demoted"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-17",
+                "title": "Night Observation Ingestion-Delayed to Daytime Filing",
+                "section_name": "Polgahawela-Kurunegala",
+                "section_risk": "Medium",
+                "urgency_level": "High",
+                "elephant_count": 2,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-09",
+                    "time": "23:00:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 11:00:00"
+            },
+            "operational": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 0,
+                "raw_total": 7,
+                "classification": "Medium"
+            },
+            "experimental": {
+                "base_section": 2,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 2,
+                "unrounded_total": 9,
+                "final_score": 9,
+                "classification": "High",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": 2,
+                "shift": "Promoted"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-18",
+                "title": "Approximate Custom Window (16:00 to 18:00) Crossing Dusk Boundary",
+                "section_name": "Polgahawela-Kurunegala",
+                "section_risk": "Medium",
+                "urgency_level": "Medium",
+                "elephant_count": 2,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "17:00:00",
+                    "precision": "approximate",
+                    "window": "custom",
+                    "uncertainty": 60
+                },
+                "filing_time": "2026-11-10 18:30:00"
+            },
+            "operational": {
+                "base_section": 2,
+                "urgency": 2,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 2,
+                "raw_total": 8,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 2,
+                "urgency": 2,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 0.25,
+                "unrounded_total": 6.25,
+                "final_score": 6,
+                "classification": "Medium",
+                "warnings": []
+            },
+            "comparison": {
+                "score_diff": -1.75,
+                "shift": "Demoted"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-19",
+                "title": "Unknown Observation Time Fallback (Neutral Zero Policy)",
+                "section_name": "Maho-Anuradhapura",
+                "section_risk": "High",
+                "urgency_level": "High",
+                "elephant_count": 3,
+                "active_alerts": false,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": null,
+                    "precision": "unknown",
+                    "uncertainty": null
+                },
+                "filing_time": "2026-11-10 14:00:00"
+            },
+            "operational": {
+                "base_section": 3,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "night_bonus": 0,
+                "raw_total": 8,
+                "classification": "High"
+            },
+            "experimental": {
+                "base_section": 3,
+                "urgency": 3,
+                "count": 2,
+                "alert": 0,
+                "diurnal_adjustment": 0,
+                "unrounded_total": 8,
+                "final_score": 8,
+                "classification": "High",
+                "warnings": [
+                    "Unknown observation time; zero diurnal adjustment applied (neutral daylight baseline)."
+                ]
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        },
+        {
+            "scenario": {
+                "id": "SCN-20",
+                "title": "Potential Duplicate Sighting Flagged (Non-Inflation Protection)",
+                "section_name": "Gal Oya-Habarana",
+                "section_risk": "Critical",
+                "urgency_level": "High",
+                "elephant_count": 2,
+                "active_alerts": true,
+                "is_potential_duplicate": true,
+                "observation": {
+                    "date": "2026-11-10",
+                    "time": "20:15:00",
+                    "precision": "exact",
+                    "uncertainty": 0
+                },
+                "filing_time": "2026-11-10 20:25:00"
+            },
+            "operational": {
+                "base_section": 4,
+                "urgency": 3,
+                "count": 2,
+                "alert": 2,
+                "night_bonus": 2,
+                "raw_total": 13,
+                "classification": "Critical"
+            },
+            "experimental": {
+                "base_section": 4,
+                "urgency": 3,
+                "count": 2,
+                "alert": 2,
+                "diurnal_adjustment": 2,
+                "unrounded_total": 13,
+                "final_score": 13,
+                "classification": "Critical",
+                "warnings": [
+                    "Report is flagged as a potential duplicate sighting; risk evaluation reflects individual report telemetry."
+                ]
+            },
+            "comparison": {
+                "score_diff": 0,
+                "shift": "Concordant"
+            }
+        }
+    ]
+}
