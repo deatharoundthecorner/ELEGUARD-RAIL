@@ -8,8 +8,8 @@
  * Verifies ZERO modifications to operational database (eleguard_rail).
  */
 
-// Set isolated test environment before loading database configs
-putenv('DB_NAME=eleguard_rail_test');
+require_once __DIR__ . '/bootstrap.php';
+ensureTestDatabaseExists();
 
 require_once __DIR__ . '/../app/config/database.php';
 require_once __DIR__ . '/../app/core/Database.php';

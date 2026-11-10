@@ -7,6 +7,9 @@
  * Fault Tolerance, and Strict Human Review Governance.
  */
 
+require_once __DIR__ . '/bootstrap.php';
+ensureTestDatabaseExists();
+
 require_once __DIR__ . '/../app/core/Database.php';
 require_once __DIR__ . '/../app/core/Auth.php';
 require_once __DIR__ . '/../app/services/ReportService.php';

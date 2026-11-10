@@ -12,6 +12,7 @@
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 ini_set('display_errors', '0');
 
+require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/../app/config/database.php';
 
 class Milestone9CStage1TestSuite {
@@ -360,7 +361,7 @@ class Milestone9CStage1TestSuite {
 
     private function cleanupTestDatabase() {
         echo "-- Step 8: Dropping Isolated Test Database --\n";
-        $this->pdo->exec("DROP DATABASE IF EXISTS `{$this->testDbName}`");
+        safeTeardownTestDatabase($this->pdo, $this->testDbName);
         $dbs = $this->pdo->query("SHOW DATABASES LIKE '{$this->testDbName}'")->fetchAll(PDO::FETCH_COLUMN);
         $this->assert(empty($dbs), "8.1 Isolated test database dropped cleanly");
         echo "\n";

@@ -21,6 +21,8 @@
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 ini_set('display_errors', '0');
 
+require_once __DIR__ . '/bootstrap.php';
+
 // STEP 1: Pre-flight operational DB record & create isolated test database
 $rawHost = '127.0.0.1';
 $rawPort = 3308;
@@ -610,7 +612,7 @@ class Milestone9CStage2ATestSuite {
 
     private function cleanupTestDatabase() {
         echo "-- Dropping Isolated Test Database ({$this->testDbName}) --\n";
-        $this->rawPdo->exec("DROP DATABASE IF EXISTS `{$this->testDbName}`");
+        safeTeardownTestDatabase($this->rawPdo, $this->testDbName);
         $dbs = $this->rawPdo->query("SHOW DATABASES LIKE '{$this->testDbName}'")->fetchAll(PDO::FETCH_COLUMN);
         $this->assert(empty($dbs), "Cleaned up isolated test database successfully");
         echo "\n";

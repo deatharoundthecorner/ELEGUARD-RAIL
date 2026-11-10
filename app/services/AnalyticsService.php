@@ -37,19 +37,64 @@ class AnalyticsService {
      * @throws RuntimeException If any write/mutation operation is detected
      */
     public static function executeReadOnlyQuery(PDO $pdo, $sql, array $params = []) {
-        $trimmedSql = trim($sql);
+        if (!is_string($sql) || trim($sql) === '') {
+            throw new InvalidArgumentException("SQL Read-Only Violation: Query must be a non-empty string.");
+        }
 
-        // Security check: Query must begin strictly with SELECT, SHOW, DESCRIBE, or EXPLAIN
-        if (!preg_match('/^(SELECT|SHOW|DESCRIBE|EXPLAIN)\b/i', $trimmedSql)) {
+        // 1. Strip SQL comments safely to expose the true canonical statements
+        // Multi-line comments: /* ... */
+        $canonicalSql = preg_replace('/\/\*[\s\S]*?\*\//', ' ', $sql);
+        // Single-line comments: -- comment and # comment
+        $canonicalSql = preg_replace('/(--|#)[^\r\n]*/', ' ', $canonicalSql);
+        $canonicalSql = preg_replace('/\s+/', ' ', trim($canonicalSql));
+
+        if ($canonicalSql === '') {
+            throw new InvalidArgumentException("SQL Read-Only Violation: Query contains only comments or whitespace.");
+        }
+
+        // 2. Reject multiple SQL statements (semicolon is only permitted as optional final character)
+        if (preg_match('/;(?!\s*$)/', $canonicalSql)) {
+            throw new RuntimeException("SQL Read-Only Violation: Multiple SQL statements are strictly prohibited.");
+        }
+
+        // 3. Statement form restriction: Query must begin strictly with SELECT, SHOW, DESCRIBE, or EXPLAIN
+        if (!preg_match('/^(SELECT|SHOW|DESCRIBE|EXPLAIN)\b/i', $canonicalSql)) {
             throw new RuntimeException("SQL Read-Only Violation: Statement must begin with SELECT, SHOW, DESCRIBE, or EXPLAIN.");
         }
 
-        // Security check: Strict ban on mutation keywords anywhere in query
-        if (preg_match('/\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|REPLACE|GRANT|REVOKE)\b/i', $trimmedSql)) {
-            throw new RuntimeException("SQL Read-Only Violation: Mutations are strictly prohibited in AnalyticsService.");
+        // 4. Reject file export and external file access (INTO OUTFILE/DUMPFILE, LOAD_FILE)
+        if (preg_match('/\bINTO\s+(OUTFILE|DUMPFILE)\b/i', $canonicalSql)) {
+            throw new RuntimeException("SQL Read-Only Violation: File export operations (INTO OUTFILE/DUMPFILE) are strictly prohibited.");
+        }
+        if (preg_match('/\bLOAD_FILE\s*\(/i', $canonicalSql)) {
+            throw new RuntimeException("SQL Read-Only Violation: File reading functions are strictly prohibited.");
         }
 
-        $stmt = $pdo->prepare($sql);
+        // 5. Reject variable assignments (@var := or SET @var)
+        if (preg_match('/(@\w+\s*:=|\bSET\s+@)/i', $canonicalSql)) {
+            throw new RuntimeException("SQL Read-Only Violation: Variable assignment is strictly prohibited in analytics queries.");
+        }
+
+        // 6. Reject locking clauses (FOR UPDATE, LOCK IN SHARE MODE, FOR SHARE)
+        if (preg_match('/\bFOR\s+(UPDATE|SHARE)\b/i', $canonicalSql)) {
+            throw new RuntimeException("SQL Read-Only Violation: Row-locking clauses (FOR UPDATE/SHARE) are strictly prohibited.");
+        }
+        if (preg_match('/\bLOCK\s+IN\s+SHARE\s+MODE\b/i', $canonicalSql)) {
+            throw new RuntimeException("SQL Read-Only Violation: Locking clauses (LOCK IN SHARE MODE) are strictly prohibited.");
+        }
+
+        // 7. Reject unsafe stored procedures, side-effecting functions, and administrative commands
+        if (preg_match('/\b(SLEEP|BENCHMARK|GET_LOCK|RELEASE_LOCK|UUID_SHORT|SYS_EXEC|SYS_EVAL)\s*\(/i', $canonicalSql)) {
+            throw new RuntimeException("SQL Read-Only Violation: Side-effecting or resource-exhausting functions are strictly prohibited.");
+        }
+
+        // 8. Strict ban on mutation and DDL keywords anywhere in the canonical query
+        if (preg_match('/\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|REPLACE|GRANT|REVOKE|RENAME|CALL|DO|HANDLER|LOAD|FLUSH|KILL|RESET|SHUTDOWN)\b/i', $canonicalSql)) {
+            throw new RuntimeException("SQL Read-Only Violation: Mutation or administrative statements are strictly prohibited.");
+        }
+
+        // 9. Execute with prepared statement (driver emulated prepares disabled)
+        $stmt = $pdo->prepare($canonicalSql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

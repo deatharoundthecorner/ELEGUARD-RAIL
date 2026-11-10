@@ -18,6 +18,8 @@
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 ini_set('display_errors', '0');
 
+require_once __DIR__ . '/bootstrap.php';
+
 // STEP 1: Pre-flight operational DB record & create isolated test database
 $rawHost = '127.0.0.1';
 $rawPort = 3308;

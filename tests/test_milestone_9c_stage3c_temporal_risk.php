@@ -18,6 +18,8 @@
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 ini_set('display_errors', '0');
 
+require_once __DIR__ . '/bootstrap.php';
+
 // STEP 1: Pre-flight operational DB record & create isolated test database
 $rawHost = '127.0.0.1';
 $rawPort = 3308;
@@ -417,7 +419,7 @@ assertTest($postOperReport1 == $preOperReport1,
 
 // Drop isolated test database
 echo "\n-- Dropping Isolated Test Database ({$testDbName}) --\n";
-$rawPdo->exec("DROP DATABASE IF EXISTS `{$testDbName}`");
+safeTeardownTestDatabase($rawPdo, $testDbName);
 echo " [PASS] Cleaned up isolated test database successfully\n\n";
 
 echo "========================================================\n";

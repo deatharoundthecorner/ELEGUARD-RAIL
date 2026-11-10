@@ -11,13 +11,41 @@ class Database {
     private $pdo;
 
     private function __construct() {
+        // Enforce database safety if running in a test context
+        $script = isset($_SERVER['SCRIPT_FILENAME']) ? str_replace('\\', '/', realpath($_SERVER['SCRIPT_FILENAME']) ?: $_SERVER['SCRIPT_FILENAME']) : '';
+        $isTestContext = defined('ELEGUARD_TEST_ENVIRONMENT') || 
+                         (PHP_SAPI === 'cli' && strpos($script, '/tests/') !== false);
+
+        if ($isTestContext) {
+            $dbName = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? (defined('DB_NAME') ? DB_NAME : null));
+            if (empty($dbName)) {
+                throw new RuntimeException("DATABASE SAFETY VIOLATION: DB_NAME is missing or empty in test execution. Tests must explicitly target 'eleguard_rail_test'.");
+            }
+            if (strtolower(trim($dbName)) === 'eleguard_rail') {
+                throw new RuntimeException("FATAL DATABASE SAFETY VIOLATION: Automated test attempted to connect to operational database 'eleguard_rail'. Execution halted.");
+            }
+            if (strtolower(trim($dbName)) !== 'eleguard_rail_test') {
+                throw new RuntimeException("DATABASE SAFETY VIOLATION: Database '{$dbName}' is not an approved test database. Tests must target 'eleguard_rail_test'.");
+            }
+        }
+
+        $dsn = DB_DSN;
+        if ($isTestContext && !empty($dbName)) {
+            $h = getenv('DB_HOST') ?: (defined('DB_HOST') ? DB_HOST : '127.0.0.1');
+            $p = getenv('DB_PORT') ?: (defined('DB_PORT') ? DB_PORT : 3308);
+            $dsn = "mysql:host={$h};port={$p};dbname={$dbName};charset=utf8mb4";
+        }
+
         try {
-            $this->pdo = new PDO(DB_DSN, DB_USER, DB_PASS, [
+            $this->pdo = new PDO($dsn, DB_USER, DB_PASS, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
         } catch (PDOException $e) {
+            if ($isTestContext || PHP_SAPI === 'cli') {
+                throw new RuntimeException("Database connection failed: " . $e->getMessage(), 0, $e);
+            }
             // Render a friendly error screen if database connection fails
             $appName = 'EleGuard Rail';
             echo "<!DOCTYPE html>
@@ -82,6 +110,10 @@ class Database {
             self::$instance = new Database();
         }
         return self::$instance;
+    }
+
+    public static function resetInstance() {
+        self::$instance = null;
     }
 
     public function getConnection() {
