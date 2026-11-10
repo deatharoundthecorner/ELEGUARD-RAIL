@@ -143,7 +143,7 @@ class RiskService {
         $warnings = [];
 
         // 1. Base Section Risk Mapping (1 to 4 points)
-        $rawSectionRisk = $reportContext['section_risk'] ?? $reportContext['risk_level'] ?? 'Low';
+        $rawSectionRisk = $reportContext['section_risk'] ?? $reportContext['risk_level'] ?? $reportContext['section_risk_level'] ?? 'Low';
         switch (ucfirst(strtolower((string)$rawSectionRisk))) {
             case 'Critical':
                 $baseSectionPoints = 4;

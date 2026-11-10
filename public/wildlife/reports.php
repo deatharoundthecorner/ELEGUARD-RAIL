@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../app/services/ReportService.php';
 require_once __DIR__ . '/../../app/services/AlertService.php';
 require_once __DIR__ . '/../../app/services/AiDetectionService.php';
 require_once __DIR__ . '/../../app/services/TemporalService.php';
+require_once __DIR__ . '/../../app/services/RiskService.php';
 
 $errors = [];
 
@@ -50,8 +51,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch single report details if ID is requested
 $selectedReport = null;
 $selectedId = $_GET['id'] ?? null;
+$shadowRisk = null;
 if ($selectedId) {
     $selectedReport = ReportService::getById((int)$selectedId);
+    if ($selectedReport) {
+        $db = Database::getInstance()->getConnection();
+        $alertStmt = $db->prepare("SELECT COUNT(*) FROM alerts WHERE section_id = :sec_id AND alert_status = 'Active'");
+        $alertStmt->execute([':sec_id' => $selectedReport['section_id']]);
+        $hasActiveAlert = ((int)$alertStmt->fetchColumn()) > 0;
+
+        $reportContext = array_merge($selectedReport, [
+            'section_risk' => $selectedReport['section_risk_level'] ?? 'Low',
+            'active_alerts' => $hasActiveAlert
+        ]);
+
+        $shadowRisk = RiskService::calculateObservationAwareRisk($reportContext, $selectedReport, ['enable_decay' => false]);
+    }
 }
 
 // Fetch all reports with filters
@@ -407,6 +422,148 @@ $sections = AlertService::getAllSections();
                     </form>
                 </div>
             <?php endif; ?>
+        </div>
+
+        <!-- Dual Risk Assessment & Shadow Mode Panel -->
+        <div class="dual-risk-panel" style="margin-top:25px; border-top:1px solid var(--border-color); padding-top:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <h3 style="font-size:1.1rem; margin:0; display:flex; align-items:center; gap:8px;">
+                    <span>🛡️</span>
+                    <span>Risk Assessment Comparison</span>
+                    <span style="font-size:0.75rem; font-weight:normal; color:var(--text-muted);">(Operational Baseline vs Shadow Model)</span>
+                </h3>
+            </div>
+
+            <!-- Mandatory Shadow Mode Governance Banner -->
+            <div style="background:rgba(245, 158, 11, 0.08); border-left:4px solid #f59e0b; padding:10px 14px; border-radius:4px; margin-bottom:18px; font-size:0.85rem; line-height:1.45; color:#fbbf24;">
+                <strong>SHADOW MODE NOTICE:</strong> The observation-aware temporal risk calculation is running in shadow mode for analytical evaluation. It does <strong>not</strong> alter operational risk scores, trigger automated alerts, or change driver cab warnings. Operational alert broadcast strictly uses the verified operational risk score.
+            </div>
+
+            <div class="grid grid-2col" style="gap:20px;">
+                <!-- Card A: Operational Risk (Active) -->
+                <div class="card-panel" style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); padding:16px; border-radius:8px; display:flex; flex-direction:column; justify-content:space-between; margin-bottom:0;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">
+                            <strong style="font-size:0.95rem; color:#fff;">A. Operational Risk (Active)</strong>
+                            <span class="badge badge-success" style="font-size:0.72rem; padding:3px 8px;">ACTIVE CONTROLLER</span>
+                        </div>
+                        
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                            <span class="badge <?php echo get_risk_badge_class($selectedReport['risk_score']); ?>" style="font-size:1.1rem; padding:6px 14px;">
+                                <?php echo e($selectedReport['risk_score']); ?>
+                            </span>
+                            <span class="text-secondary" style="font-size:0.85rem;">Controls Alert Broadcast</span>
+                        </div>
+
+                        <table class="data-table" style="font-size:0.85rem; width:100%; margin-bottom:10px;">
+                            <tr>
+                                <td style="color:var(--text-secondary); width:45%;">Score Source:</td>
+                                <td><code>Intake Calculation (ReportService)</code></td>
+                            </tr>
+                            <tr>
+                                <td style="color:var(--text-secondary);">Section Risk:</td>
+                                <td><span class="badge <?php echo get_risk_badge_class($selectedReport['section_risk_level'] ?? 'Low'); ?>"><?php echo e($selectedReport['section_risk_level'] ?? 'Low'); ?></span></td>
+                            </tr>
+                            <tr>
+                                <td style="color:var(--text-secondary);">Urgency Rating:</td>
+                                <td><span class="badge <?php echo get_risk_badge_class($selectedReport['urgency_level']); ?>"><?php echo e($selectedReport['urgency_level']); ?></span></td>
+                            </tr>
+                            <tr>
+                                <td style="color:var(--text-secondary);">Ingestion Time:</td>
+                                <td><code><?php echo format_date($selectedReport['created_at']); ?> SLST</code></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin-top:12px; padding:8px 10px; background:rgba(16, 185, 129, 0.08); border-radius:4px; font-size:0.8rem; color:#10b981;">
+                        ✔ Active operational baseline. Alert broadcast dropdown defaults to this rating.
+                    </div>
+                </div>
+
+                <!-- Card B: Experimental Temporal Risk (Shadow Mode) -->
+                <div class="card-panel" style="background:rgba(255,255,255,0.02); border:1px solid rgba(245, 158, 11, 0.3); padding:16px; border-radius:8px; display:flex; flex-direction:column; justify-content:space-between; margin-bottom:0;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">
+                            <strong style="font-size:0.95rem; color:#fbbf24;">B. Observation-Aware Risk</strong>
+                            <span class="badge" style="background:#b45309; color:#fff; font-size:0.7rem; font-weight:bold; padding:3px 8px; border-radius:4px;">
+                                EXPERIMENTAL — NOT USED FOR OPERATIONAL ALERTING
+                            </span>
+                        </div>
+
+                        <?php if ($shadowRisk): ?>
+                            <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+                                <span class="badge <?php echo get_risk_badge_class($shadowRisk['final_classification']); ?>" style="font-size:1.1rem; padding:6px 14px;">
+                                    <?php echo e($shadowRisk['final_classification']); ?>
+                                </span>
+                                <span style="font-size:1rem; font-weight:600; color:#fff;">
+                                    <?php echo number_format($shadowRisk['unrounded_total_score'], 2); ?> pts
+                                </span>
+                                <span class="text-secondary" style="font-size:0.8rem;">
+                                    (Rounded: <?php echo $shadowRisk['final_score']; ?> / 13)
+                                </span>
+                            </div>
+
+                            <table class="data-table" style="font-size:0.85rem; width:100%; margin-bottom:10px;">
+                                <tr>
+                                    <td style="color:var(--text-secondary); width:45%;">Diurnal Factor:</td>
+                                    <td>
+                                        <strong style="color:<?php echo $shadowRisk['diurnal_adjustment'] > 0 ? '#fbbf24' : '#9ca3af'; ?>;">
+                                            +<?php echo number_format($shadowRisk['diurnal_adjustment'], 2); ?> pts
+                                        </strong>
+                                        <span class="text-secondary" style="font-size:0.75rem;">(Continuous illumination)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--text-secondary);">Observation Window:</td>
+                                    <td>
+                                        <?php if (!empty($shadowRisk['observation_interval']['start']) && !empty($shadowRisk['observation_interval']['end'])): ?>
+                                            <code><?php echo e($shadowRisk['observation_interval']['start']); ?> – <?php echo e($shadowRisk['observation_interval']['end']); ?> SLST</code>
+                                        <?php else: ?>
+                                            <span class="text-muted">Unknown observation interval</span>
+                                        <?php endif; ?>
+                                        <div style="margin-top:2px;">
+                                            <?php echo TemporalService::renderPrecisionBadge($selectedReport['sighting_time_precision'], $selectedReport['sighting_time_window'], $selectedReport['sighting_time_uncertainty_minutes']); ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--text-secondary);">Point Breakdown:</td>
+                                    <td style="font-size:0.8rem; line-height:1.4;">
+                                        Section: <code><?php echo $shadowRisk['base_section_points']; ?></code> | 
+                                        Urgency: <code><?php echo $shadowRisk['urgency_points']; ?></code> | 
+                                        Count: <code><?php echo $shadowRisk['elephant_count_points']; ?></code> | 
+                                        Alerts: <code><?php echo $shadowRisk['active_alert_points']; ?></code> | 
+                                        Diurnal: <code>+<?php echo number_format($shadowRisk['diurnal_adjustment'], 2); ?></code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--text-secondary);">Engine Model:</td>
+                                    <td><code>v<?php echo e($shadowRisk['model_version']); ?> (Shadow Assessment)</code></td>
+                                </tr>
+                            </table>
+
+                            <?php if (!empty($shadowRisk['data_quality_warnings'])): ?>
+                                <div style="background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-radius:4px; padding:8px 10px; margin-top:8px; font-size:0.78rem; color:#fca5a5;">
+                                    <strong style="color:#ef4444;">Data Quality Notices:</strong>
+                                    <ul style="margin:4px 0 0 16px; padding:0;">
+                                        <?php foreach ($shadowRisk['data_quality_warnings'] as $warning): ?>
+                                            <li><?php echo e($warning); ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <div class="text-muted" style="padding:20px; text-align:center;">
+                                Unable to calculate shadow temporal risk assessment.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div style="margin-top:12px; padding:8px 10px; background:rgba(245, 158, 11, 0.08); border-radius:4px; font-size:0.8rem; color:#fbbf24;">
+                        ⚠️ Informational shadow telemetry only. Does not alter operational alerts.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 <?php endif; ?>

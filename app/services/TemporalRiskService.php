@@ -232,9 +232,7 @@ class TemporalRiskService {
 
         // CASE 1: Unknown observation time (Strict zero adjustment policy)
         if ($precision === TemporalService::PRECISION_UNKNOWN || empty($rawTime)) {
-            if ($rawTime !== null && $rawTime !== '') {
-                $warnings[] = "Time was provided but precision is marked unknown. Zero diurnal adjustment applied.";
-            }
+            $warnings[] = "Unknown observation time; zero diurnal adjustment applied (neutral daylight baseline).";
             return [
                 'diurnal_factor' => 0.0,
                 'diurnal_points' => 0,
