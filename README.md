@@ -287,7 +287,19 @@ A comprehensive 15-slide technical and stakeholder presentation prepared for int
 
 ---
 
-## 9. Documented Limitations & Technical Boundaries
+## 9. Engineering Records & Technical Documentation
+
+Formal engineering deliverables and architectural audits compiled under the Master Development Directive:
+
+- 📋 **[Master Development Audit](docs/development/master_development_audit.md)** — Comprehensive repository baseline, migration status, AI runtime assessment, and 9-stage engineering roadmap.
+- 🗺️ **[Engineering Development Roadmap](docs/development/development_roadmap.md)** — Detailed milestone progression (Milestones 1–8, 9A/9B, 9C, Stage J, Stages A–I) and future engineering horizon.
+- 🏛️ **[Architectural Decision Records (ADRs)](docs/development/architecture_decisions.md)** — Ten formal ADRs documenting three-database isolation, privilege separation, geodetic forward projection, 7-period diurnal continuum, UUID idempotency, Web Crypto AES-GCM vault, advisory YOLOX-Tiny ONNX pipeline, and RFC 9457 error standards.
+- 🔒 **[Application Security Assessment](docs/development/security_assessment.md)** — OWASP Top 10 evaluation, anti-poaching coordinate masking, threat modeling, and engine-level privilege boundaries.
+- 🧪 **[Quality Assurance & Testing Report](docs/development/testing_report.md)** — Detailed test execution report covering all 35 test suites, 1,647+ assertions, 100% pass rate, CDP timing remediation, and edge-case verification.
+
+---
+
+## 10. Documented Limitations & Technical Boundaries
 
 As documented in `docs/final_handover/deployment_readiness_and_limitations.md`:
 1. **Locomotive Telemetry Simulation (LIM-01):** Driver advisory interface does not connect directly to locomotive J1939 CAN bus or wheel tachometers. Driver review is restricted to stationary safety stops.
@@ -298,7 +310,7 @@ As documented in `docs/final_handover/deployment_readiness_and_limitations.md`:
 
 ---
 
-## 10. Future Development Roadmap
+## 11. Future Development Roadmap
 
 - **Hardware Locomotive Interface:** Direct serial/CAN bus telemetry integration with locomotive GPS units and train radio modems.
 - **Cowcatcher Edge AI Vision:** Deep-learning computer vision models running on edge compute with forward-facing infrared cameras.
@@ -307,6 +319,6 @@ As documented in `docs/final_handover/deployment_readiness_and_limitations.md`:
 
 ---
 
-## 11. License
+## 12. License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

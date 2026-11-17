@@ -490,22 +490,31 @@ async function runBrowserTest() {
         'about:blank'
     ]);
 
-    // Wait for CDP readiness
-    await new Promise(r => setTimeout(r, 1200));
+    // Poll for CDP readiness with retry backoff
+    let targets = null;
+    for (let attempt = 0; attempt < 25; attempt++) {
+        await new Promise(r => setTimeout(r, 200));
+        try {
+            targets = await new Promise((resolve, reject) => {
+                const req = http.get('http://127.0.0.1:{$cdpPort}/json', res => {
+                    let data = '';
+                    res.on('data', c => data += c);
+                    res.on('end', () => {
+                        try { resolve(JSON.parse(data)); } catch(e) { reject(e); }
+                    });
+                });
+                req.on('error', reject);
+                req.setTimeout(500, () => { req.destroy(); reject(new Error('timeout')); });
+            });
+            if (targets && targets.length > 0) break;
+        } catch(e) {
+            // Wait and retry
+        }
+    }
 
     try {
-        const targets = await new Promise((resolve, reject) => {
-            http.get('http://127.0.0.1:{$cdpPort}/json', res => {
-                let data = '';
-                res.on('data', c => data += c);
-                res.on('end', () => {
-                    try { resolve(JSON.parse(data)); } catch(e) { reject(e); }
-                });
-            }).on('error', reject);
-        });
-
         if (!targets || targets.length === 0) {
-            throw new Error('No CDP targets found');
+            throw new Error('No CDP targets found after retrying');
         }
 
         const ws = new WebSocket(targets[0].webSocketDebuggerUrl);

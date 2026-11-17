@@ -365,6 +365,31 @@
     flex-shrink: 0;
 }
 
+/* Leaflet Dark Controls for Night-Cab HUD */
+.leaflet-bar {
+    border: 1px solid #2e3d2e !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+    border-radius: 6px !important;
+    overflow: hidden;
+}
+
+.leaflet-bar a {
+    background-color: #1c261c !important;
+    color: #e0e6e0 !important;
+    border-bottom: 1px solid #2e3d2e !important;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.leaflet-bar a:hover {
+    background-color: #2e3d2e !important;
+    color: #4caf50 !important;
+}
+
+.leaflet-bar a.leaflet-disabled {
+    background-color: #141a14 !important;
+    color: #556655 !important;
+}
+
 /* Leaflet Dark Layer Switcher */
 .leaflet-control-layers {
     background: rgba(28, 38, 28, 0.94) !important;
