@@ -278,6 +278,15 @@ php tests/run_all_tests.php
 
 ---
 
+## Project Presentation
+
+A comprehensive 15-slide technical and stakeholder presentation prepared for inter-agency review (Department of Wildlife Conservation and Sri Lanka Railways Directorate) and academic evaluation is available in the repository:
+
+- 📄 **[ELEGUARD RAIL Stakeholder Presentation (PDF)](docs/presentation/ELEGUARD_RAIL_Stakeholder_Presentation.pdf)** — View or download the complete 15-slide presentation covering the problem context, decoupled geodetic architecture, offline Web Crypto PWA, finite-state machine biological triage, stationary driver HUD, and safety boundary disclaimers.
+- 📊 **[ELEGUARD RAIL Stakeholder Presentation (PowerPoint .pptx)](docs/presentation/ELEGUARD_RAIL_Stakeholder_Presentation.pptx)** — Download the editable presentation deck with slide layouts, architecture diagrams, and milestone closure metrics.
+
+---
+
 ## 9. Documented Limitations & Technical Boundaries
 
 As documented in `docs/final_handover/deployment_readiness_and_limitations.md`:
