@@ -15,7 +15,7 @@ The platform bridges community sighting reports, field ranger telemetry, biologi
 
 > [!CAUTION]
 > ### Mandatory Safety & Operational Disclaimer
-> 
+>
 > 1. **Demonstration Prototype Only:** ELEGUARD RAIL is an academic, research, and demonstration engineering prototype.
 > 2. **Not Certified Railway Safety Software:** This platform is **NOT certified safety-critical railway software** under CENELEC EN 50126, EN 50128, EN 50129, or IEC 61508 (SIL 1–4).
 > 3. **Zero Direct Locomotive Control:** The system **DOES NOT control trains, throttle, braking actuators, track interlocking, or railway signalling**. It operates strictly outside physical train protection boundaries.
@@ -63,7 +63,7 @@ In Sri Lanka, wild elephant habitats intersect high-speed railway corridors acro
 |    [Railway Control GIS Desk]     |   |       [Locomotive Driver In-Cab HUD]      |
 |  - Leaflet Vector Map Visualization|   |  - Stationary Review Compliance Banner   |
 |  - Section Hazard Scoring         |   |  - Audio Chime Caution Notifications      |
-|  - Caution Order Dispatch Log     |   |  - One-Tap Safety Acknowledgement         |
+|  - Simulated Advisory Review Log  |   |  - One-Tap Safety Acknowledgement         |
 +-----------------------------------+   +-------------------------------------------+
 ```
 
@@ -83,7 +83,7 @@ In Sri Lanka, wild elephant habitats intersect high-speed railway corridors acro
 4. **Locomotive Driver Advisory HUD (`public/driver/`):**
    - High-contrast night-cab interface optimized for low light.
    - Strict stationary review compliance (`STATIONARY REVIEW USE ONLY`).
-   - Warning alerts with cryptographic acknowledgement receipts.
+   - Simulated advisory alerts with demonstration cryptographic acknowledgement logs.
 5. **System Administration & Analytics (`public/admin/`):**
    - User account lifecycle management and RBAC enforcement across 5 roles.
    - Read-only historical analytics and incident correlation.
@@ -219,14 +219,61 @@ php tests/run_all_tests.php
 
 ## 8. Role Interfaces & Screenshots
 
+### 8.1 Official Project Showcase
+
+![ELEGUARD RAIL Project Showcase](docs/final_handover/linkedin_showcase/05-project-showcase-contact-sheet.png)
+
+> [!NOTE]
+> **Notice on Demonstration Visuals & Operational Authority:** All sightings, GPS coordinates, alerts, telemetry, and metrics depicted in these showcase captures represent synthetic demonstration data within isolated prototype environments. ELEGUARD RAIL is an experimental decision-support prototype and **does not control train signalling, dispatch, speed restrictions, or locomotive movements**. Official Sri Lanka Railways (SLR) operating procedures, physical signals, and authorized railway personnel retain all operational command and authority at all times.
+
+---
+
+### 8.2 Primary Operational Interfaces
+
+#### 1. Railway Control Desk
+*Prototype situational-awareness and simulated advisory-review interface for monitoring railway corridor context and reviewing hazard advisories.*<br />
+**Operational Scope:** Purely informational decision support. Does not broadcast enforceable speed restrictions, issue train movements, or execute railway dispatch. All train movements and operational decisions remain strictly under official Sri Lanka Railways procedures and authorized personnel.<br />
+**Interface URL:** `/public/control/dashboard.php` (Desktop Viewport: 1440 × 900)
+
+![Railway Control Desk](docs/final_handover/linkedin_showcase/01-control-desk.png)
+
+#### 2. Wildlife Verification Workspace
+*Biological observation triage, spatial map telemetry, and simulated YOLOX-Tiny ONNX AI advisory review for authorized Wildlife Officers.*<br />
+**Operational Scope:** Machine-learning detections and AI outputs are strictly advisory decision-support recommendations that remain subject to mandatory human verification by authorized Wildlife Officers before any status confirmation.<br />
+**Interface URL:** `/public/wildlife/reports.php?id=53` (Desktop Viewport: 1440 × 900)
+
+![Wildlife Verification Workspace](docs/final_handover/linkedin_showcase/02-wildlife-verification.png)
+
+#### 3. Field Reporting Mobile PWA
+*Offline-first guided field observation capture, Web Crypto AES-GCM encrypted local storage, and user-controlled batch synchronization with connectivity-aware status updates for Field Observers.*<br />
+**Demonstration Scope:** Displayed GPS coordinates, sighting timestamps, and observer telemetry represent synthetic field test data for prototype evaluation.<br />
+**Interface URL:** `/public/field/index.php` (Mobile Viewport: 390 × 844)
+
+<p align="center">
+  <img src="docs/final_handover/linkedin_showcase/03-field-pwa-mobile.png" alt="Field Reporting Mobile PWA" width="390" />
+</p>
+
+#### 4. Platform Analytics & Governance Console
+*System health audit, data quality benchmarks, and dataset provenance segregation for System Administrators.*<br />
+**Demonstration Scope:** Displayed metrics, report distributions, and audit totals reflect synthetic development fixtures and baseline demonstration logs.<br />
+**Interface URL:** `/public/admin/analytics.php` (Desktop Viewport: 1440 × 900)
+
+![Platform Analytics Console](docs/final_handover/linkedin_showcase/04-admin-analytics.png)
+
+---
+
+### 8.3 Role Access & Reference Inventory
+
 | Role / Feature | Primary Interface URL | Visual Evidence Reference | Description |
 | :--- | :--- | :--- | :--- |
 | **System Administration** | `/public/admin/dashboard.php` | `docs/final_handover/phase_c1_evidence/c1_01_admin_dashboard_desktop.png` | System health, user lifecycle, audit trail, server telemetry. |
-| **Railway Control Desk** | `/public/control/dashboard.php` | `docs/final_handover/phase_c1_evidence/c1_03_control_dashboard.png` | Corridor hazard monitoring, speed advisory broadcast, driver receipts. |
-| **Wildlife Verification** | `/public/wildlife/dashboard.php` | `docs/final_handover/phase_c1_evidence/c1_04_wildlife_dashboard.png` | Sighting triage, AI advisory review, biological confirmation. |
-| **Locomotive Cab HUD** | `/public/driver/dashboard.php` | `docs/final_handover/phase_c1_evidence/c1_05_driver_dashboard.png` | High-contrast stationary review HUD, corridor hazard advisories. |
+| **Railway Control Desk** | `/public/control/dashboard.php` | `docs/final_handover/linkedin_showcase/01-control-desk.png` | Corridor situational awareness, simulated advisory-review interface (informational only; no dispatch or speed control). |
+| **Wildlife Verification** | `/public/wildlife/reports.php` | `docs/final_handover/linkedin_showcase/02-wildlife-verification.png` | Sighting triage, YOLOX-Tiny ONNX advisory review (strictly subject to human verification). |
+| **Locomotive Cab HUD** | `/public/driver/dashboard.php` | `docs/final_handover/phase_c1_evidence/c1_05_driver_dashboard.png` | High-contrast stationary review HUD, simulated corridor hazard advisories (stationary review only). |
 | **Community Reporter** | `/public/reporter/dashboard.php` | `docs/final_handover/phase_c1_evidence/c1_06_reporter_dashboard.png` | Community observation submission, sighting status tracking. |
-| **Field Telemetry PWA** | `/public/field/index.php` | `docs/final_handover/phase_c1_evidence/c1_08_field_pwa_telemetry.png` | Offline field data capture, encrypted vault, geodesic projection. |
+| **Field Telemetry PWA** | `/public/field/index.php` | `docs/final_handover/linkedin_showcase/03-field-pwa-mobile.png` | Offline field data capture, encrypted vault, geodesic projection (synthetic telemetry). |
+| **Platform Analytics** | `/public/admin/analytics.php` | `docs/final_handover/linkedin_showcase/04-admin-analytics.png` | Provenance segregation, data quality audit, service health (synthetic metrics). |
+| **Showcase Contact Sheet** | Consolidated Overview | `docs/final_handover/linkedin_showcase/05-project-showcase-contact-sheet.png` | 2×2 showcase overview across all core subsystems (synthetic demonstration data). |
 | **Responsive Tablet** | All interfaces | `docs/final_handover/phase_c1_evidence/c1_07_responsive_tablet_view.png` | 768px tablet layout with adaptive navigation drawer and backdrop. |
 
 ---
