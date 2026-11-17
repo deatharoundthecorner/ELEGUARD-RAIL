@@ -102,7 +102,7 @@ require_once __DIR__ . '/../../app/layouts/dashboard_header.php';
     <div class="card-panel">
         <div class="panel-header">
             <h2 class="panel-title">🤖 AI Camera Subsystem Throughput</h2>
-            <span class="badge badge-outline">YOLOv8 Advisory Inference</span>
+            <span class="badge badge-outline">YOLOX-Tiny ONNX Advisory Inference</span>
         </div>
         <div id="admin-ai-telemetry" style="padding:15px 0;">
             <!-- Rendered by JS -->
