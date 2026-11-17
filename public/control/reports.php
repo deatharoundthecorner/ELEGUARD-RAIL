@@ -3,12 +3,15 @@
  * Control Desk Reports & Alert Conversion
  */
 $pageTitle = "Convert Reports";
-$allowed_roles = 'control_officer';
+$allowed_roles = ['control_officer', 'admin']; // $allowed_roles = 'control_officer';
 require_once __DIR__ . '/../../app/layouts/dashboard_header.php';
 require_once __DIR__ . '/../../app/services/ReportService.php';
 require_once __DIR__ . '/../../app/services/AlertService.php';
 require_once __DIR__ . '/../../app/services/TemporalService.php';
 require_once __DIR__ . '/../../app/services/RiskService.php';
+require_once __DIR__ . '/../../app/services/ProximityService.php';
+require_once __DIR__ . '/../../app/services/VerificationService.php';
+require_once __DIR__ . '/../../app/services/FieldReportingService.php';
 require_once __DIR__ . '/../../app/includes/validation.php';
 
 $errors = [];
@@ -44,22 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors['submit'] = "Failed to broadcast warning alert.";
             }
         }
-    } elseif ($action === 'verify') {
-        $reportId = $_POST['report_id'] ?? '';
-        if (ReportService::updateStatus((int)$reportId, 'Verified', $currentUser['id'])) {
-            Session::flash('success', "Report #{$reportId} marked as Verified. Ready for alert broadcast.");
-            Router::redirect("control/reports.php?id={$reportId}");
-        } else {
-            $errors['submit'] = "Failed to update report status.";
-        }
-    } elseif ($action === 'reject') {
-        $reportId = $_POST['report_id'] ?? '';
-        if (ReportService::updateStatus((int)$reportId, 'Rejected', $currentUser['id'])) {
-            Session::flash('success', "Report #{$reportId} rejected.");
-            Router::redirect('control/reports.php');
-        } else {
-            $errors['submit'] = "Failed to update report status.";
-        }
+    } elseif ($action === 'verify' || $action === 'reject') {
+        // Enforce biological decision boundary: Control officers cannot verify or reject reports
+        $errors['submit'] = "Forbidden Action: Railway Control Officers are not authorized to verify or reject wildlife reports. Biological verification is restricted to Wildlife Officers or Administrators.";
     }
 }
 
@@ -68,6 +58,10 @@ $selectedReport = null;
 $selectedId = $_GET['id'] ?? null;
 $shadowRisk = null;
 $delayInfo = null;
+$proximityInfo = null;
+$assignmentHistory = [];
+$isFallbackSection = false;
+
 if ($selectedId) {
     $selectedReport = ReportService::getById((int)$selectedId);
     if ($selectedReport) {
@@ -83,6 +77,31 @@ if ($selectedId) {
 
         $shadowRisk = RiskService::calculateObservationAwareRisk($reportContext, $selectedReport, ['enable_decay' => false]);
         $delayInfo = TemporalService::calculateReportingDelay($selectedReport);
+
+        // ProximityService calculation for system-suggested nearest railway track
+        if (!empty($selectedReport['latitude']) && !empty($selectedReport['longitude'])) {
+            $proximityInfo = ProximityService::calculateRailwayProximity(
+                $selectedReport['latitude'],
+                $selectedReport['longitude'],
+                $selectedReport['gps_accuracy_meters'] ?? null
+            );
+        }
+
+        // Fetch Audit & Corridor Attribution History
+        $auditResult = VerificationService::getAuditHistory(
+            (int)$selectedId,
+            $currentUser['role'],
+            (int)$currentUser['id']
+        );
+        if ($auditResult['success'] && !empty($auditResult['data']['section_assignments'])) {
+            $assignmentHistory = $auditResult['data']['section_assignments'];
+        }
+
+        // Check if report has fallback section assignment
+        $secStatus = $selectedReport['section_assignment_status'] ?? 'provisional_estimated';
+        if ($secStatus === 'provisional_estimated' && empty($selectedReport['latitude']) && empty($selectedReport['longitude'])) {
+            $isFallbackSection = true;
+        }
     }
 }
 
@@ -94,6 +113,10 @@ $urgencyFilter = $_GET['urgency_level'] ?? null;
 $reports = ReportService::getAll($statusFilter, $sectionFilter, $urgencyFilter);
 $sections = AlertService::getAllSections();
 ?>
+
+<!-- GIS Stylesheet & Local Leaflet Vendor Assets -->
+<link rel="stylesheet" href="<?php echo Router::url('assets/vendor/leaflet/leaflet.css'); ?>">
+<link rel="stylesheet" href="<?php echo Router::url('assets/css/control_attribution.css'); ?>">
 
 <div class="dashboard-title-row">
     <h1>Process Sighting Reports</h1>
@@ -238,30 +261,259 @@ $sections = AlertService::getAllSections();
                         </div>
                     </form>
                 <?php elseif ($selectedReport['report_status'] === 'Pending'): ?>
-                    <div style="text-align:center; padding:30px 10px;">
-                        <h3 style="color:var(--accent-color); margin-bottom:15px;">Awaiting Ranger Verification</h3>
-                        <p class="text-secondary" style="font-size:0.85rem; margin-bottom:20px;">This report has not been verified by a wildlife ranger yet. If you have confirmed details from another source, you can verify it now or reject it.</p>
-                        
-                        <div style="display:flex; gap:10px;">
-                            <form action="<?php echo Router::url('control/reports.php'); ?>" method="POST" style="flex:1;">
-                                <?php echo csrf_field(); ?>
-                                <input type="hidden" name="action" value="verify">
-                                <input type="hidden" name="report_id" value="<?php echo $selectedReport['id']; ?>">
-                                <button type="submit" class="btn btn-primary" style="width:100%;">Verify Sighting</button>
-                            </form>
-                            <form action="<?php echo Router::url('control/reports.php'); ?>" method="POST" style="flex:1;">
-                                <?php echo csrf_field(); ?>
-                                <input type="hidden" name="action" value="reject">
-                                <input type="hidden" name="report_id" value="<?php echo $selectedReport['id']; ?>">
-                                <button type="submit" class="btn btn-outline" style="width:100%; border-color:var(--danger); color:var(--danger);">Reject</button>
-                            </form>
-                        </div>
+                    <div style="text-align:center; padding:30px 15px; background-color:rgba(255,255,255,0.02); border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
+                        <h3 style="color:var(--accent-color); margin-bottom:12px;">Awaiting Biological Verification</h3>
+                        <p class="text-secondary" style="font-size:0.85rem; max-width:480px; margin:0 auto 12px; line-height:1.5;">
+                            This sighting is pending formal biological review. Under platform safety governance, biological verification and rejection are strictly restricted to authorized Wildlife Officers.
+                        </p>
+                        <p class="text-muted" style="font-size:0.8rem; margin:0;">
+                            Railway Control Officers may monitor corridor telemetry, associate railway sections, or broadcast warning alerts if immediate operational hazards exist.
+                        </p>
                     </div>
                 <?php else: ?>
                     <div style="text-align:center; padding:50px 20px; background-color:rgba(255,255,255,0.02); border-radius:6px; color:var(--text-muted);">
                         Report processed with status: <strong><?php echo $selectedReport['report_status']; ?></strong>. No control actions required.
                     </div>
                 <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Toast notification for async actions -->
+        <div id="attribution-success-toast" style="display:none; position:fixed; top:20px; right:20px; z-index:10000; background:#10b981; color:#fff; padding:12px 20px; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.3); font-weight:600; font-size:0.9rem;">
+        </div>
+
+        <!-- Section Attribution & GIS Operational Review Panel -->
+        <div class="attribution-panel" id="attribution-panel"
+             data-report-id="<?php echo (int)$selectedReport['id']; ?>"
+             data-current-section-id="<?php echo (int)$selectedReport['section_id']; ?>"
+             data-current-section-name="<?php echo e($selectedReport['section_name']); ?>"
+             data-lat="<?php echo !empty($selectedReport['latitude']) ? (float)$selectedReport['latitude'] : 'null'; ?>"
+             data-lon="<?php echo !empty($selectedReport['longitude']) ? (float)$selectedReport['longitude'] : 'null'; ?>"
+             data-closest-lat="<?php echo !empty($proximityInfo['closest_track_point']['latitude']) ? (float)$proximityInfo['closest_track_point']['latitude'] : 'null'; ?>"
+             data-closest-lon="<?php echo !empty($proximityInfo['closest_track_point']['longitude']) ? (float)$proximityInfo['closest_track_point']['longitude'] : 'null'; ?>"
+             data-distance-meters="<?php echo !empty($proximityInfo['distance_meters']) ? (float)$proximityInfo['distance_meters'] : 'null'; ?>"
+             data-csrf-token="<?php echo e(Session::generateCsrfToken()); ?>"
+             data-associate-url="<?php echo Router::url('api/v2/reports/' . $selectedReport['id'] . '/associate-section'); ?>"
+             data-history-url="<?php echo Router::url('api/v2/reports/' . $selectedReport['id'] . '/history'); ?>"
+             data-geojson-url="<?php echo Router::url('assets/data/railway_routes.geojson'); ?>">
+             
+            <div class="attribution-panel-header">
+                <h3 class="attribution-panel-title">
+                    <span>🛤️</span>
+                    <span>Railway Section Attribution & Operational Corridor Triage</span>
+                </h3>
+                <div>
+                    <?php
+                    $secStatus = $selectedReport['section_assignment_status'] ?? 'provisional_estimated';
+                    if ($secStatus === 'controller_confirmed'): ?>
+                        <span class="badge-confirmed" id="current-section-badge">✔ CONTROLLER CONFIRMED</span>
+                    <?php elseif ($secStatus === 'topology_ambiguity'): ?>
+                        <span class="badge-ambiguity" id="current-section-badge">⚡ TOPOLOGY AMBIGUITY</span>
+                    <?php else: ?>
+                        <span class="badge-provisional" id="current-section-badge">⏳ PROVISIONAL</span>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Attribution Comparison Grid -->
+            <div class="attribution-comparison-grid">
+                <!-- Card 1: Observer / Field Intake Section -->
+                <div class="attribution-card">
+                    <div class="attribution-card-header">
+                        <span class="attribution-card-label">1. Observer-Reported Sighting</span>
+                        <span class="badge badge-outline" style="font-size:0.7rem;">Field Intake</span>
+                    </div>
+                    <div class="attribution-card-value">
+                        <?php if ($isFallbackSection): ?>
+                            <span style="color:#94a3b8; font-style:italic;">Default Fallback (No GPS)</span>
+                        <?php else: ?>
+                            <?php echo e($selectedReport['section_name']); ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="attribution-card-meta">
+                        Location: <code><?php echo e($selectedReport['location_description']); ?></code>
+                        <?php if (!empty($selectedReport['nearest_milestone_ref'])): ?>
+                            <br>Milestone / KP: <strong><?php echo e($selectedReport['nearest_milestone_ref']); ?></strong>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Card 2: System-Suggested Nearest Track -->
+                <div class="attribution-card suggested">
+                    <div class="attribution-card-header">
+                        <span class="attribution-card-label">2. System-Suggested Track</span>
+                        <span class="badge-provisional" style="font-size:0.68rem; padding:2px 6px;">PROVISIONAL</span>
+                    </div>
+                    <div class="attribution-card-value" style="color:#fbbf24;">
+                        <?php if ($proximityInfo && !empty($proximityInfo['nearest_section_name'])): ?>
+                            <?php echo e($proximityInfo['nearest_section_name']); ?>
+                        <?php elseif ($proximityInfo && empty($proximityInfo['has_coordinates'])): ?>
+                            <span style="font-size:0.9rem; color:#94a3b8;">No GPS Telemetry</span>
+                        <?php else: ?>
+                            <span style="font-size:0.9rem; color:#94a3b8;">Calculation Pending</span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="attribution-card-meta">
+                        <?php if ($proximityInfo && !empty($proximityInfo['distance_meters'])): ?>
+                            Distance to Track: <strong><?php echo number_format($proximityInfo['distance_meters'], 1); ?> m</strong>
+                            (±<?php echo round($proximityInfo['gps_accuracy_meters'] ?? 25); ?>m)
+                        <?php else: ?>
+                            <span>Track proximity unavailable without valid GPS coordinates.</span>
+                        <?php endif; ?>
+                        <div class="badge-osm-disclaimer">
+                            ⚠️ PROVISIONAL — NOT OFFICIALLY VERIFIED (OpenStreetMap Geometry)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Current Authoritative Corridor -->
+                <div class="attribution-card active-assigned">
+                    <div class="attribution-card-header">
+                        <span class="attribution-card-label">3. Current Assigned Corridor</span>
+                        <span class="badge badge-success" style="font-size:0.7rem;">Active Attribution</span>
+                    </div>
+                    <div class="attribution-card-value" id="current-section-display">
+                        <?php echo e($selectedReport['section_name']); ?>
+                    </div>
+                    <div class="attribution-card-meta">
+                        District: <strong><?php echo e($selectedReport['district'] ?? 'N/A'); ?></strong> | Corridor #<?php echo (int)$selectedReport['section_id']; ?>
+                        <br>
+                        Status: <strong><?php echo e($secStatus); ?></strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="attribution-action-bar">
+                <button type="button" class="btn-confirm-section" id="btn-confirm-attribution">
+                    <span>✔</span> Confirm Section Attribution
+                </button>
+                <button type="button" class="btn-reassign-section" id="btn-reassign-corridor">
+                    <span>🔄</span> Reassign Railway Corridor
+                </button>
+            </div>
+
+            <!-- Leaflet GIS Review Map -->
+            <div class="attribution-gis-wrapper">
+                <div id="attribution-gis-map"></div>
+                <div class="gis-legend-bar">
+                    <div class="gis-legend-item">
+                        <span class="legend-swatch" style="background:#10b981;"></span>
+                        <span>Active Assigned Corridor</span>
+                    </div>
+                    <div class="gis-legend-item">
+                        <span class="legend-swatch" style="background:#475569;"></span>
+                        <span>Other Network Corridors</span>
+                    </div>
+                    <div class="gis-legend-item">
+                        <span style="color:#f59e0b;">●</span>
+                        <span>Sighting Observation Pin</span>
+                    </div>
+                    <div class="gis-legend-item">
+                        <span style="color:#ef4444;">- - -</span>
+                        <span>Nearest Track Geodesic Connector</span>
+                    </div>
+                    <div style="font-style:italic;">
+                        PROVISIONAL — NOT OFFICIALLY VERIFIED (OSM/HOT-HDX)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chronological Assignment History Ledger -->
+            <div class="attribution-history-section">
+                <div class="attribution-history-title">
+                    <span>📜</span>
+                    <span>Corridor Attribution Audit History (Read-Only Ledger)</span>
+                </div>
+                <div id="attribution-history-container">
+                    <?php if (empty($assignmentHistory)): ?>
+                        <p class="text-muted" style="font-size:0.82rem; font-style:italic;">
+                            No historical reassignments recorded. Initial corridor assigned at intake.
+                        </p>
+                    <?php else: ?>
+                        <div class="attribution-timeline">
+                            <?php foreach ($assignmentHistory as $item): ?>
+                                <div class="timeline-item">
+                                    <div class="timeline-card">
+                                        <div class="timeline-header">
+                                            <span class="timeline-transition">
+                                                <?php echo e($item['previous_section_name'] ?: 'Initial Intake'); ?> &rarr; <?php echo e($item['new_section_name']); ?>
+                                            </span>
+                                            <span class="timeline-time">
+                                                <?php echo format_date($item['assigned_at']); ?>
+                                            </span>
+                                        </div>
+                                        <div class="timeline-meta">
+                                            By: <strong><?php echo e($item['assigned_by_name']); ?></strong> |
+                                            Method: <code><?php echo e($item['assignment_method']); ?></code> |
+                                            Type: <code><?php echo e($item['assignment_type']); ?></code>
+                                        </div>
+                                        <div class="timeline-reason">
+                                            &ldquo;<?php echo e($item['assignment_reason']); ?>&rdquo;
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignment & Reassignment Modal Dialog -->
+        <div class="attribution-modal-overlay" id="attribution-modal-overlay">
+            <div class="attribution-modal-card">
+                <div class="attribution-modal-header">
+                    <h4 class="attribution-modal-title">Confirm or Reassign Railway Corridor</h4>
+                    <button type="button" class="attribution-modal-close" id="attribution-modal-close">&times;</button>
+                </div>
+                <form id="attribution-modal-form">
+                    <div class="attribution-modal-body">
+                        <div class="modal-alert-error" id="attribution-modal-error"></div>
+                        
+                        <div class="form-group" style="margin-bottom:14px;">
+                            <label class="form-label" style="font-size:0.85rem; color:#94a3b8;">Current Section:</label>
+                            <div id="attribution-modal-current-sec" style="font-weight:600; color:#fff; font-size:0.95rem;">
+                                <?php echo e($selectedReport['section_name']); ?> (#<?php echo (int)$selectedReport['section_id']; ?>)
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom:14px;">
+                            <label for="attribution-modal-section" class="form-label" style="font-size:0.85rem;">Target Railway Section *</label>
+                            <select id="attribution-modal-section" class="form-control" required style="width:100%;">
+                                <?php foreach ($sections as $sec): ?>
+                                    <option value="<?php echo (int)$sec['id']; ?>" <?php echo ((int)$sec['id'] === (int)$selectedReport['section_id']) ? 'selected' : ''; ?>>
+                                        Section #<?php echo (int)$sec['id']; ?>: <?php echo e($sec['section_name']); ?> (<?php echo e($sec['district']); ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom:14px;">
+                            <label for="attribution-modal-method" class="form-label" style="font-size:0.85rem;">Verification / Attribution Method *</label>
+                            <select id="attribution-modal-method" class="form-control" required style="width:100%;">
+                                <option value="manual_controller_override">Manual Controller Override</option>
+                                <option value="spatial_nearest_neighbor">Spatial Nearest Neighbor (GIS Telemetry)</option>
+                                <option value="station_master_vhf">Station Master VHF Radio Confirmation</option>
+                                <option value="chainage_milepost_lookup">Chainage / Milepost Lookup</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom:14px;">
+                            <label for="attribution-modal-reason" class="form-label" style="font-size:0.85rem;">Operational Justification Reason *</label>
+                            <textarea id="attribution-modal-reason" class="form-control" required rows="3" 
+                                      placeholder="Provide operational reason for corridor confirmation or reassignment (e.g. verified with Gal Oya station master on duty)..."
+                                      style="font-size:0.85rem; resize:vertical;"></textarea>
+                            <div id="attribution-modal-char-count" style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">
+                                0 / 5 characters minimum
+                            </div>
+                        </div>
+                    </div>
+                    <div class="attribution-modal-footer">
+                        <button type="button" class="btn btn-outline btn-sm" id="attribution-modal-cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm" id="attribution-modal-submit">Confirm Attribution</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -510,5 +762,9 @@ $sections = AlertService::getAllSections();
         <?php endif; ?>
     </div>
 </div>
+
+<!-- GIS Leaflet & Control Section Attribution Controller Scripts -->
+<script src="<?php echo Router::url('assets/vendor/leaflet/leaflet.js'); ?>"></script>
+<script src="<?php echo Router::url('assets/js/control_attribution.js'); ?>"></script>
 
 <?php require_once __DIR__ . '/../../app/layouts/dashboard_footer.php'; ?>

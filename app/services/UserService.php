@@ -18,9 +18,12 @@ class UserService {
             $params[':role'] = $roleFilter;
         }
         
-        if ($searchQuery) {
-            $sql .= " AND (name LIKE :search OR email LIKE :search)";
-            $params[':search'] = '%' . $searchQuery . '%';
+        if ($searchQuery !== null && trim($searchQuery) !== '') {
+            $trimmedSearch = trim($searchQuery);
+            $escapedSearch = addcslashes($trimmedSearch, '%_\\');
+            $sql .= " AND (name LIKE :search_name ESCAPE '\\\\' OR email LIKE :search_email ESCAPE '\\\\')";
+            $params[':search_name'] = '%' . $escapedSearch . '%';
+            $params[':search_email'] = '%' . $escapedSearch . '%';
         }
         
         $sql .= " ORDER BY created_at DESC";

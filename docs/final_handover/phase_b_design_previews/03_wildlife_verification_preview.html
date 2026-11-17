@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wildlife Verification Workspace | DWC & ELEGUARD RAIL [Preview]</title>
+  <style>
+    :root {
+      --bg-canvas: #09110d;
+      --bg-panel: #111d16;
+      --bg-panel-subtle: #16261e;
+      --border-panel: #1e362a;
+      --border-focus: #10b981;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --dwc-emerald: #10b981;
+      --dwc-sage: #34d399;
+      --sig-amber: #f59e0b;
+      --sig-red: #ef4444;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "Segoe UI Mono", "Roboto Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Ranger Workspace Header */
+    .ranger-header {
+      background: #060c09;
+      border-bottom: 1px solid var(--border-panel);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .ranger-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ranger-emblem {
+      width: 28px;
+      height: 28px;
+      background: #064e3b;
+      border: 1px solid #059669;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #34d399;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .ranger-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .ranger-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .ranger-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+    }
+
+    .sector-badge {
+      background: #091e14;
+      border: 1px solid #134e32;
+      color: #a7f3d0;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    /* Triage Filter Bar */
+    .filter-bar {
+      background: #0b1510;
+      border-bottom: 1px solid var(--border-panel);
+      padding: 10px 24px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .filter-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-tab.active {
+      background: #11281c;
+      color: var(--dwc-sage);
+      border-color: #1b4d36;
+    }
+
+    .filter-badge {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    /* Split Dossier Layout */
+    .dossier-workspace {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Left: Sighting Stream */
+    .sighting-queue {
+      border-right: 1px solid var(--border-panel);
+      overflow-y: auto;
+      background: #0d1712;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .queue-item {
+      padding: 14px 18px;
+      border-bottom: 1px solid #16241c;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .queue-item:hover {
+      background: #112118;
+    }
+
+    .queue-item.selected {
+      background: #142a1f;
+      border-left: 3px solid var(--dwc-emerald);
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .item-id {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--dwc-sage);
+    }
+
+    .item-time {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .item-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .item-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-tags {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .tag-count {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      background: #0d281a;
+      border: 1px solid #1b5336;
+      color: #6ee7b7;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .tag-ai {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      background: #2b1f09;
+      border: 1px solid #573e13;
+      color: #fde68a;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* Right: Investigation Detail */
+    .dossier-detail {
+      background: var(--bg-panel);
+      overflow-y: auto;
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .dossier-header-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-panel);
+      padding-bottom: 16px;
+    }
+
+    .dossier-headline {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .dossier-subhead {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* Grid for Evidence & Geo */
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .evidence-card {
+      background: #0d1712;
+      border: 1px solid var(--border-panel);
+      border-radius: 6px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .photo-mockup-frame {
+      height: 200px;
+      background: #060c09;
+      border: 1px solid #1a2f23;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .yolo-box {
+      border: 2px solid #eab308;
+      background: rgba(234, 179, 8, 0.1);
+      position: absolute;
+      width: 140px;
+      height: 120px;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 4px;
+    }
+
+    .yolo-tag {
+      background: #eab308;
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 2px;
+      align-self: flex-start;
+    }
+
+    .geo-stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #172a1e;
+      font-size: 12px;
+    }
+
+    .geo-stat-label { color: var(--text-muted); }
+    .geo-stat-val { font-family: var(--font-mono); font-weight: 600; color: #fff; }
+
+    /* Action Deck */
+    .action-deck {
+      display: flex;
+      gap: 12px;
+      border-top: 1px solid var(--border-panel);
+      padding-top: 20px;
+      margin-top: 10px;
+    }
+
+    .btn-verify {
+      background: #059669;
+      border: 1px solid #10b981;
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-verify:hover { background: #10b981; }
+
+    .btn-clarify {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-reject {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Synthetic Demonstration Banner -->
+  <div style="background: #1e1b12; border-bottom: 1px solid #78350f; color: #fbbf24; font-family: var(--font-mono); font-size: 11px; padding: 7px 24px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+    <span>⚠️ SYNTHETIC DEMONSTRATION PROTOTYPE &bull; ILLUSTRATIVE SAMPLE VALUES ONLY</span>
+    <span>STATUS: READ-ONLY ECOLOGICAL DOSSIER &bull; NO DISPATCH POWERS</span>
+  </div>
+
+  <!-- Header -->
+  <header class="ranger-header">
+    <div class="ranger-brand">
+      <div class="ranger-emblem">DWC</div>
+      <div>
+        <div class="ranger-title">DEPARTMENT OF WILDLIFE CONSERVATION &bull; ELEGUARD DESK</div>
+        <div class="ranger-sub">Field Evidence Verification & Sighting Assessment</div>
+      </div>
+    </div>
+
+    <div class="ranger-meta">
+      <div class="sector-badge">SECTOR: MINNERIYA / KAUDULLA BUFFER</div>
+      <div style="font-family: var(--font-mono); color: var(--dwc-sage);">Ranger: <strong>wildlife@eleguard.lk</strong></div>
+    </div>
+  </header>
+
+  <!-- Filter / Triage Bar -->
+  <div class="filter-bar">
+    <button class="filter-tab active">
+      Pending Verification <span class="filter-badge">26</span>
+    </button>
+    <button class="filter-tab">
+      Verified <span class="filter-badge">1</span>
+    </button>
+    <button class="filter-tab">
+      Clarification Requested <span class="filter-badge">2</span>
+    </button>
+    <button class="filter-tab">
+      Rejected / False Alarm <span class="filter-badge">5</span>
+    </button>
+  </div>
+
+  <!-- Main Split Dossier View -->
+  <div class="dossier-workspace">
+    <!-- Left: Queue -->
+    <div class="sighting-queue">
+      <div class="queue-item selected">
+        <div class="item-top">
+          <span class="item-id">#88 &bull; PENDING REVIEW</span>
+          <span class="item-time">11-15 05:47 PM</span>
+        </div>
+        <div class="item-title">Habarana &ndash; Gal Oya Reserve</div>
+        <div class="item-desc">3 mature elephants near culvert 412 moving toward track line...</div>
+        <div class="item-tags">
+          <span class="tag-count">3 ELEPHANTS</span>
+          <span class="tag-ai">AI: 89% CONFIDENCE</span>
+        </div>
+      </div>
+
+      <div class="queue-item">
+        <div class="item-top">
+          <span class="item-id">#55 &bull; PENDING REVIEW</span>
+          <span class="item-time">11-08 08:35 PM</span>
+        </div>
+        <div class="item-title">Minneriya Crossing Marker 105</div>
+        <div class="item-desc">Single bull elephant grazing in scrub jungle near fence boundary...</div>
+        <div class="item-tags">
+          <span class="tag-count">1 ELEPHANT</span>
+          <span class="tag-ai" style="color: #fbbf24; background: #342009;">AI: UNCERTAIN (38%)</span>
+        </div>
+      </div>
+
+      <div class="queue-item">
+        <div class="item-top">
+          <span class="item-id">#38 &bull; PENDING REVIEW</span>
+          <span class="item-time">11-08 12:42 PM</span>
+        </div>
+        <div class="item-title">Maho &ndash; Anuradhapura Section</div>
+        <div class="item-desc">2 elephants reported crossing culvert 118...</div>
+        <div class="item-tags">
+          <span class="tag-count">2 ELEPHANTS</span>
+          <span class="tag-count" style="color: var(--text-dim); background: #16241c;">TEXT REPORT</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Active Sighting Dossier Detail -->
+    <div class="dossier-detail">
+      <div class="dossier-header-card">
+        <div>
+          <div class="dossier-headline">Sighting #88 [Synthetic Record]: Habarana &ndash; Gal Oya Forest Reserve</div>
+          <div class="dossier-subhead">
+            Submitted by: <strong>Villager Reporter</strong> &bull; Observation Time: <strong>2026-11-15 05:47 PM</strong> &bull; Diurnal: <strong>Dusk (17:00 &ndash; 19:30)</strong>
+          </div>
+        </div>
+        <span style="font-family: var(--font-mono); font-size: 11px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24; padding: 4px 8px; border-radius: 4px;">HIGH URGENCY [SAMPLE]</span>
+      </div>
+
+      <div class="evidence-grid">
+        <!-- Evidence Media & YOLOX-Tiny ONNX Architecture -->
+        <div class="evidence-card">
+          <div class="card-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Field Evidence & YOLOX-Tiny ONNX Advisory Inference
+          </div>
+          <div class="photo-mockup-frame" style="flex-direction: column; gap: 8px; padding: 16px; background: #060c09;">
+            <div style="font-family: var(--font-mono); font-size: 11px; color: #a7f3d0; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); padding: 4px 10px; border-radius: 4px; display: inline-flex; align-items: center; gap: 6px;">
+              <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%;"></span>
+              CONFIRMED ELEPHANT PRESENCE (Illustrative Sample Confidence: 89%)
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 16px;">
+              [FIELD EVIDENCE PHOTO &bull; RAW JPEG HASH SHA-256 VERIFIED IMMUTABLE]
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 10.5px; color: #cbd5e1; margin-top: 10px; background: #0b1510; padding: 6px 10px; border-radius: 4px; border: 1px solid #1a2f23; width: 100%; line-height: 1.4;">
+              Backend Engine: YOLOX-Tiny ONNX (AiDetectionService.php) &bull; Thresholds Verified: Confirmed &ge;40%, Uncertain 20&ndash;40%, Negative &lt;20%
+            </div>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45;">
+            <strong>Advisory Decision-Support Notice:</strong> YOLOX-Tiny ONNX inference is strictly automated non-blocking decision support. The AI subsystem cannot verify reports or trigger train cautions. Ecological verification requires official human Wildlife Ranger sign-off.
+          </div>
+        </div>
+
+        <!-- Spatial Math & Standoff -->
+        <div class="evidence-card">
+          <div class="card-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Spatial Standoff & Track Proximity Math (Synthetic Demonstration)
+          </div>
+
+          <div class="geo-stat-row">
+            <span class="geo-stat-label">Observer Location (GPS):</span>
+            <span class="geo-stat-val">8.04125000, 80.82564000 <span style="font-size: 10px; color: #94a3b8;">[Synthetic Fix]</span></span>
+          </div>
+          <div class="geo-stat-row">
+            <span class="geo-stat-label">Estimated Standoff Distance:</span>
+            <span class="geo-stat-val">120 meters <span style="font-size: 10px; color: #94a3b8;">[Synthetic Estimate]</span></span>
+          </div>
+          <div class="geo-stat-row">
+            <span class="geo-stat-label">Estimated Observer Bearing:</span>
+            <span class="geo-stat-val">045&deg; North-East <span style="font-size: 10px; color: #94a3b8;">[Synthetic]</span></span>
+          </div>
+          <div class="geo-stat-row">
+            <span class="geo-stat-label">Calculated Animal Fix:</span>
+            <span class="geo-stat-val">8.04198000, 80.82638000 <span style="font-size: 10px; color: #94a3b8;">[Synthetic Geodesic]</span></span>
+          </div>
+          <div class="geo-stat-row">
+            <span class="geo-stat-label">Distance to Railway Centerline:</span>
+            <span class="geo-stat-val" style="color: #f87171;">18 meters <span style="font-size: 10px; color: #fca5a5;">[Inside Buffer &bull; Synthetic]</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Deck -->
+      <div>
+        <div class="action-deck">
+          <button class="btn-verify" onclick="alert('PROTOTYPE DEMONSTRATION: Sighting observation verified ecologically. Notice sent to Railway Operations Control Desk for independent train caution evaluation.');">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Verify Sighting Observation
+          </button>
+          <button class="btn-clarify" onclick="alert('PROTOTYPE DEMONSTRATION: Requesting field clarification from reporting observer.');">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Request Field Clarification
+          </button>
+          <button class="btn-reject" onclick="alert('PROTOTYPE DEMONSTRATION: Sighting observation rejected as false alarm.');">
+            Reject (False Alarm / Out of Corridor)
+          </button>
+        </div>
+        <div style="font-size: 11.5px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 10px; line-height: 1.5;">
+          * ROLE BOUNDARY SEPARATION: Wildlife verification certifies ecological observation validity. Railway caution orders and train advisory broadcasts are executed exclusively by Sri Lanka Railways Train Controllers at the Control Desk.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

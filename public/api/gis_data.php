@@ -12,10 +12,12 @@
  *   exposure of sensitive live wildlife coordinates.
  */
 
-// Set strict JSON response headers
+// Set strict JSON response headers and cache controls for sensitive GIS telemetry
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/core/Session.php';
@@ -25,6 +27,13 @@ require_once __DIR__ . '/../../app/services/GisService.php';
 // Helper function to send standardized JSON responses and terminate
 function send_json_response($statusCode, array $data) {
     http_response_code($statusCode);
+    if (isset($data['status'])) {
+        if ($data['status'] === 'success' && !isset($data['success'])) {
+            $data = array_merge(['success' => true], $data);
+        } elseif ($data['status'] === 'error' && !isset($data['success'])) {
+            $data = array_merge(['success' => false], $data);
+        }
+    }
     echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -61,6 +70,25 @@ try {
             'message' => 'Access denied. Precise wildlife coordinates are restricted to authorized wildlife and railway control officers.'
         ]);
     }
+
+    // Role-based coordinate access: least-privilege model
+    // Operational dispatchers and biologists require full precision coordinates.
+    // Administrative users receive approximate masked coordinates (~2 decimal places, ~1.1km).
+    // Any caller can explicitly opt for masked coordinates via ?mask_coordinates=1 or ?masked=1.
+    $operationalRoles = ['wildlife_officer', 'control_officer'];
+    $maskParams = [
+        $_GET['mask_coordinates'] ?? null,
+        $_GET['masked'] ?? null,
+        $_GET['force_mask'] ?? null
+    ];
+    $forceMask = false;
+    foreach ($maskParams as $mp) {
+        if ($mp !== null && in_array(strtolower(trim((string)$mp)), ['1', 'true', 'yes'], true)) {
+            $forceMask = true;
+            break;
+        }
+    }
+    $hasPreciseAccess = in_array($role, $operationalRoles, true) && !$forceMask;
 
     // 4. Input Validation & Parameter Sanitization
     $filters = [];
@@ -148,14 +176,14 @@ try {
         $filters['limit'] = 100;
     }
 
-    // Filter: layer (all, routes, hotspots, reports)
+    // Filter: layer (all, routes, hotspots, reports, alerts)
     $layer = isset($_GET['layer']) ? strtolower(trim($_GET['layer'])) : 'all';
-    $validLayers = ['all', 'routes', 'hotspots', 'reports'];
+    $validLayers = ['all', 'routes', 'hotspots', 'reports', 'alerts'];
     if (!in_array($layer, $validLayers, true)) {
         send_json_response(400, [
             'status' => 'error',
             'code' => 400,
-            'message' => "Invalid layer parameter. Allowed values: all, routes, hotspots, reports."
+            'message' => "Invalid layer parameter. Allowed values: all, routes, hotspots, reports, alerts."
         ]);
     }
 
@@ -179,11 +207,19 @@ try {
         send_json_response(200, [
             'status' => 'success',
             'layer' => 'reports',
-            'data' => GisService::reportsToGeoJson($reports)
+            'coordinate_privacy' => $hasPreciseAccess ? 'full_precision_operational' : 'approximate_masked_2_decimals',
+            'data' => GisService::reportsToGeoJson($reports, $hasPreciseAccess)
+        ]);
+    } elseif ($layer === 'alerts') {
+        $alerts = GisService::getActiveAlertsGeoJson($filters['section_id'] ?? null);
+        send_json_response(200, [
+            'status' => 'success',
+            'layer' => 'alerts',
+            'data' => $alerts
         ]);
     } else {
         // Return full aggregated GIS payload
-        $payload = GisService::getGisPayload($filters);
+        $payload = GisService::getGisPayload($filters, $hasPreciseAccess);
         send_json_response(200, $payload);
     }
 

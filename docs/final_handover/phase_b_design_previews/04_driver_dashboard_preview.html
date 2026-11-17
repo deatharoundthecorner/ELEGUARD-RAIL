@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driver Cab Safety Desk — Stationary Review | ELEGUARD RAIL [Preview]</title>
+  <style>
+    :root {
+      --bg-cab-canvas: #070a0e;
+      --bg-cab-card: #0e141c;
+      --bg-cab-elevated: #151e2a;
+      --border-cab: #202d3e;
+      --text-cab-bright: #ffffff;
+      --text-cab-muted: #cbd5e1;
+      --text-cab-dim: #94a3b8;
+      --sig-crimson: #ef4444;
+      --sig-amber: #f59e0b;
+      --sig-green: #10b981;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "Segoe UI Mono", "Roboto Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-cab-canvas);
+      color: var(--text-cab-bright);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.45;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* MANDATORY STATUTORY BANNER: STATIONARY REVIEW ONLY */
+    .mandate-banner {
+      background: #78350f;
+      border: 2px solid #f59e0b;
+      border-radius: 6px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mandate-icon {
+      flex-shrink: 0;
+      color: #fef3c7;
+    }
+
+    .mandate-title {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+    }
+
+    .mandate-sub {
+      font-size: 12px;
+      color: #fde68a;
+      margin-top: 2px;
+    }
+
+    /* STATUTORY LEGAL PRECEDENCE NOTICE */
+    .precedence-card {
+      background: #19140e;
+      border: 1.5px solid #ea580c;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 12px;
+      color: #fed7aa;
+      line-height: 1.4;
+    }
+
+    .precedence-card strong {
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    /* Top Cab Telemetry Status Bar */
+    .cab-status-strip {
+      background: var(--bg-cab-card);
+      border: 1px solid var(--border-cab);
+      border-radius: 6px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .train-ident {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .train-badge {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      color: #38bdf8;
+    }
+
+    .audio-safety-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #1a161f;
+      border: 1px solid #4a3461;
+      color: #e9d5ff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    /* Active Danger Alert Card - Non Glare, Solid Crimson Accent */
+    .hazard-card {
+      background: var(--bg-cab-card);
+      border: 1px solid var(--border-cab);
+      border-left: 6px solid var(--sig-crimson);
+      border-radius: 6px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hazard-head-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hazard-level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #450a0a;
+      border: 1px solid #b91c1c;
+      color: #fca5a5;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+    }
+
+    .stale-warning-pill {
+      background: #2e1065;
+      border: 1px solid #7c3aed;
+      color: #e9d5ff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .hazard-headline {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      line-height: 1.25;
+    }
+
+    .hazard-location-callout {
+      background: #090e15;
+      border: 1px solid #1a2738;
+      border-radius: 4px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .loc-corridor {
+      font-size: 16px;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    .loc-chainage {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-cab-muted);
+    }
+
+    /* Dual Timestamp Box */
+    .timestamp-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .time-box {
+      background: #090e15;
+      border: 1px solid #1a2738;
+      border-radius: 4px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .time-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-cab-dim);
+    }
+
+    .time-val {
+      font-size: 16px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #ffffff;
+    }
+
+    /* Action Desk Controls - 48px touch targets */
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .btn-ack-briefing {
+      background: #1e293b;
+      border: 1px solid #3b82f6;
+      color: #93c5fd;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-ack-briefing:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-ack-holding {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-ack-holding:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Synthetic Demonstration Banner -->
+    <div style="background: #1e1b12; border: 1px solid #78350f; color: #fbbf24; font-family: var(--font-mono); font-size: 11px; padding: 6px 14px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+      <span>⚠️ SYNTHETIC DEMONSTRATION PROTOTYPE &bull; ILLUSTRATIVE VALUES ONLY</span>
+      <span>CAB DESK &bull; RECEIPT-ONLY SEMANTICS</span>
+    </div>
+
+    <!-- STATUTORY SAFETY MANDATE -->
+    <div class="mandate-banner">
+      <svg class="mandate-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <div class="mandate-title">STATIONARY REVIEW USE ONLY &bull; DO NOT INTERACT WHILE LOCOMOTIVE IS IN MOTION</div>
+        <div class="mandate-sub">Sri Lanka Railways Operational Safety Circular 2026/04 &bull; Screen interaction strictly restricted to stations and halts.</div>
+      </div>
+    </div>
+
+    <!-- LEGAL PRECEDENCE WARNING -->
+    <div class="precedence-card">
+      <strong>Statutory Precedence Notice:</strong> This display provides supplementary situational awareness only. It <strong>DOES NOT</strong> supersede Sri Lanka Railways Caution Orders (Form T.409/T.410), fixed track signals, or direct Train Controller instructions.
+    </div>
+
+    <!-- CAB STATUS BAR -->
+    <div class="cab-status-strip">
+      <div class="train-ident">
+        <span class="train-badge">TRAIN #6011 &bull; Class S12</span>
+        <span style="font-size: 12px; color: var(--text-cab-muted);">Locomotive Driver: <strong>driver@eleguard.lk</strong></span>
+      </div>
+
+      <div class="audio-safety-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        AUDIO SUPPRESSED (CAB SAFETY)
+      </div>
+    </div>
+
+    <!-- CRITICAL HAZARD CARD -->
+    <div class="hazard-card">
+      <div class="hazard-head-row">
+        <div class="hazard-level-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/></svg>
+          CRITICAL HAZARD ADVISORY
+        </div>
+        <span class="stale-warning-pill">DISPATCHED: 4 MINS AGO</span>
+      </div>
+
+      <div class="hazard-headline">
+        COLLISION HAZARD: Sighting of 3 Elephants Approaching Track Line
+      </div>
+
+      <div class="hazard-location-callout">
+        <div class="loc-corridor">Minneriya &ndash; Hingurakgoda Corridor</div>
+        <div class="loc-chainage">Milepost 105.4 &bull; Near Culvert 412 (Distance to track: 18m)</div>
+      </div>
+
+      <div class="timestamp-split-grid">
+        <div class="time-box">
+          <span class="time-label">Field Observation Recorded:</span>
+          <span class="time-val">05:47 PM (Today)</span>
+        </div>
+        <div class="time-box">
+          <span class="time-label">Train Control Broadcast Dispatched:</span>
+          <span class="time-val">05:50 PM (4m ago)</span>
+        </div>
+      </div>
+
+      <!-- Station Halt Response Touch Targets (Receipt-Only Semantics) -->
+      <div class="action-row" style="grid-template-columns: repeat(3, 1fr);">
+        <button class="btn-ack-briefing" onclick="alert('CAB RECEIPT LOGGED: Briefing Noted (Standard Vigilance). Logged to Central Control audit ledger with SHA-256 hash. No speed or braking command issued.');">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Briefing Noted (Standard Vigilance)
+        </button>
+        <button class="btn-ack-holding" style="background: #2b1f09; border-color: #f59e0b; color: #fde68a;" onclick="alert('CAB RECEIPT LOGGED: Acknowledged — Advisory Received. Operating under Train Controller Caution Orders. No throttle or braking command issued.');">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Acknowledged &mdash; Advisory Received
+        </button>
+        <button class="btn-ack-holding" style="background: #1f1418; border-color: #ef4444; color: #fca5a5;" onclick="alert('CAB RECEIPT LOGGED: Stationary Standstill Logged at Station/Halt. No throttle or braking command issued.');">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Stationary Standstill Logged
+        </button>
+      </div>
+      <div style="font-size: 11.5px; color: var(--text-cab-muted); font-family: var(--font-mono); line-height: 1.5; border-top: 1px solid var(--border-cab); padding-top: 10px;">
+        * RECEIPT-ONLY SEMANTICS: Acknowledging logs advisory receipt into Railway Control audit ledger. This interface does not command train speed, braking, or throttle. Operating under official Sri Lanka Railways Caution Orders (Form T.409/T.410).
+      </div>
+    </div>
+  </div>
+</body>
+</html>

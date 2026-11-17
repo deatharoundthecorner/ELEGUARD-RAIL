@@ -19,38 +19,32 @@ ini_set('display_errors', '0');
 
 require_once __DIR__ . '/bootstrap.php';
 
-// STEP 1: Pre-flight operational DB record & create isolated test database
+// STEP 1: Pre-flight operational DB record & ensure isolated test database
 $rawHost = '127.0.0.1';
 $rawPort = 3308;
-$rawUser = 'root';
-$rawPass = '';
-
-$rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", $rawUser, $rawPass);
-$rawPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// Record baseline operational counts and Report #1 state before any test activity
-$rawPdo->exec("USE eleguard_rail");
-$preOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$preOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-$preOperReport1 = $rawPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
-
-// Create fresh isolated test database clone
-$testDbName = 'eleguard_rail_test';
-$rawPdo->exec("DROP DATABASE IF EXISTS `{$testDbName}`");
-$rawPdo->exec("CREATE DATABASE `{$testDbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-
-$rawPdo->exec("USE eleguard_rail");
-$tables = $rawPdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
-
-$rawPdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-foreach ($tables as $t) {
-    $createSql = $rawPdo->query("SHOW CREATE TABLE `{$t}`")->fetch(PDO::FETCH_ASSOC)['Create Table'];
-    $rawPdo->exec("USE `{$testDbName}`");
-    $rawPdo->exec($createSql);
-    $rawPdo->exec("INSERT INTO `{$testDbName}`.`{$t}` SELECT * FROM eleguard_rail.`{$t}`");
-    $rawPdo->exec("USE eleguard_rail");
+$testDbName = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? null);
+if (empty($testDbName) || $testDbName === 'eleguard_rail_test' || $testDbName === 'eleguard_rail') {
+    $testDbName = 'eleguard_test_tmp_' . bin2hex(random_bytes(6));
+    putenv("DB_NAME={$testDbName}");
+    $_ENV['DB_NAME'] = $testDbName;
 }
-$rawPdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+$rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", 'root', '', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+
+// Read operational baseline counts safely via read-only account (zero privileged USE eleguard_rail)
+$roPdo = new PDO("mysql:host={$rawHost};port={$rawPort};dbname=eleguard_rail;charset=utf8mb4", 'eleguard_readonly', 'ReadOnly_Guard#2026', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+$preOperReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
+$preOperLogs = (int)$roPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
+$preOperReport1 = $roPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+
+// Ensure test database is populated from canonical seed (NEVER cloned from operational DB)
+ensureTestDatabaseExists($rawPdo, $testDbName);
+$rawPdo->exec("USE `{$testDbName}`");
+$preTestReportIds = $rawPdo->query("SELECT id FROM elephant_reports")->fetchAll(PDO::FETCH_COLUMN, 0);
 
 // STEP 2: Enforce environment variable routing to isolated test database BEFORE loading config
 putenv("DB_NAME={$testDbName}");
@@ -496,10 +490,10 @@ $subBoolResult = ReportService::submitReport(
 assertTest($subBoolResult === true,
     "3.2 submitReport() wrapper maintains 100% backward compatibility returning boolean true");
 
-// 3.3 Auto-elevation in submit_report.php workflow targets $newRangerId
+// 3.3 Auto-elevation in submit_report.php workflow targets $newRangerId (requires explicit authorization flag)
 $elevated = false;
 if ($newRangerId !== false && $newRangerId > 0) {
-    $elevated = ReportService::updateStatus($newRangerId, 'Verified', $wildlifeOfficerId);
+    $elevated = ReportService::updateStatus($newRangerId, 'Verified', $wildlifeOfficerId, true);
 }
 assertTest($elevated === true, "3.3 Newly inserted report ID {$newRangerId} elevated to 'Verified'");
 
@@ -811,10 +805,9 @@ echo "\n";
 // -------------------------------------------------------------------------------------------------
 echo "-- Group 6: Operational Database Zero-Write Invariant --\n";
 
-$rawPdo->exec("USE eleguard_rail");
-$postOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$postOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-$postOperReport1 = $rawPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+$postOperReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
+$postOperLogs = (int)$roPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
+$postOperReport1 = $roPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
 
 assertTest($postOperReports === $preOperReports,
     "6.1 Operational elephant_reports count untouched ({$preOperReports} == {$postOperReports})");
@@ -823,9 +816,21 @@ assertTest($postOperLogs === $preOperLogs,
 assertTest($postOperReport1 == $preOperReport1,
     "6.3 Historical Report #1 in operational database is 100% untouched and pristine");
 
-// Cleanup test database
-echo "\n-- Dropping Isolated Test Database ({$testDbName}) --\n";
-safeTeardownTestDatabase($rawPdo, $testDbName);
+// Cleanup test database records
+echo "\n-- Cleaning Up Transient Test Data in ({$testDbName}) --\n";
+if (!empty($preTestReportIds)) {
+    $ph = implode(',', array_map('intval', $preTestReportIds));
+    // Disable FK checks to handle self-referencing parent_clarification_id FK during teardown
+    $rawPdo->exec("SET FOREIGN_KEY_CHECKS=0");
+    $rawPdo->exec("DELETE rc FROM report_clarifications rc
+        INNER JOIN elephant_reports er ON rc.report_id = er.id
+        WHERE er.id NOT IN ({$ph})");
+    $rawPdo->exec("DELETE rv FROM report_verifications rv
+        INNER JOIN elephant_reports er ON rv.report_id = er.id
+        WHERE er.id NOT IN ({$ph})");
+    $rawPdo->exec("DELETE FROM elephant_reports WHERE id NOT IN ({$ph})");
+    $rawPdo->exec("SET FOREIGN_KEY_CHECKS=1");
+}
 echo " [PASS] Cleaned up isolated test database successfully\n\n";
 
 echo "========================================================\n";

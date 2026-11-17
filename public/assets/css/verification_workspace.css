@@ -1,0 +1,474 @@
+/**
+ * EleGuard Rail — Wildlife Officer Verification & Operational Review Workspace
+ * Milestone 9C — Stage 4E.4.3-F
+ * 
+ * Styles for:
+ * - Verification Dashboard Status Tabs & Count Badges
+ * - Observation Review Layout (Demographics, Telemetry, Tuskers, Chainage)
+ * - Interactive Leaflet Review Map & OSM Disclaimer
+ * - Verification Decision Panel & Self-Verification Protection Banner
+ * - Clarification Conversation Thread & Inquiry Form
+ * - Verification History Audit Ledger
+ * - Responsive Mobile Breakpoints
+ */
+
+/* ==========================================================================
+   1. DASHBOARD STATUS TABS & METRIC BADGES
+   ========================================================================== */
+.verification-tabs-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    padding-bottom: 12px;
+}
+
+.verification-tab-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-secondary, #94a3b8);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.verification-tab-item:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.verification-tab-item.active {
+    color: #fff;
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+    font-weight: 600;
+}
+
+.verification-tab-item.active.tab-pending {
+    background: rgba(245, 158, 11, 0.18);
+    border-color: #f59e0b;
+}
+
+.verification-tab-item.active.tab-needs-info {
+    background: rgba(59, 130, 246, 0.18);
+    border-color: #3b82f6;
+}
+
+.verification-tab-item.active.tab-clarification-submitted {
+    background: rgba(168, 85, 247, 0.18);
+    border-color: #a855f7;
+}
+
+.verification-tab-item.active.tab-verified {
+    background: rgba(16, 185, 129, 0.18);
+    border-color: #10b981;
+}
+
+.verification-tab-item.active.tab-rejected {
+    background: rgba(239, 68, 68, 0.18);
+    border-color: #ef4444;
+}
+
+.tab-count-pill {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+    color: inherit;
+}
+
+/* Specific status badges */
+.badge-status-pending {
+    background: rgba(245, 158, 11, 0.18);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.badge-status-needs-info {
+    background: rgba(59, 130, 246, 0.18);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.badge-status-clarification-submitted {
+    background: rgba(168, 85, 247, 0.18);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.badge-status-verified {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.badge-status-rejected {
+    background: rgba(239, 68, 68, 0.18);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+/* ==========================================================================
+   2. DETAILED OBSERVATION REVIEW WORKSPACE
+   ========================================================================== */
+.review-workspace-card {
+    background: var(--card-bg, #1e293b);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-top: 4px solid var(--accent-color, #10b981);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.review-workspace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.review-workspace-title {
+    font-size: 1.35rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.observation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.observation-data-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.observation-data-card h3 {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--accent-color, #10b981);
+    margin-top: 0;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.demographics-pill-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.demographic-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 8px;
+    text-align: center;
+}
+
+.demographic-box .box-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.demographic-box .box-label {
+    font-size: 0.72rem;
+    color: var(--text-secondary, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 2px;
+}
+
+/* Tusker Information Badge */
+.tusker-alert-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid #f59e0b;
+    color: #fbbf24;
+}
+
+/* ==========================================================================
+   3. LEAFLET MAP VIEW & ENGINEERING DISCLAIMER
+   ========================================================================== */
+.sighting-map-container {
+    height: 380px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.map-engineering-disclaimer {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-left: 4px solid #f59e0b;
+    color: #fbbf24;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.map-telemetry-legend {
+    display: flex;
+    gap: 16px;
+    font-size: 0.8rem;
+    color: var(--text-secondary, #94a3b8);
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.map-telemetry-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ==========================================================================
+   4. VERIFICATION DECISION PANEL & SELF-VERIFICATION GUARD
+   ========================================================================== */
+.verification-decision-panel {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 24px;
+}
+
+.self-verification-prohibited-banner {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-left: 5px solid #ef4444;
+    color: #fca5a5;
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.self-verification-prohibited-banner strong {
+    color: #ef4444;
+}
+
+.verification-actions-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   5. CLARIFICATION CONVERSATION PANEL
+   ========================================================================== */
+.clarification-conversation-panel {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 24px;
+}
+
+.conversation-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.message-bubble {
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
+    position: relative;
+}
+
+.message-bubble.bubble-officer-inquiry {
+    border-left: 4px solid #3b82f6;
+    background: rgba(59, 130, 246, 0.04);
+}
+
+.message-bubble.bubble-reporter-response {
+    border-left: 4px solid #10b981;
+    background: rgba(16, 185, 129, 0.04);
+}
+
+.message-bubble.bubble-officer-followup {
+    border-left: 4px solid #f59e0b;
+    background: rgba(245, 158, 11, 0.04);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+    color: var(--text-secondary, #94a3b8);
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.message-author {
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.message-body {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: #e2e8f0;
+}
+
+.parent-reference-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary, #94a3b8);
+}
+
+.inquiry-form-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 14px;
+}
+
+.char-counter {
+    font-size: 0.75rem;
+    color: var(--text-secondary, #94a3b8);
+    text-align: right;
+    margin-top: 4px;
+}
+
+/* ==========================================================================
+   6. VERIFICATION HISTORY AUDIT LEDGER
+   ========================================================================== */
+.verification-history-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 24px;
+}
+
+/* ==========================================================================
+   7. PAGINATION CONTROLS
+   ========================================================================== */
+.verification-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pagination-pages {
+    display: flex;
+    gap: 6px;
+}
+
+.pagination-link {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary, #94a3b8);
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.pagination-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.pagination-link.active {
+    background: #10b981;
+    color: #fff;
+    border-color: #10b981;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   8. RESPONSIVE MOBILE BREAKPOINTS
+   ========================================================================== */
+@media (max-width: 992px) {
+    .observation-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .demographics-pill-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .review-workspace-card {
+        padding: 16px;
+    }
+    
+    .sighting-map-container {
+        height: 280px;
+    }
+    
+    .verification-actions-row {
+        flex-direction: column;
+    }
+    
+    .verification-actions-row .btn {
+        width: 100%;
+    }
+    
+    .verification-tab-item {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+}

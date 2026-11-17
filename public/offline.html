@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#166534">
+    <title>Offline Mode | EleGuard Rail Field Telemetry</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-sky: #38bdf8;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .offline-container {
+            max-width: 480px;
+            width: 100%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(245, 158, 11, 0.15);
+            border: 2px solid var(--accent-amber);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+        }
+
+        .icon-wrapper svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--accent-amber);
+        }
+
+        .brand-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-emerald);
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background-color: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--danger);
+            border-radius: 9999px;
+            color: #fca5a5;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--danger);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        p.description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .info-box {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-left: 3px solid var(--accent-sky);
+            padding: 12px 16px;
+            text-align: left;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .info-box strong {
+            color: var(--accent-sky);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            min-height: 48px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-emerald);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #059669;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover, .btn-secondary:focus {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .footer-note {
+            margin-top: 24px;
+            font-size: 11px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="icon-wrapper">
+            <!-- Satellite / Radio Disconnect Icon -->
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 14.53 2.94 16.84 4.49 18.6L18.6 4.49C16.84 2.94 14.53 2 12 2ZM20.91 8.84C21.6 9.83 22 10.87 22 12C22 17.52 17.52 22 12 22C10.87 22 9.83 21.6 8.84 20.91L20.91 8.84ZM4.27 3L3 4.27L19.73 21L21 19.73L4.27 3Z"/>
+            </svg>
+        </div>
+
+        <span class="brand-badge">EleGuard Rail Field Telemetry</span>
+        <h1>Offline Mode Active</h1>
+
+        <div class="status-pill" id="statusPill">
+            <span class="status-dot"></span>
+            <span id="statusText">Network Connection Unavailable</span>
+        </div>
+
+        <p class="description">
+            Your device is currently disconnected from cellular and satellite networks along the railway corridor.
+        </p>
+
+        <div class="info-box">
+            <strong>Field Telemetry Security Guard:</strong><br>
+            To prevent wildlife telemetry exposure, sensitive animal coordinates are never stored in unencrypted browser cache. Offline encrypted drafts and local sync will activate in Stage 4E.4.2-B.
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="retryBtn" onclick="checkConnection()">
+                🔄 Check Connection &amp; Retry
+            </button>
+            <button class="btn btn-secondary" onclick="window.history.back()">
+                ← Return to Previous Screen
+            </button>
+        </div>
+
+        <p class="footer-note">
+            EleGuard Rail &bull; Milestone 9C &bull; PWA Foundation
+        </p>
+    </div>
+
+    <script>
+        function checkConnection() {
+            var btn = document.getElementById('retryBtn');
+            btn.innerHTML = 'Checking...';
+            btn.disabled = true;
+
+            if (navigator.onLine) {
+                // Network restored
+                window.location.reload();
+            } else {
+                setTimeout(function() {
+                    btn.innerHTML = '❌ Still Offline &bull; Tap to Retry';
+                    btn.disabled = false;
+                    var pill = document.getElementById('statusPill');
+                    pill.style.borderColor = '#ef4444';
+                }, 800);
+            }
+        }
+
+        window.addEventListener('online', function() {
+            var statusText = document.getElementById('statusText');
+            statusText.innerText = 'Connection Restored! Reloading...';
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

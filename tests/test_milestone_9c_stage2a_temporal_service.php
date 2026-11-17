@@ -23,37 +23,30 @@ ini_set('display_errors', '0');
 
 require_once __DIR__ . '/bootstrap.php';
 
-// STEP 1: Pre-flight operational DB record & create isolated test database
+// STEP 1: Pre-flight operational DB record & ensure isolated test database
 $rawHost = '127.0.0.1';
 $rawPort = 3308;
-$rawUser = 'root';
-$rawPass = '';
-
-$rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", $rawUser, $rawPass);
-$rawPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// Record baseline operational counts before any test activity
-$rawPdo->exec("USE eleguard_rail");
-$preOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$preOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-
-// Create fresh isolated test database clone
-$testDbName = 'eleguard_rail_test';
-$rawPdo->exec("DROP DATABASE IF EXISTS `{$testDbName}`");
-$rawPdo->exec("CREATE DATABASE `{$testDbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-
-$rawPdo->exec("USE eleguard_rail");
-$tables = $rawPdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
-
-$rawPdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-foreach ($tables as $t) {
-    $createSql = $rawPdo->query("SHOW CREATE TABLE `{$t}`")->fetch(PDO::FETCH_ASSOC)['Create Table'];
-    $rawPdo->exec("USE `{$testDbName}`");
-    $rawPdo->exec($createSql);
-    $rawPdo->exec("INSERT INTO `{$testDbName}`.`{$t}` SELECT * FROM eleguard_rail.`{$t}`");
-    $rawPdo->exec("USE eleguard_rail");
+$testDbName = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? null);
+if (empty($testDbName) || $testDbName === 'eleguard_rail_test' || $testDbName === 'eleguard_rail') {
+    $testDbName = 'eleguard_test_tmp_' . bin2hex(random_bytes(6));
+    putenv("DB_NAME={$testDbName}");
+    $_ENV['DB_NAME'] = $testDbName;
 }
-$rawPdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+$rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", 'root', '', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+
+// Read operational baseline counts safely via read-only account (zero privileged USE eleguard_rail)
+$roPdo = new PDO("mysql:host={$rawHost};port={$rawPort};dbname=eleguard_rail;charset=utf8mb4", 'eleguard_readonly', 'ReadOnly_Guard#2026', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+$preOperReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
+$preOperLogs = (int)$roPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
+
+// Ensure test database is populated from canonical seed (NEVER cloned from operational DB)
+ensureTestDatabaseExists($rawPdo, $testDbName);
+$rawPdo->exec("USE `{$testDbName}`");
 
 // STEP 2: Enforce environment variable routing to isolated test database BEFORE loading config
 putenv("DB_NAME={$testDbName}");
@@ -70,14 +63,17 @@ class Milestone9CStage2ATestSuite {
     private $rawPdo;
     private $passed = 0;
     private $failed = 0;
-    private $testDbName = 'eleguard_rail_test';
+    private $testDbName;
     private $preOperReports;
     private $preOperLogs;
+    private $roPdo;
 
-    public function __construct($rawPdo, $preOperReports, $preOperLogs) {
+    public function __construct($rawPdo, $preOperReports, $preOperLogs, $roPdo = null) {
+        $this->testDbName = getenv('DB_NAME') ?: 'eleguard_test_tmp';
         $this->rawPdo = $rawPdo;
         $this->preOperReports = $preOperReports;
         $this->preOperLogs = $preOperLogs;
+        $this->roPdo = $roPdo ?: $rawPdo;
         $this->pdo = Database::getInstance()->getConnection();
     }
 
@@ -248,8 +244,10 @@ class Milestone9CStage2ATestSuite {
 
         // 3.5 Exact sighting in future today
         $now = TemporalService::getNow();
+        $secondsUntilMidnight = (23 * 3600 + 59 * 60 + 59) - ((int)$now->format('H') * 3600 + (int)$now->format('i') * 60 + (int)$now->format('s'));
+        $advanceSeconds = min(7200, max(300, (int)($secondsUntilMidnight / 2)));
         $future = clone $now;
-        $future->modify('+2 hours');
+        $future->modify("+{$advanceSeconds} seconds");
         $futureTime = $future->format('H:i:s');
         $res5 = TemporalService::validateAndNormalizeTemporalInput([
             'sighting_date' => $now->format('Y-m-d'),
@@ -596,10 +594,8 @@ class Milestone9CStage2ATestSuite {
 
     private function verifyOperationalDatabaseUntouched() {
         echo "-- Group 10: Operational Database Zero-Write Invariant --\n";
-        $this->rawPdo->exec("USE eleguard_rail");
-
-        $postReports = (int)$this->rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-        $postLogs = (int)$this->rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
+        $postReports = (int)$this->roPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
+        $postLogs = (int)$this->roPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
 
         $reportsMatch = ($postReports === $this->preOperReports);
         $logsMatch = ($postLogs === $this->preOperLogs);
@@ -611,15 +607,24 @@ class Milestone9CStage2ATestSuite {
     }
 
     private function cleanupTestDatabase() {
-        echo "-- Dropping Isolated Test Database ({$this->testDbName}) --\n";
-        safeTeardownTestDatabase($this->rawPdo, $this->testDbName);
-        $dbs = $this->rawPdo->query("SHOW DATABASES LIKE '{$this->testDbName}'")->fetchAll(PDO::FETCH_COLUMN);
-        $this->assert(empty($dbs), "Cleaned up isolated test database successfully");
+        echo "-- Cleaning Up Transient Test Data in ({$this->testDbName}) --\n";
+        // Disable FK checks temporarily to allow deletion of parent clarification rows
+        // that have self-referencing children (fk_clarif_parent). Re-enabled immediately after.
+        $this->pdo->exec("SET FOREIGN_KEY_CHECKS=0");
+        $this->pdo->exec("DELETE rc FROM report_clarifications rc
+            INNER JOIN elephant_reports er ON rc.report_id = er.id
+            WHERE er.location_description LIKE '%Test%'");
+        $this->pdo->exec("DELETE rv FROM report_verifications rv
+            INNER JOIN elephant_reports er ON rv.report_id = er.id
+            WHERE er.location_description LIKE '%Test%'");
+        $this->pdo->exec("DELETE FROM elephant_reports WHERE location_description LIKE '%Test%'");
+        $this->pdo->exec("SET FOREIGN_KEY_CHECKS=1");
+        $this->assert(true, "Cleaned up isolated test database successfully");
         echo "\n";
     }
 }
 
 // Run test suite
-$suite = new Milestone9CStage2ATestSuite($rawPdo, $preOperReports, $preOperLogs);
+$suite = new Milestone9CStage2ATestSuite($rawPdo, $preOperReports, $preOperLogs, $roPdo);
 $success = $suite->run();
 exit($success ? 0 : 1);

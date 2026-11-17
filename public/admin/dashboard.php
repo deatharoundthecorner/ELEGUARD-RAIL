@@ -26,7 +26,7 @@ $recentIncidents = array_slice(AlertService::getAllIncidents(), 0, 5);
 ?>
 
 <div class="dashboard-title-row">
-    <h1>Administrative Central Console</h1>
+    <h1>Administrative Central Console <span class="badge badge-sample" style="font-size:0.75rem; vertical-align:middle; margin-left:8px;">Demonstration Data</span></h1>
     <p class="text-secondary">System-wide monitoring dashboard for users, railway lines, hotspots, safety warnings, and logs.</p>
 </div>
 
@@ -63,9 +63,25 @@ $recentIncidents = array_slice(AlertService::getAllIncidents(), 0, 5);
     </div>
 </div>
 
+<div class="card-panel" style="margin-top: 25px; margin-bottom: 25px; border-left: 4px solid var(--info); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; padding:18px 24px;">
+    <div>
+        <h3 style="margin-bottom:4px; font-size:1.1rem; color:#fff; display:flex; align-items:center; gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+            Platform Analytics, Provenance & Data Quality Console
+        </h3>
+        <p class="text-secondary" style="font-size:0.85rem; margin:0;">Audit dataset provenance segregation, review data completeness indices, and inspect real-time Analytics REST API health.</p>
+    </div>
+    <div>
+        <a href="<?php echo Router::url('admin/analytics.php'); ?>" class="btn btn-outline btn-md">Open Platform Analytics ↗</a>
+    </div>
+</div>
+
 <div class="card-panel" style="margin-top: 30px; margin-bottom: 30px;">
     <div class="panel-header">
-        <h2 class="panel-title">🗺️ Central Railway GIS & Wildlife Tracking Map</h2>
+        <h2 class="panel-title" style="display:flex; align-items:center; gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+            Central Railway GIS & Wildlife Tracking Map
+        </h2>
         <a href="<?php echo Router::url('admin/map.php'); ?>" class="btn btn-outline btn-sm">Full Screen Map ↗</a>
     </div>
     <?php 

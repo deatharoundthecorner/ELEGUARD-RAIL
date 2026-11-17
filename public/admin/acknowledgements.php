@@ -12,7 +12,7 @@ $acknowledgements = AlertService::getAcknowledgements();
 
 <div class="dashboard-title-row">
     <h1>Driver Cab Acknowledgements Log</h1>
-    <p class="text-secondary">Audit driver confirmations, response times, speed adjustments, and comments recorded on safety warnings.</p>
+    <p class="text-secondary">Audit driver confirmations, response times, advisory receipts, and comments recorded on safety warnings.</p>
 </div>
 
 <div class="card-panel">
@@ -26,7 +26,7 @@ $acknowledgements = AlertService::getAcknowledgements();
                         <th>Time Acknowledged</th>
                         <th>Train Driver</th>
                         <th>Railway Section</th>
-                        <th>Safety Action Taken</th>
+                        <th>Driver Response / Status</th>
                         <th>Driver Remarks</th>
                         <th>Original message</th>
                         <th>Alert level</th>
@@ -39,14 +39,16 @@ $acknowledgements = AlertService::getAcknowledgements();
                             <td><strong><?php echo e($ack['driver_name']); ?></strong></td>
                             <td><strong><?php echo e($ack['section_name']); ?></strong></td>
                             <td>
-                                <span class="badge <?php 
+                                <?php 
+                                    $displayStatus = $ack['action_status_display'] ?? $ack['action_status'];
                                     $st = $ack['action_status'];
-                                    if ($st === 'Stopped') echo 'badge-danger';
-                                    elseif ($st === 'Slowing Down') echo 'badge-warning-dark';
-                                    elseif ($st === 'Acknowledged') echo 'badge-success';
-                                    else echo 'badge-outline';
-                                ?>">
-                                    <?php echo e($ack['action_status']); ?>
+                                    $badgeClass = 'badge-outline';
+                                    if ($st === 'Stopped') $badgeClass = 'badge-danger';
+                                    elseif ($st === 'Slowing Down') $badgeClass = 'badge-warning-dark';
+                                    elseif ($st === 'Acknowledged') $badgeClass = 'badge-success';
+                                ?>
+                                <span class="badge <?php echo $badgeClass; ?>">
+                                    <?php echo e($displayStatus); ?>
                                 </span>
                             </td>
                             <td style="font-size:0.85rem; color:#fff; max-width: 200px;"><?php echo e($ack['note'] ? $ack['note'] : 'N/A'); ?></td>

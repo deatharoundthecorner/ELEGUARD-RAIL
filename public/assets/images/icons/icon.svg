@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="50%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="railGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.8"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="512" height="512" rx="108" fill="url(#bgGrad)"/>
+  
+  <!-- Outer Border Ring -->
+  <rect x="12" y="12" width="488" height="488" rx="96" fill="none" stroke="url(#glowGrad)" stroke-width="6" opacity="0.6"/>
+
+  <!-- Railway Track Geometry (Lower Half) -->
+  <g filter="url(#shadow)">
+    <!-- Sleepers / Ties -->
+    <line x1="120" y1="410" x2="392" y2="410" stroke="#64748b" stroke-width="14" stroke-linecap="round"/>
+    <line x1="140" y1="375" x2="372" y2="375" stroke="#64748b" stroke-width="12" stroke-linecap="round"/>
+    <line x1="160" y1="345" x2="352" y2="345" stroke="#64748b" stroke-width="10" stroke-linecap="round"/>
+    <line x1="180" y1="320" x2="332" y2="320" stroke="#64748b" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Left & Right Steel Rails (Perspective to Horizon) -->
+    <line x1="150" y1="430" x2="220" y2="305" stroke="url(#railGrad)" stroke-width="12" stroke-linecap="round"/>
+    <line x1="362" y1="430" x2="292" y2="305" stroke="url(#railGrad)" stroke-width="12" stroke-linecap="round"/>
+  </g>
+
+  <!-- Radar Telemetry Pulse Rings -->
+  <circle cx="256" cy="190" r="140" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="12 8" opacity="0.35"/>
+  <circle cx="256" cy="190" r="185" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="8 8" opacity="0.2"/>
+
+  <!-- Stylized Elephant Icon / Silhouette (Center Focus) -->
+  <g filter="url(#shadow)" fill="#f8fafc">
+    <!-- Elephant Head, Body, Trunk, Tusks -->
+    <path d="M 220 120 
+             C 170 120 145 155 145 195 
+             C 145 220 155 240 170 255 
+             C 165 270 160 300 165 315 
+             C 168 322 178 322 182 315 
+             C 190 300 195 270 205 258 
+             C 215 264 228 268 245 268 
+             C 285 268 315 245 325 210 
+             C 335 195 355 190 365 200 
+             C 375 210 375 235 365 255 
+             C 358 270 345 285 330 295 
+             C 324 300 327 310 335 310 
+             C 355 305 385 275 390 235 
+             C 395 195 380 160 350 140 
+             C 315 118 260 115 220 120 Z"/>
+    <!-- Elephant Eye -->
+    <circle cx="225" cy="175" r="7" fill="#047857"/>
+    <circle cx="227" cy="173" r="2.5" fill="#ffffff"/>
+    
+    <!-- Tusk -->
+    <path d="M 235 225 C 245 245 260 255 275 255 C 270 248 262 242 255 230 Z" fill="#fbbf24"/>
+  </g>
+
+  <!-- Telemetry Badge (GPS / Radio Signal Indicator) -->
+  <g transform="translate(370, 70)" filter="url(#shadow)">
+    <circle cx="25" cy="25" r="25" fill="#10b981"/>
+    <path d="M 17 25 A 8 8 0 0 1 33 25" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M 12 20 A 15 15 0 0 1 38 20" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="25" cy="30" r="3" fill="#ffffff"/>
+  </g>
+
+  <!-- Typography: EleGuard Rail -->
+  <text x="256" y="468" text-anchor="middle" font-family="'Outfit', 'Inter', -apple-system, sans-serif" font-weight="700" font-size="28" fill="#e2e8f0" letter-spacing="3">
+    ELEGUARD <tspan fill="#10b981">FIELD</tspan>
+  </text>
+</svg>

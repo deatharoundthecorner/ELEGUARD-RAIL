@@ -1,0 +1,201 @@
+/**
+ * ELEGUARD RAIL — Central Design Tokens
+ * Reference: ER-UI-PHASE-C1-FOUNDATION-001
+ * Design System: Natural Enterprise Railway Technology
+ * 
+ * Provides unified CSS custom properties across all five RBAC roles:
+ * Admin, Control Desk, Wildlife Verification, Locomotive Driver, Reporter/PWA.
+ */
+
+:root {
+  /* ==========================================================================
+     1. Primary Railway & Wildlife Identity Palettes
+     ========================================================================== */
+  --eg-navy-900: #0B192C;        /* Industrial Railway Navy */
+  --eg-navy-800: #1E3E62;        /* Structural Steel Blue */
+  --eg-navy-700: #2C5282;        /* Interactive Rail Accent */
+  
+  --eg-forest-900: #1B3B2B;      /* Deep Ceylon Forest Green */
+  --eg-forest-700: #2D5A43;      /* Wildlife Reserve Green */
+  --eg-forest-500: #3E8260;      /* Environmental Sage */
+
+  --eg-amber-600: #D97706;       /* Safety Amber (Operational Caution) */
+  --eg-amber-500: #F59E0B;       /* Signal Amber */
+  --eg-charcoal-950: #0F172A;    /* Slate Charcoal (High Readability Text) */
+
+  /* ==========================================================================
+     2. Secondary & Accent Tones
+     ========================================================================== */
+  --eg-steel-cyan: #38BDF8;      /* Technical Telemetry Accent */
+  --eg-rail-blue: #0284C7;       /* Primary Action Blue */
+  --eg-dwc-emerald: #10B981;     /* Verified Ecological Status */
+  --eg-dwc-sage: #34D399;        /* Secondary Wildlife Accent */
+
+  /* ==========================================================================
+     3. Surface & Background Containers
+     ========================================================================== */
+  /* Dark Operational Workstation (Standard) */
+  --eg-canvas-dark: #0B0F17;     /* Main Application Canvas */
+  --eg-panel-dark: #131B26;      /* Primary Surface / Card Panel */
+  --eg-panel-subtle: #192332;    /* Inset Wells & Section Sub-panels */
+  --eg-panel-hover: #1E2B3E;     /* Interactive Hover State */
+
+  /* Light / High-Visibility Fallbacks */
+  --eg-canvas-light: #F4F6F9;    /* Glare-Resistant Cool Canvas */
+  --eg-panel-light: #FFFFFF;     /* White Card Surface */
+  --eg-panel-light-subtle: #EDF2F7; /* Inset Telemetry Wells */
+
+  /* Active Semantic Canvas & Panel references */
+  --eg-bg-canvas: var(--eg-canvas-dark);
+  --eg-bg-panel: var(--eg-panel-dark);
+  --eg-bg-panel-subtle: var(--eg-panel-subtle);
+
+  /* ==========================================================================
+     4. Border & Structural Dividers
+     ========================================================================== */
+  --eg-border-panel: #202D3F;    /* Structural Card & Table Border */
+  --eg-border-subtle: #29394F;   /* Inner Divider Border */
+  --eg-border-focus: #38BDF8;    /* Keyboard & Interactive Focus */
+  --eg-border-light: #E2E8F0;    /* Light Interface Border */
+
+  /* ==========================================================================
+     5. High-Contrast Typography & Text Colors
+     ========================================================================== */
+  --eg-text-primary: #F8FAFC;    /* Maximum Contrast Primary Text */
+  --eg-text-secondary: #CBD5E1;  /* High Legibility Secondary Labels */
+  --eg-text-muted: #94A3B8;      /* Structural Sub-labels & Metadata */
+  --eg-text-dim: #64748B;        /* Timestamp & Low-Priority Footers */
+  --eg-text-inverse: #0F172A;    /* Inverted Text on Light Badges */
+
+  /* ==========================================================================
+     6. Operational Status & Signal Palettes
+     ========================================================================== */
+  /* Danger / Critical Collision Threat */
+  --eg-sig-red: #EF4444;
+  --eg-sig-red-bg: rgba(239, 68, 68, 0.15);
+  --eg-sig-red-border: rgba(239, 68, 68, 0.35);
+  --eg-sig-red-text: #F87171;
+
+  /* Warning / Caution Zone */
+  --eg-sig-amber: #F59E0B;
+  --eg-sig-amber-bg: rgba(245, 158, 11, 0.15);
+  --eg-sig-amber-border: rgba(245, 158, 11, 0.35);
+  --eg-sig-amber-text: #FBBF24;
+
+  /* Verified / Safe / Success */
+  --eg-sig-green: #10B981;
+  --eg-sig-green-bg: rgba(16, 185, 129, 0.15);
+  --eg-sig-green-border: rgba(16, 185, 129, 0.35);
+  --eg-sig-green-text: #34D399;
+
+  /* Advisory / System Info */
+  --eg-sig-blue: #0EA5E9;
+  --eg-sig-blue-bg: rgba(14, 165, 233, 0.15);
+  --eg-sig-blue-border: rgba(14, 165, 233, 0.35);
+  --eg-sig-blue-text: #38BDF8;
+
+  /* Pending / Unreviewed */
+  --eg-sig-gray: #94A3B8;
+  --eg-sig-gray-bg: rgba(148, 163, 184, 0.15);
+  --eg-sig-gray-border: rgba(148, 163, 184, 0.30);
+  --eg-sig-gray-text: #CBD5E1;
+
+  /* ==========================================================================
+     7. Typography Scales & Font Stacks
+     ========================================================================== */
+  /* Primary Sans-Serif (Standard App Text) */
+  --eg-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* Technical Monospace (Coordinates, Speed, Time, Chainage) */
+  --eg-font-mono: 'JetBrains Mono', "SF Mono", "Segoe UI Mono", "Roboto Mono", Consolas, monospace;
+
+  /* Heading Font */
+  --eg-font-heading: 'Outfit', 'Inter', -apple-system, sans-serif;
+
+  /* Font Sizes */
+  --eg-text-xs: 0.6875rem;       /* 11px - Telemetry labels, micro-badges */
+  --eg-text-sm: 0.78125rem;      /* 12.5px - Table rows, metadata, subtexts */
+  --eg-text-base: 0.84375rem;    /* 13.5px - Standard application body */
+  --eg-text-md: 0.9375rem;       /* 15px - Section subtitles, form inputs */
+  --eg-text-lg: 1.125rem;        /* 18px - Panel titles, modal headers */
+  --eg-text-xl: 1.375rem;        /* 22px - Dashboard section headings */
+  --eg-text-2xl: 1.625rem;       /* 26px - KPI metrics, primary numbers */
+
+  /* Line Heights */
+  --eg-leading-tight: 1.2;
+  --eg-leading-normal: 1.45;
+  --eg-leading-relaxed: 1.6;
+
+  /* ==========================================================================
+     8. Spacing Scale
+     ========================================================================== */
+  --eg-space-1: 4px;
+  --eg-space-2: 8px;
+  --eg-space-3: 12px;
+  --eg-space-4: 16px;
+  --eg-space-5: 20px;
+  --eg-space-6: 24px;
+  --eg-space-8: 32px;
+  --eg-space-10: 40px;
+
+  /* ==========================================================================
+     9. Radiuses & Shadows
+     ========================================================================== */
+  --eg-radius-xs: 2px;
+  --eg-radius-sm: 4px;
+  --eg-radius-md: 6px;
+  --eg-radius-lg: 8px;
+  --eg-radius-full: 9999px;
+
+  --eg-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --eg-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+  --eg-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.45), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
+
+  /* ==========================================================================
+     10. Layout Widths & Responsive Breakpoints
+     ========================================================================== */
+  --eg-sidebar-width: 240px;
+  --eg-topbar-height: 56px;
+  --eg-layout-max: 1440px;
+  --eg-layout-laptop: 1280px;
+  --eg-layout-tablet: 768px;
+  --eg-layout-mobile: 390px;
+}
+
+/* ==========================================================================
+   11. Role-Specific Visual Identity Themes (Task F Support)
+   ========================================================================== */
+/* Role: Admin (Technical Slate & Steel Blue) */
+body.role-admin {
+  --eg-role-accent: var(--eg-steel-cyan);
+  --eg-role-banner-bg: #0B192C;
+  --eg-role-badge-border: rgba(56, 189, 248, 0.35);
+}
+
+/* Role: Railway Control Desk (Deep Dispatch Workstation & Safety Amber) */
+body.role-control_officer {
+  --eg-role-accent: var(--eg-amber-500);
+  --eg-role-banner-bg: #080C12;
+  --eg-role-badge-border: rgba(245, 158, 11, 0.35);
+}
+
+/* Role: Wildlife Verification (Ceylon Forest Green & Emerald) */
+body.role-wildlife_officer {
+  --eg-role-accent: var(--eg-dwc-emerald);
+  --eg-role-banner-bg: #09110D;
+  --eg-role-badge-border: rgba(16, 185, 129, 0.35);
+}
+
+/* Role: Locomotive Driver (High-Contrast Glare-Resistant Black & Amber) */
+body.role-driver {
+  --eg-role-accent: var(--eg-amber-500);
+  --eg-role-banner-bg: #070A0E;
+  --eg-role-badge-border: rgba(245, 158, 11, 0.45);
+}
+
+/* Role: Citizen Reporter (Accessible Deep Sea Blue) */
+body.role-reporter {
+  --eg-role-accent: var(--eg-rail-blue);
+  --eg-role-banner-bg: #0B1219;
+  --eg-role-badge-border: rgba(2, 132, 199, 0.35);
+}

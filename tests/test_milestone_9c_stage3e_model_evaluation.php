@@ -20,39 +20,33 @@ ini_set('display_errors', '0');
 
 require_once __DIR__ . '/bootstrap.php';
 
-// STEP 1: Pre-flight operational DB record & create isolated test database
+// STEP 1: Pre-flight operational DB record & ensure isolated test database
 $rawHost = '127.0.0.1';
 $rawPort = 3308;
-$rawUser = 'root';
-$rawPass = '';
-
-$rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", $rawUser, $rawPass);
-$rawPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// Record baseline operational counts and Report #1 state before any test activity
-$rawPdo->exec("USE eleguard_rail");
-$preOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$preOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-$preOperAlerts = (int)$rawPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-$preOperReport1 = $rawPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
-
-// Create fresh isolated test database clone
-$testDbName = 'eleguard_rail_test';
-$rawPdo->exec("DROP DATABASE IF EXISTS `{$testDbName}`");
-$rawPdo->exec("CREATE DATABASE `{$testDbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-
-$rawPdo->exec("USE eleguard_rail");
-$tables = $rawPdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
-
-$rawPdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-foreach ($tables as $t) {
-    $createSql = $rawPdo->query("SHOW CREATE TABLE `{$t}`")->fetch(PDO::FETCH_ASSOC)['Create Table'];
-    $rawPdo->exec("USE `{$testDbName}`");
-    $rawPdo->exec($createSql);
-    $rawPdo->exec("INSERT INTO `{$testDbName}`.`{$t}` SELECT * FROM eleguard_rail.`{$t}`");
-    $rawPdo->exec("USE eleguard_rail");
+$testDbName = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? null);
+if (empty($testDbName) || $testDbName === 'eleguard_rail_test' || $testDbName === 'eleguard_rail') {
+    $testDbName = 'eleguard_test_tmp_' . bin2hex(random_bytes(6));
+    putenv("DB_NAME={$testDbName}");
+    $_ENV['DB_NAME'] = $testDbName;
 }
-$rawPdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+$rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", 'root', '', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+
+// Read operational baseline counts safely via read-only account (zero privileged USE eleguard_rail)
+$roPdo = new PDO("mysql:host={$rawHost};port={$rawPort};dbname=eleguard_rail;charset=utf8mb4", 'eleguard_readonly', 'ReadOnly_Guard#2026', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+$preOperSnapshot = captureOperationalDatabaseSnapshot($roPdo);
+$preOperReports = $preOperSnapshot['tables']['elephant_reports']['count'];
+$preOperLogs = $preOperSnapshot['tables']['system_logs']['count'];
+$preOperAlerts = $preOperSnapshot['tables']['alerts']['count'];
+$preOperReport1 = $preOperSnapshot['report1'];
+
+// Ensure test database is populated from canonical seed (NEVER cloned from operational DB)
+ensureTestDatabaseExists($rawPdo, $testDbName);
+$rawPdo->exec("USE `{$testDbName}`");
 
 // STEP 2: Enforce environment variable routing to isolated test database BEFORE loading config
 putenv("DB_NAME={$testDbName}");
@@ -600,14 +594,13 @@ runTest("5.4 Section Base Floor Rule verified under 24h decay: Score={$resDecay2
 // ------------------------------------------------------------------------
 echo "\n--- GROUP 6: Empirical Limitations Audit (Historical Baseline & Data Scarcity) ---\n";
 
-$rawPdo->exec("USE eleguard_rail");
-$totReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$nullDateReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports WHERE sighting_date IS NULL")->fetchColumn();
-$nullTimeReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports WHERE sighting_time IS NULL")->fetchColumn();
-$unknownPrecReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports WHERE sighting_time_precision = 'unknown'")->fetchColumn();
+$totReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
+$nullDateReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports WHERE sighting_date IS NULL")->fetchColumn();
+$nullTimeReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports WHERE sighting_time IS NULL")->fetchColumn();
+$unknownPrecReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports WHERE sighting_time_precision = 'unknown'")->fetchColumn();
 
 // Check genuine historical baseline reports (unmodified operational reports with ID <= 3)
-$baselineReports = $rawPdo->query("SELECT id, location_description, sighting_date, sighting_time, latitude, longitude FROM elephant_reports WHERE id <= 3")->fetchAll(PDO::FETCH_ASSOC);
+$baselineReports = $roPdo->query("SELECT id, location_description, sighting_date, sighting_time, latitude, longitude FROM elephant_reports WHERE id <= 3")->fetchAll(PDO::FETCH_ASSOC);
 
 runTest("6.1 All 43 operational reports retain sighting_date = NULL (100% historical unmigrated)", $nullDateReports === 43, $totalTests, $passedTests, $failedTests);
 runTest("6.2 All 43 operational reports retain sighting_time = NULL", $nullTimeReports === 43, $totalTests, $passedTests, $failedTests);
@@ -642,15 +635,15 @@ runTest("6.5 Synthetic scenario dataset persisted to tests/data/milestone_9c_sta
 // ------------------------------------------------------------------------
 echo "\n--- GROUP 7: Operational Safety & Zero Database Modification Invariants ---\n";
 
-$rawPdo->exec("USE eleguard_rail");
-$postOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$postOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-$postOperAlerts = (int)$rawPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-$postOperReport1 = $rawPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+$verify = verifyOperationalDatabaseSnapshot($preOperSnapshot, $roPdo);
+$postOperReports = $verify['post']['tables']['elephant_reports']['count'];
+$postOperLogs = $verify['post']['tables']['system_logs']['count'];
+$postOperAlerts = $verify['post']['tables']['alerts']['count'];
+$postOperReport1 = $verify['post']['report1'];
 
-runTest("7.1 Operational elephant_reports count unmodified (43 == {$postOperReports})", $postOperReports === 43 && $postOperReports === $preOperReports, $totalTests, $passedTests, $failedTests);
-runTest("7.2 Operational system_logs count unmodified (185 == {$postOperLogs})", $postOperLogs === 185 && $postOperLogs === $preOperLogs, $totalTests, $passedTests, $failedTests);
-runTest("7.3 Operational alerts count unmodified (15 == {$postOperAlerts})", $postOperAlerts === 15 && $postOperAlerts === $preOperAlerts, $totalTests, $passedTests, $failedTests);
+runTest("7.1 Operational elephant_reports count unmodified ({$preOperReports} == {$postOperReports})", $verify['tables']['elephant_reports']['passed'], $totalTests, $passedTests, $failedTests);
+runTest("7.2 Operational system_logs count and checksum unmodified ({$preOperLogs} == {$postOperLogs})", $verify['tables']['system_logs']['passed'], $totalTests, $passedTests, $failedTests);
+runTest("7.3 Operational alerts count unmodified ({$preOperAlerts} == {$postOperAlerts})", $verify['tables']['alerts']['passed'], $totalTests, $passedTests, $failedTests);
 runTest("7.4 Operational Report #1 record untouched", $preOperReport1 === $postOperReport1, $totalTests, $passedTests, $failedTests);
 
 echo "\n========================================================================\n";

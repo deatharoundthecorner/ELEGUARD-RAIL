@@ -5,6 +5,7 @@
 # Environment & Secrets (Never commit credentials)
 .env
 .env.*
+.env.operational_backup
 !.env.example
 
 # Uploaded Media & User Files
@@ -44,8 +45,9 @@ Desktop.ini
 # Local Database Backups & Dumps
 *.bak
 *.dump
-backups/
+/backups/
 database/backups/
+database/backups/*
 
 # Python Bytecode & Cache
 __pycache__/

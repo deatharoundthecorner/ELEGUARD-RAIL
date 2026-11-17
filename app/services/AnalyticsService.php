@@ -120,6 +120,9 @@ class AnalyticsService {
             'Verified' => 0,
             'Rejected' => 0,
             'Converted to Alert' => 0,
+            'Needs Information' => 0,
+            'Duplicate Candidate' => 0,
+            'Escalated' => 0,
             'Resolved' => 0
         ];
         $byUrgency = ['Low' => 0, 'Medium' => 0, 'High' => 0, 'Critical' => 0];
@@ -195,8 +198,11 @@ class AnalyticsService {
      */
     public static function getTemporalAnalytics(PDO $pdo, array $options = []) {
         $genuineOnly = !empty($options['genuine_only']);
+        $sectionId = !empty($options['section_id']) ? (int)$options['section_id'] : null;
+        $startDate = !empty($options['start_date']) ? $options['start_date'] : null;
+        $endDate = !empty($options['end_date']) ? $options['end_date'] : null;
 
-        $sql = "SELECT id, reported_by, description, location_description, image_path, ai_detection_notes,
+        $sql = "SELECT id, section_id, reported_by, description, location_description, image_path, ai_detection_notes,
                        sighting_date, sighting_time, sighting_time_precision, sighting_time_window, 
                        sighting_time_uncertainty_minutes, created_at 
                 FROM elephant_reports 
@@ -238,6 +244,19 @@ class AnalyticsService {
             if ($genuineOnly && $isTest) {
                 continue; // Skip test records when genuine_only is requested
             }
+
+            if ($sectionId !== null && (int)($r['section_id'] ?? 0) !== $sectionId) {
+                continue; // Filter by registered railway section
+            }
+
+            if ($startDate !== null && !empty($r['sighting_date']) && $r['sighting_date'] < $startDate) {
+                continue;
+            }
+
+            if ($endDate !== null && !empty($r['sighting_date']) && $r['sighting_date'] > $endDate) {
+                continue;
+            }
+
             $totalEvaluated++;
 
             // Precision tracking
@@ -316,10 +335,18 @@ class AnalyticsService {
      * @return array Section analytics payload
      */
     public static function getSectionAnalytics(PDO $pdo, array $options = []) {
+        $filterSecId = !empty($options['section_id']) ? (int)$options['section_id'] : null;
+
         $secSql = "SELECT id, section_name, district, risk_level, start_location, end_location 
                    FROM railway_sections 
                    ORDER BY id ASC";
         $sections = self::executeReadOnlyQuery($pdo, $secSql);
+
+        if ($filterSecId !== null) {
+            $sections = array_values(array_filter($sections, function($s) use ($filterSecId) {
+                return (int)$s['id'] === $filterSecId;
+            }));
+        }
 
         $repSql = "SELECT id, section_id, reported_by, description, location_description, image_path,
                           ai_detection_notes, latitude, longitude, report_status, is_potential_duplicate 
@@ -474,8 +501,15 @@ class AnalyticsService {
             ];
         }
 
+        $secFilter = !empty($options['section_id']) ? (int)$options['section_id'] : null;
+        if ($secFilter !== null) {
+            $hotspotList = array_values(array_filter($hotspotList, function($h) use ($secFilter) {
+                return (int)$h['section_id'] === $secFilter;
+            }));
+        }
+
         return [
-            'total_hotspots' => count($hotspots),
+            'total_hotspots' => count($hotspotList),
             'by_risk_level' => $byRisk,
             'by_section' => $bySection,
             'hotspots' => $hotspotList,

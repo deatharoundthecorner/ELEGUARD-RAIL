@@ -68,14 +68,12 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
     
-    $opReports = (int)$opPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-    $opLogs = (int)$opPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-    $opAlerts = (int)$opPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-    $opRep1 = $opPdo->query("SELECT sighting_date, sighting_time, risk_score, report_status FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+    $preSnapshot = captureOperationalDatabaseSnapshot($opPdo);
+    $opRep1 = $preSnapshot['report1'];
 
-    runTest("0.1 Operational DB elephant_reports baseline is 43", $opReports === 43, $totalTests, $passedTests, $failedTests, "Got: $opReports");
-    runTest("0.2 Operational DB system_logs baseline is 185", $opLogs === 185, $totalTests, $passedTests, $failedTests, "Got: $opLogs");
-    runTest("0.3 Operational DB alerts baseline is 15", $opAlerts === 15, $totalTests, $passedTests, $failedTests, "Got: $opAlerts");
+    runTest("0.1 Operational DB elephant_reports baseline snapshot captured", isset($preSnapshot['tables']['elephant_reports']), $totalTests, $passedTests, $failedTests);
+    runTest("0.2 Operational DB system_logs baseline snapshot captured", isset($preSnapshot['tables']['system_logs']), $totalTests, $passedTests, $failedTests);
+    runTest("0.3 Operational DB alerts baseline snapshot captured", isset($preSnapshot['tables']['alerts']), $totalTests, $passedTests, $failedTests);
     runTest("0.4 Operational Report #1 sighting time is NULL", $opRep1['sighting_time'] === null, $totalTests, $passedTests, $failedTests);
     runTest("0.5 Operational Report #1 risk score baseline is Medium", $opRep1['risk_score'] === 'Medium', $totalTests, $passedTests, $failedTests);
 } catch (Exception $e) {
@@ -83,8 +81,16 @@ try {
     exit(1);
 }
 
-// Connect to isolated test database
-$testPdo = new PDO("mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=eleguard_rail_test;charset=utf8mb4", DB_USER, DB_PASS, [
+// Connect to isolated disposable test database
+$targetDb = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? null);
+if (empty($targetDb) || $targetDb === 'eleguard_rail_test' || $targetDb === 'eleguard_rail') {
+    $targetDb = 'eleguard_test_tmp_' . bin2hex(random_bytes(6));
+    putenv("DB_NAME={$targetDb}");
+    $_ENV['DB_NAME'] = $targetDb;
+    $rawPdo = new PDO("mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";charset=utf8mb4", DB_USER, DB_PASS);
+    ensureTestDatabaseExists($rawPdo, $targetDb);
+}
+$testPdo = new PDO("mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname={$targetDb};charset=utf8mb4", DB_USER, DB_PASS, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 ]);
 
@@ -133,24 +139,32 @@ try {
 runTest("3.2 Case-insensitive operational DB_NAME 'ELEGUARD_RAIL' strictly blocked", $operCaseThrew, $totalTests, $passedTests, $failedTests);
 
 // -------------------------------------------------------------------------
-// 4. Approved Test DB_NAME
+// 4. Approved Disposable Test DB_NAME & Protected DB Rejection
 // -------------------------------------------------------------------------
-echo "\n--- 4. APPROVED TEST DB_NAME ACCEPTANCE ---\n";
+echo "\n--- 4. APPROVED DISPOSABLE TEST DB_NAME & PROTECTED DB REJECTION ---\n";
 $approvedPassed = false;
 try {
-    $approvedPassed = validateTestDatabaseTarget("eleguard_rail_test");
+    $approvedPassed = validateTestDatabaseTarget("eleguard_test_tmp_abcdef0123");
 } catch (Exception $e) {
     $approvedPassed = false;
 }
-runTest("4.1 Approved test DB_NAME 'eleguard_rail_test' validated successfully", $approvedPassed === true, $totalTests, $passedTests, $failedTests);
+runTest("4.1 Approved disposable test DB 'eleguard_test_tmp_abcdef0123' validated successfully", $approvedPassed === true, $totalTests, $passedTests, $failedTests);
 
 $unapprovedThrew = false;
 try {
     validateTestDatabaseTarget("random_production_db");
 } catch (RuntimeException $e) {
-    $unapprovedThrew = (strpos($e->getMessage(), 'not an approved test database') !== false);
+    $unapprovedThrew = (strpos($e->getMessage(), 'not an approved disposable test database') !== false || strpos($e->getMessage(), 'not an approved test database') !== false);
 }
 runTest("4.2 Unapproved database name strictly blocked", $unapprovedThrew, $totalTests, $passedTests, $failedTests);
+
+$persistentThrew = false;
+try {
+    validateTestDatabaseTarget("eleguard_rail_test");
+} catch (RuntimeException $e) {
+    $persistentThrew = (strpos($e->getMessage(), 'protected persistent test database') !== false);
+}
+runTest("4.3 Protected persistent test DB 'eleguard_rail_test' strictly blocked", $persistentThrew, $totalTests, $passedTests, $failedTests);
 
 // -------------------------------------------------------------------------
 // 5. Test Database Connection Failure Handling
@@ -320,9 +334,9 @@ try {
     $bootstrapEnforced = (strpos($e->getMessage(), 'operational database') !== false);
 }
 
-// Restore safe test database
-putenv('DB_NAME=eleguard_rail_test');
-$_ENV['DB_NAME'] = 'eleguard_rail_test';
+// Restore safe disposable test database
+putenv("DB_NAME={$targetDb}");
+$_ENV['DB_NAME'] = $targetDb;
 Database::resetInstance();
 
 runTest("17.1 Database singleton strictly refuses connection to operational DB in test context", $bootstrapEnforced, $totalTests, $passedTests, $failedTests);
@@ -347,18 +361,24 @@ try {
 }
 runTest("18.2 safeTeardownTestDatabase strictly refuses to drop arbitrary unapproved database", $cleanupUnapprovedBlocked, $totalTests, $passedTests, $failedTests);
 
+$cleanupProtectedBlocked = false;
+try {
+    safeTeardownTestDatabase($testPdo, "eleguard_rail_test");
+} catch (RuntimeException $e) {
+    $cleanupProtectedBlocked = (strpos($e->getMessage(), 'protected persistent test database') !== false);
+}
+runTest("18.3 safeTeardownTestDatabase strictly refuses to drop protected persistent test database", $cleanupProtectedBlocked, $totalTests, $passedTests, $failedTests);
+
 // -------------------------------------------------------------------------
 // 19. Operational Database Write Prevention
 // -------------------------------------------------------------------------
 echo "\n--- 19. OPERATIONAL DATABASE WRITE PREVENTION ---\n";
-$postReports = (int)$opPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$postLogs = (int)$opPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-$postAlerts = (int)$opPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-$postRep1 = $opPdo->query("SELECT sighting_date, sighting_time, risk_score, report_status FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+$verifyResult = verifyOperationalDatabaseSnapshot($preSnapshot, $opPdo);
+$postRep1 = $verifyResult['post']['report1'];
 
-runTest("19.1 Operational elephant_reports count completely untouched (43 == {$postReports})", $postReports === 43, $totalTests, $passedTests, $failedTests);
-runTest("19.2 Operational system_logs count completely untouched (185 == {$postLogs})", $postLogs === 185, $totalTests, $passedTests, $failedTests);
-runTest("19.3 Operational alerts count completely untouched (15 == {$postAlerts})", $postAlerts === 15, $totalTests, $passedTests, $failedTests);
+runTest("19.1 Operational elephant_reports count and checksum completely untouched", $verifyResult['tables']['elephant_reports']['passed'], $totalTests, $passedTests, $failedTests);
+runTest("19.2 Operational system_logs count and checksum completely untouched", $verifyResult['tables']['system_logs']['passed'], $totalTests, $passedTests, $failedTests);
+runTest("19.3 Operational alerts count and checksum completely untouched", $verifyResult['tables']['alerts']['passed'], $totalTests, $passedTests, $failedTests);
 runTest("19.4 Operational Report #1 sighting time remains NULL", $postRep1['sighting_time'] === null, $totalTests, $passedTests, $failedTests);
 runTest("19.5 Operational Report #1 risk score remains Medium", $postRep1['risk_score'] === 'Medium', $totalTests, $passedTests, $failedTests);
 

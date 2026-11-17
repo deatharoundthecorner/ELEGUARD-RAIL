@@ -24,6 +24,12 @@ class ProximityService {
     const EARTH_RADIUS_METERS = 6371000.0;
 
     /**
+     * Topology ambiguity / multi-corridor convergence threshold in metres.
+     * System-defined topology ambiguity heuristic — not an officially validated Sri Lanka Railways engineering threshold.
+     */
+    const CONVERGENCE_AMBIGUITY_THRESHOLD_METERS = 500.0;
+
+    /**
      * Sri Lanka geographical bounding box for strict sanity validation
      */
     const SRI_LANKA_MIN_LAT = 5.8;

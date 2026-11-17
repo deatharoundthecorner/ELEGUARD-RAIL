@@ -1,13 +1,20 @@
 /**
- * EleGuard Rail Train Driver Alert Sounds
- * Uses the Web Audio API to trigger safety alarms when Critical alerts are visible on the dashboard.
+ * EleGuard Rail Train Driver Alert Sounds & Safety Audio Governance
+ * Milestone 9C Stage 4E.4.3-I Refinement:
+ *
+ * Operational Safety Mandate:
+ * Cab audible sirens are permanently SUPPRESSED by default to avoid masking
+ * critical safety audio channels in the locomotive cab (including VHF track
+ * radios, AWS/TPWS audible warnings, and explosive track torpedoes/detonators).
+ * Repeating siren alarms are strictly prohibited.
  */
 
 let audioCtx = null;
 let soundInterval = null;
-let isMuted = localStorage.getItem('driver_audio_muted') === 'true';
+// Audio is strictly suppressed by default for railway cab safety
+let isMuted = true;
 
-// Initialize audio context safely after user interaction
+// Initialize audio context safely if explicitly requested
 function initAudio() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -17,71 +24,39 @@ function initAudio() {
     }
 }
 
-// Generate a dual-frequency alarm beep tone using Web Audio oscillators
-function playEmergencyBeep() {
+// Single subdued reminder tone (repeating siren loop permanently removed)
+function playSubduedReminderTone() {
     if (isMuted) return;
     initAudio();
-    
     if (!audioCtx) return;
 
     try {
-        const osc1 = audioCtx.createOscillator();
-        const osc2 = audioCtx.createOscillator();
+        const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
 
-        osc1.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(880, audioCtx.currentTime); // High pitch frequency A5
-        
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(660, audioCtx.currentTime); // Complementary frequency E5
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime); // Gentle A4 note
 
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05); // Attack
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45); // Release
+        gainNode.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
 
-        osc1.connect(gainNode);
-        osc2.connect(gainNode);
+        osc.connect(gainNode);
         gainNode.connect(audioCtx.destination);
 
-        osc1.start();
-        osc2.start();
-        
-        osc1.stop(audioCtx.currentTime + 0.5);
-        osc2.stop(audioCtx.currentTime + 0.5);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
     } catch (e) {
-        console.error("Audio trigger failed:", e);
+        console.warn("Audio reminder suppressed:", e);
     }
 }
 
-// Monitor warning screen for active critical alert divs
+// Monitor warning screen - repeating sirens are DISABLED
 function checkAlertsForSound() {
-    const criticalAlerts = document.querySelectorAll('.driver-alert-critical');
-    const audioBtn = document.getElementById('toggleAudioBtn');
     const audioStatus = document.getElementById('audioStatusText');
-
-    if (criticalAlerts.length > 0 && !isMuted) {
-        if (!soundInterval) {
-            // Play initial alarm
-            playEmergencyBeep();
-            // Setup repeating alarm siren (every 1.5 seconds)
-            soundInterval = setInterval(playEmergencyBeep, 1500);
-            
-            if (audioStatus) {
-                audioStatus.textContent = "🔊 ALARM ACTIVE";
-                audioStatus.style.color = "var(--danger)";
-            }
-        }
-    } else {
-        stopAlarm();
-        if (audioStatus) {
-            if (isMuted) {
-                audioStatus.textContent = "🔇 MUTED";
-                audioStatus.style.color = "var(--text-muted)";
-            } else {
-                audioStatus.textContent = "🔊 MONITORING ACTIVE";
-                audioStatus.style.color = "var(--success)";
-            }
-        }
+    if (audioStatus) {
+        audioStatus.textContent = "🔇 SUPPRESSED (CAB SAFETY)";
+        audioStatus.style.color = "var(--text-secondary)";
     }
 }
 
@@ -93,49 +68,32 @@ function stopAlarm() {
 }
 
 function toggleAudio() {
-    isMuted = !isMuted;
-    localStorage.setItem('driver_audio_muted', isMuted ? 'true' : 'false');
-    
+    // Railway cab safety: repeating sirens remain disabled
+    stopAlarm();
     const audioBtn = document.getElementById('toggleAudioBtn');
-    
-    if (isMuted) {
-        stopAlarm();
-        if (audioBtn) {
-            audioBtn.textContent = "Unmute Warning Alarms";
-            audioBtn.classList.add('muted');
-        }
-    } else {
-        initAudio();
-        if (audioBtn) {
-            audioBtn.textContent = "Mute Warning Alarms";
-            audioBtn.classList.remove('muted');
-        }
-        playEmergencyBeep();
+    const audioStatus = document.getElementById('audioStatusText');
+    if (audioBtn) {
+        audioBtn.textContent = "Cab Audio Suppressed by Safety Protocol";
+        audioBtn.disabled = true;
+        audioBtn.classList.add('muted');
     }
-    
-    checkAlertsForSound();
+    if (audioStatus) {
+        audioStatus.textContent = "🔇 SUPPRESSED (CAB SAFETY)";
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    stopAlarm();
     const audioBtn = document.getElementById('toggleAudioBtn');
+    const audioStatus = document.getElementById('audioStatusText');
     
     if (audioBtn) {
-        // Restore saved muted state UI
-        if (isMuted) {
-            audioBtn.textContent = "Unmute Warning Alarms";
-            audioBtn.classList.add('muted');
-        } else {
-            audioBtn.textContent = "Mute Warning Alarms";
-            audioBtn.classList.remove('muted');
-        }
-        
-        audioBtn.addEventListener('click', () => {
-            initAudio();
-            toggleAudio();
-        });
+        audioBtn.textContent = "Cab Audio Suppressed by Safety Protocol";
+        audioBtn.disabled = true;
+        audioBtn.classList.add('muted');
     }
-
-    // Periodically run check
-    checkAlertsForSound();
-    setInterval(checkAlertsForSound, 2000);
+    if (audioStatus) {
+        audioStatus.textContent = "🔇 SUPPRESSED (CAB SAFETY)";
+        audioStatus.style.color = "var(--text-secondary)";
+    }
 });

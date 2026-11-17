@@ -16,6 +16,9 @@ class Auth {
         $user = $stmt->fetch();
         
         if ($user && $user['status'] === 'active' && password_verify($password, $user['password'])) {
+            // TSK-J02: Regenerate session ID upon successful login to prevent session fixation attacks
+            Session::regenerateId(true);
+
             Session::set('user_id', $user['id']);
             Session::set('user_name', $user['name']);
             Session::set('user_email', $user['email']);

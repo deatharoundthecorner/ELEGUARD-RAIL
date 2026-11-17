@@ -7,6 +7,7 @@ require_once __DIR__ . '/../core/Database.php';
 require_once __DIR__ . '/../services/RiskService.php';
 require_once __DIR__ . '/../services/AiDetectionService.php';
 require_once __DIR__ . '/../services/TemporalService.php';
+require_once __DIR__ . '/../services/VerificationService.php';
 
 class ReportService {
 
@@ -255,16 +256,115 @@ class ReportService {
     }
 
     /**
-     * Updates status of report
+     * Updates status of report.
+     * Enforces that biological verification transitions ('Verified', 'Rejected', 'Needs Information')
+     * are strictly routed through the audited VerificationService with mandatory RBAC and ledger logging.
+     * Anti-self-verification is enforced by default ($allowSelfVerification = false).
+     * Non-verification operational status changes (e.g. 'Converted to Alert', 'Resolved') are validated
+     * against a strict operational whitelist and require authenticated, authorized roles.
+     * 
+     * @param int $id Report ID
+     * @param string $status Target status
+     * @param int|null $userId Authenticated actor ID
+     * @param bool $allowSelfVerification Whether to permit self-verification (default false; requires explicit authorization)
+     * @return bool True on successful transition, false on authorization/validation failure
      */
-    public static function updateStatus($id, $status, $userId = null) {
+    public static function updateStatus($id, $status, $userId = null, bool $allowSelfVerification = false) {
         $db = Database::getInstance()->getConnection();
-        $stmt = $db->prepare("UPDATE elephant_reports SET report_status = :status, updated_at = NOW() WHERE id = :id");
-        $success = $stmt->execute([':status' => $status, ':id' => $id]);
 
-        if ($success && $userId) {
+        // 1. Unauthenticated or unattributed status changes strictly blocked
+        if ($userId === null || (int)$userId <= 0) {
+            return false;
+        }
+
+        // Fetch actor role server-side from database
+        $uStmt = $db->prepare("SELECT id, role FROM users WHERE id = :uid");
+        $uStmt->execute([':uid' => (int)$userId]);
+        $user = $uStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            return false;
+        }
+        $userRole = (string)$user['role'];
+
+        // 2. Check if target status requires biological verification governance
+        if (in_array($status, ['Verified', 'Rejected', 'Needs Information', 'Clarification Submitted'], true)) {
+            if (!in_array($userRole, ['wildlife_officer', 'admin'], true)) {
+                return false; // Non-officers (controllers, reporters, drivers) strictly forbidden
+            }
+
+            if ($status === 'Verified') {
+                $res = VerificationService::verifyReport(
+                    (int)$id, 
+                    'Verified', 
+                    'remote_telemetry', 
+                    'Audited status transition via ReportService', 
+                    (int)$userId, 
+                    $userRole, 
+                    null, 
+                    $allowSelfVerification
+                );
+                return !empty($res['success']);
+            }
+
+            if ($status === 'Rejected') {
+                $res = VerificationService::verifyReport(
+                    (int)$id, 
+                    'Rejected', 
+                    'remote_telemetry', 
+                    'Rejection justification recorded via ReportService', 
+                    (int)$userId, 
+                    $userRole, 
+                    null, 
+                    $allowSelfVerification
+                );
+                return !empty($res['success']);
+            }
+
+            if ($status === 'Needs Information') {
+                $res = VerificationService::requestAdditionalInfo((int)$id, 'Information requested via ReportService interface', (int)$userId, $userRole);
+                return !empty($res['success']);
+            }
+
+            return false;
+        }
+
+        // 3. SEC-02: Hardened Non-verification operational status update
+        // Strictly whitelist permitted operational statuses and their role authorizations
+        $operationalRolePermissions = [
+            'Converted to Alert' => ['control_officer', 'admin'],
+            'Resolved'           => ['control_officer', 'wildlife_officer', 'admin'],
+            'Escalated'          => ['control_officer', 'wildlife_officer', 'admin']
+        ];
+
+        if (!array_key_exists($status, $operationalRolePermissions)) {
+            return false; // Arbitrary status values or unauthorized biological bypass strictly rejected
+        }
+
+        if (!in_array($userRole, $operationalRolePermissions[$status], true)) {
+            return false; // Role not authorized for this specific operational status transition
+        }
+
+        // Validate source report existence and lifecycle constraints
+        $rStmt = $db->prepare("SELECT id, report_status FROM elephant_reports WHERE id = :id");
+        $rStmt->execute([':id' => (int)$id]);
+        $report = $rStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$report) {
+            return false; // Non-existent report
+        }
+
+        // Operational constraint: Cannot convert or resolve already rejected reports
+        if ($report['report_status'] === 'Rejected') {
+            return false;
+        }
+
+        $stmt = $db->prepare("UPDATE elephant_reports SET report_status = :status, updated_at = NOW() WHERE id = :id");
+        $success = $stmt->execute([':status' => $status, ':id' => (int)$id]);
+
+        if ($success) {
             require_once __DIR__ . '/../core/Auth.php';
-            Auth::logActivity($userId, 'Report Updated', "Report #{$id} status changed to '{$status}'.");
+            Auth::logActivity((int)$userId, 'Report Operational Status Updated', "Report #{$id} status changed from {$report['report_status']} to '{$status}'.");
         }
         return $success;
     }

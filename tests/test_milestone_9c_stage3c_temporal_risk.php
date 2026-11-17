@@ -20,39 +20,32 @@ ini_set('display_errors', '0');
 
 require_once __DIR__ . '/bootstrap.php';
 
-// STEP 1: Pre-flight operational DB record & create isolated test database
+// STEP 1: Pre-flight operational DB record & ensure isolated test database
 $rawHost = '127.0.0.1';
 $rawPort = 3308;
-$rawUser = 'root';
-$rawPass = '';
-
-$rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", $rawUser, $rawPass);
-$rawPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// Record baseline operational counts and Report #1 state before any test activity
-$rawPdo->exec("USE eleguard_rail");
-$preOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$preOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-$preOperAlerts = (int)$rawPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-$preOperReport1 = $rawPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
-
-// Create fresh isolated test database clone
-$testDbName = 'eleguard_rail_test';
-$rawPdo->exec("DROP DATABASE IF EXISTS `{$testDbName}`");
-$rawPdo->exec("CREATE DATABASE `{$testDbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-
-$rawPdo->exec("USE eleguard_rail");
-$tables = $rawPdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
-
-$rawPdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-foreach ($tables as $t) {
-    $createSql = $rawPdo->query("SHOW CREATE TABLE `{$t}`")->fetch(PDO::FETCH_ASSOC)['Create Table'];
-    $rawPdo->exec("USE `{$testDbName}`");
-    $rawPdo->exec($createSql);
-    $rawPdo->exec("INSERT INTO `{$testDbName}`.`{$t}` SELECT * FROM eleguard_rail.`{$t}`");
-    $rawPdo->exec("USE eleguard_rail");
+$testDbName = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? null);
+if (empty($testDbName) || $testDbName === 'eleguard_rail_test' || $testDbName === 'eleguard_rail') {
+    $testDbName = 'eleguard_test_tmp_' . bin2hex(random_bytes(6));
+    putenv("DB_NAME={$testDbName}");
+    $_ENV['DB_NAME'] = $testDbName;
 }
-$rawPdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+$rawPdo = new PDO("mysql:host={$rawHost};port={$rawPort}", 'root', '', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+
+// Read operational baseline counts safely via read-only account (zero privileged USE eleguard_rail)
+$roPdo = new PDO("mysql:host={$rawHost};port={$rawPort};dbname=eleguard_rail;charset=utf8mb4", 'eleguard_readonly', 'ReadOnly_Guard#2026', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+$preOperReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
+$preOperLogs = (int)$roPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
+$preOperAlerts = (int)$roPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
+$preOperReport1 = $roPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+
+// Ensure test database is populated from canonical seed (NEVER cloned from operational DB)
+ensureTestDatabaseExists($rawPdo, $testDbName);
+$rawPdo->exec("USE `{$testDbName}`");
 
 // STEP 2: Enforce environment variable routing to isolated test database BEFORE loading config
 putenv("DB_NAME={$testDbName}");
@@ -402,11 +395,10 @@ echo "\n";
 // -------------------------------------------------------------------------------------------------
 echo "-- Group 7: Operational Safety & Zero Operational Database Writes --\n";
 
-$rawPdo->exec("USE eleguard_rail");
-$postOperReports = (int)$rawPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-$postOperLogs = (int)$rawPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-$postOperAlerts = (int)$rawPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-$postOperReport1 = $rawPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+$postOperReports = (int)$roPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
+$postOperLogs = (int)$roPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
+$postOperAlerts = (int)$roPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
+$postOperReport1 = $roPdo->query("SELECT id, report_status, sighting_date, sighting_time, sighting_time_precision, created_at, updated_at FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
 
 assertTest($postOperReports === $preOperReports,
     "7.1 Operational elephant_reports count completely untouched ({$preOperReports} == {$postOperReports})");
@@ -417,9 +409,19 @@ assertTest($postOperAlerts === $preOperAlerts,
 assertTest($postOperReport1 == $preOperReport1,
     "7.4 Historical Report #1 in operational database is 100% untouched and pristine");
 
-// Drop isolated test database
-echo "\n-- Dropping Isolated Test Database ({$testDbName}) --\n";
-safeTeardownTestDatabase($rawPdo, $testDbName);
+// Cleanup transient records in test database
+echo "\n-- Cleaning Up Transient Test Data in ({$testDbName}) --\n";
+// Disable FK checks temporarily to allow deletion of parent clarification rows
+// that have self-referencing children (fk_clarif_parent). Re-enabled immediately after.
+$rawPdo->exec("SET FOREIGN_KEY_CHECKS=0");
+$rawPdo->exec("DELETE rc FROM report_clarifications rc
+    INNER JOIN elephant_reports er ON rc.report_id = er.id
+    WHERE er.location_description LIKE '%Synthetic%' OR er.location_description LIKE '%Test%'");
+$rawPdo->exec("DELETE rv FROM report_verifications rv
+    INNER JOIN elephant_reports er ON rv.report_id = er.id
+    WHERE er.location_description LIKE '%Synthetic%' OR er.location_description LIKE '%Test%'");
+$rawPdo->exec("DELETE FROM elephant_reports WHERE location_description LIKE '%Synthetic%' OR location_description LIKE '%Test%'");
+$rawPdo->exec("SET FOREIGN_KEY_CHECKS=1");
 echo " [PASS] Cleaned up isolated test database successfully\n\n";
 
 echo "========================================================\n";

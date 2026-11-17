@@ -1,0 +1,460 @@
+/**
+ * EleGuard Rail — Section Attribution & GIS Review Interface Styles
+ * 
+ * Milestone 9C — Stage 4E.4.3-H2: Control Officer Section Attribution
+ */
+
+/* ==========================================================================
+   1. Attribution Main Panel & Cards
+   ========================================================================== */
+.attribution-panel {
+    background: var(--card-bg, #1a2332);
+    border: 1px solid var(--border-color, #2d3748);
+    border-top: 4px solid #3b82f6;
+    border-radius: 8px;
+    padding: 22px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.attribution-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color, #2d3748);
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.attribution-panel-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.attribution-comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.attribution-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.attribution-card.active-assigned {
+    border-color: rgba(59, 130, 246, 0.4);
+    background: rgba(59, 130, 246, 0.04);
+}
+
+.attribution-card.suggested {
+    border-color: rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.04);
+}
+
+.attribution-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.attribution-card-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary, #94a3b8);
+}
+
+.attribution-card-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.attribution-card-meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   2. Status & Authority Badges
+   ========================================================================== */
+.badge-confirmed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-provisional {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-ambiguity {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-osm-disclaimer {
+    background: rgba(245, 158, 11, 0.08);
+    border-left: 3px solid #f59e0b;
+    color: #fbbf24;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0 4px 4px 0;
+    margin-top: 8px;
+    display: block;
+}
+
+/* ==========================================================================
+   3. Actions & Interactive Controls
+   ========================================================================== */
+.attribution-action-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.btn-confirm-section {
+    background: #10b981;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease-in-out;
+}
+
+.btn-confirm-section:hover:not(:disabled) {
+    background: #059669;
+}
+
+.btn-reassign-section {
+    background: #3b82f6;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease-in-out;
+}
+
+.btn-reassign-section:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.btn-confirm-section:disabled,
+.btn-reassign-section:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   4. Assignment Modal Dialog
+   ========================================================================== */
+.attribution-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.attribution-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.attribution-modal-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 540px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.attribution-modal-overlay.active .attribution-modal-card {
+    transform: scale(1);
+}
+
+.attribution-modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.attribution-modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+}
+
+.attribution-modal-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.attribution-modal-close:hover {
+    color: #ffffff;
+}
+
+.attribution-modal-body {
+    padding: 20px;
+}
+
+.attribution-modal-footer {
+    padding: 14px 20px;
+    border-top: 1px solid #334155;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.modal-alert-error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    display: none;
+}
+
+/* ==========================================================================
+   5. GIS Review Map
+   ========================================================================== */
+.attribution-gis-wrapper {
+    margin-top: 18px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border-color, #2d3748);
+}
+
+#attribution-gis-map {
+    height: 380px;
+    width: 100%;
+    background: #0f172a;
+}
+
+.gis-legend-bar {
+    background: #111827;
+    border-top: 1px solid #1f2937;
+    padding: 8px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.gis-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-swatch {
+    width: 14px;
+    height: 4px;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+/* ==========================================================================
+   6. Attribution History Timeline
+   ========================================================================== */
+.attribution-history-section {
+    margin-top: 24px;
+    border-top: 1px solid var(--border-color, #2d3748);
+    padding-top: 16px;
+}
+
+.attribution-history-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.attribution-timeline {
+    position: relative;
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+.attribution-timeline::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 6px;
+    width: 2px;
+    background: #334155;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: -18px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3b82f6;
+    border: 2px solid #1e293b;
+}
+
+.timeline-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.timeline-transition {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.timeline-time {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.timeline-meta {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+
+.timeline-reason {
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 2px solid #3b82f6;
+    padding: 6px 10px;
+    border-radius: 0 4px 4px 0;
+    color: #e2e8f0;
+    font-size: 0.82rem;
+    font-style: italic;
+    margin-top: 6px;
+}
+
+/* Spinner helper */
+.btn-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 0.8s linear infinite;
+    margin-right: 6px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

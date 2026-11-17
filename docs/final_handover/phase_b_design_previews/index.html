@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase B Design System — Role Previews Gallery | ELEGUARD RAIL</title>
+  <style>
+    :root {
+      --bg-canvas: #090d13;
+      --bg-surface: #111823;
+      --bg-surface-elevated: #172232;
+      --border-color: #223247;
+      --border-accent: #334b6b;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-rail: #0284c7;
+      --accent-rail-hover: #0369a1;
+      --signal-red: #ef4444;
+      --signal-amber: #f59e0b;
+      --signal-green: #10b981;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "Segoe UI Mono", "Roboto Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 32px 24px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 15px;
+      max-width: 860px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+      background: var(--bg-surface);
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .tab-btn:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      background: #0f2742;
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .role-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .role-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+
+    .role-card-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .role-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .role-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+
+    .role-card-body {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .role-desc {
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .feature-item {
+      font-size: 12px;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-rail);
+    }
+
+    .role-card-footer {
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preview-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #0284c7;
+      color: #ffffff;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+
+    .preview-link:hover {
+      background: #0369a1;
+    }
+
+    .frame-viewer-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .frame-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .frame-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .frame-viewport-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .viewport-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .viewport-btn.active {
+      background: #0f2742;
+      color: #38bdf8;
+      border-color: #38bdf8;
+    }
+
+    .iframe-container {
+      width: 100%;
+      height: 840px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: #000;
+      overflow: hidden;
+      transition: max-width 0.25s ease;
+      margin: 0 auto;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Mandatory Synthetic Demonstration Banner -->
+    <div style="background: #78350f; color: #fef3c7; border: 1px solid #b45309; padding: 10px 16px; border-radius: 6px; margin-bottom: 24px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 16px;">⚠️</span>
+      <span>SYNTHETIC DEMONSTRATION PROTOTYPE • ILLUSTRATIVE VALUES ONLY • NOT AN OPERATIONAL RAILWAY SAFETY INTERFACE</span>
+    </div>
+
+    <header>
+      <div class="header-badge">ELEGUARD RAIL // PHASE B PROPOSAL &bull; ER-UI-PHASE-B-DESIGN-001</div>
+      <h1>Natural Enterprise Railway Technology — Visual Previews</h1>
+      <p class="subtitle">
+        Static visual design prototypes showcasing the unified design system across all operational roles:
+        Admin, Control Officer, Wildlife Officer, Locomotive Driver, Reporter, and Field Ranger PWA.
+        Zero API connections, zero data mutations, pure structural & design mockups.
+      </p>
+    </header>
+
+    <div class="grid">
+      <!-- 1. Admin -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            System Admin
+          </div>
+          <span class="role-tag">Console</span>
+        </div>
+        <div class="role-card-body">
+          <p class="role-desc">Enterprise governance console prioritizing system observability, MariaDB mutex health, telemetry API latency matrix, and cross-departmental audit trails.</p>
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feature-dot"></span> 4-Card System Telemetry Bar (Illustrative Sample)</li>
+            <li class="feature-item"><span class="feature-dot"></span> Real-Time REST API Health Matrix</li>
+            <li class="feature-item"><span class="feature-dot"></span> Corridor Track Advisory Caution Status (T.409 Precedence)</li>
+            <li class="feature-item"><span class="feature-dot"></span> System Access & Immutability Ledger (Sample Records)</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">01_admin_dashboard_preview.html</span>
+          <a class="preview-link" href="01_admin_dashboard_preview.html" target="preview_frame" onclick="loadPreview('01_admin_dashboard_preview.html', 'System Admin — Enterprise Management Console')">Open Preview &rarr;</a>
+        </div>
+      </div>
+
+      <!-- 2. Control -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M14.83 14.83l4.24 4.24M9.17 14.83l-4.24 4.24"/></svg>
+            Control Officer
+          </div>
+          <span class="role-tag" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.3);">Workstation</span>
+        </div>
+        <div class="role-card-body">
+          <p class="role-desc">Railway dispatch and monitoring desk featuring live track occupancy strips, advisory caution triage queue, and driver cab receipt-only telemetry audit matrix.</p>
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feature-dot" style="background: #f59e0b;"></span> Linear Track Corridor (Scheduled Occupancy)</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #f59e0b;"></span> 3-Stage Intake, Prep & Authorised Dispatch</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #f59e0b;"></span> Real-Time Driver Cab Receipt Telemetry</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #f59e0b;"></span> Verified Hotlines (SLR Control &amp; DWC 1992)</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">02_control_desk_preview.html</span>
+          <a class="preview-link" href="02_control_desk_preview.html" target="preview_frame" onclick="loadPreview('02_control_desk_preview.html', 'Control Officer — Operations Monitoring Workstation')">Open Preview &rarr;</a>
+        </div>
+      </div>
+
+      <!-- 3. Wildlife -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Wildlife Officer
+          </div>
+          <span class="role-tag" style="color: #10b981; border-color: rgba(16, 185, 129, 0.3);">Investigation</span>
+        </div>
+        <div class="role-card-body">
+          <p class="role-desc">Specialized investigation dossier layout for DWC rangers. Displays observation triage stream, evidence photo lightboxes, and YOLOX-Tiny ONNX scalar decision-support scores.</p>
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feature-dot" style="background: #10b981;"></span> Sighting Dossier Split View (Queue + Detail)</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #10b981;"></span> YOLOX-Tiny ONNX Architecture & Thresholds</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #10b981;"></span> Observer Standoff vs Elephant Geo-Math (Synthetic)</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #10b981;"></span> 1-Click Ecological Sighting Verification</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">03_wildlife_verification_preview.html</span>
+          <a class="preview-link" href="03_wildlife_verification_preview.html" target="preview_frame" onclick="loadPreview('03_wildlife_verification_preview.html', 'Wildlife Officer — Verification Workspace')">Open Preview &rarr;</a>
+        </div>
+      </div>
+
+      <!-- 4. Driver -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Locomotive Driver
+          </div>
+          <span class="role-tag" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">Safety Cab</span>
+        </div>
+        <div class="role-card-body">
+          <p class="role-desc">Ultra-minimal, anti-glare cab advisory desk designed strictly for stationary pre-departure review. Complies with Sri Lanka Railways Caution Order Form T.409/T.410.</p>
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feature-dot" style="background: #ef4444;"></span> Stationary Review Mandate Banner (Circular 2026/04)</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #ef4444;"></span> Suppressed Cab Audio Safety Pill</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #ef4444;"></span> Receipt-Only Acknowledgement Stream (No Speed Control)</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #ef4444;"></span> 32px Tabular Numerals & High Contrast</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">04_driver_dashboard_preview.html</span>
+          <a class="preview-link" href="04_driver_dashboard_preview.html" target="preview_frame" onclick="loadPreview('04_driver_dashboard_preview.html', 'Locomotive Driver — Cab Advisory Desk')">Open Preview &rarr;</a>
+        </div>
+      </div>
+
+      <!-- 5. Reporter -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Citizen Reporter
+          </div>
+          <span class="role-tag">Community</span>
+        </div>
+        <div class="role-card-body">
+          <p class="role-desc">Simplified, clear community reporting portal. Prominent 1-click sighting filing button, 3-step reporting visual guide, and early warning risk-reduction intelligence.</p>
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feature-dot"></span> Prominent "File Sighting" Primary Call-to-Action</li>
+            <li class="feature-item"><span class="feature-dot"></span> Visual 3-Step Guide (50&ndash;150m Safe Standoff)</li>
+            <li class="feature-item"><span class="feature-dot"></span> Two-Stage Verification (DWC & SLR Separation)</li>
+            <li class="feature-item"><span class="feature-dot"></span> Emergency Ranger Direct Dial (DWC Hotline 1992)</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">05_reporter_dashboard_preview.html</span>
+          <a class="preview-link" href="05_reporter_dashboard_preview.html" target="preview_frame" onclick="loadPreview('05_reporter_dashboard_preview.html', 'Citizen Reporter — Community Sighting Portal')">Open Preview &rarr;</a>
+        </div>
+      </div>
+
+      <!-- 6. Field PWA -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            Field Reporter PWA
+          </div>
+          <span class="role-tag" style="color: #eab308; border-color: rgba(234, 179, 8, 0.3);">Mobile-First</span>
+        </div>
+        <div class="role-card-body">
+          <p class="role-desc">High-contrast mobile PWA designed for harsh outdoor sunlight and night duty. Features dynamic GPS accuracy telemetry, offline storage indicator, and 48px touch targets.</p>
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feature-dot" style="background: #eab308;"></span> Simulated vs Hardware Dynamic GNSS States</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #eab308;"></span> Offline Sync Queue Counter (Sample)</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #eab308;"></span> Rapid Diurnal Period Touch Selectors (SVG Icons)</li>
+            <li class="feature-item"><span class="feature-dot" style="background: #eab308;"></span> 6-Stage Progressively Disclosed Stepper</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">06_field_pwa_preview.html</span>
+          <a class="preview-link" href="06_field_pwa_preview.html" target="preview_frame" onclick="loadPreview('06_field_pwa_preview.html', 'Field Ranger PWA — Mobile Telemetry Unit', true)">Open Preview &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Preview Stage -->
+    <div class="frame-viewer-section">
+      <div class="frame-toolbar">
+        <div class="frame-title" id="active-frame-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span id="frame-label">System Admin — Enterprise Management Console</span>
+        </div>
+        <div class="frame-viewport-controls">
+          <button class="viewport-btn active" onclick="setViewport('100%')">Desktop (Full)</button>
+          <button class="viewport-btn" onclick="setViewport('1280px')">Laptop (1280px)</button>
+          <button class="viewport-btn" onclick="setViewport('768px')">Tablet (768px)</button>
+          <button class="viewport-btn" onclick="setViewport('410px')">Mobile (390px)</button>
+        </div>
+      </div>
+      <div class="iframe-container" id="iframe-box">
+        <iframe name="preview_frame" id="preview-iframe" src="01_admin_dashboard_preview.html"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function loadPreview(url, title, isMobile = false) {
+      document.getElementById('preview-iframe').src = url;
+      document.getElementById('frame-label').innerText = title;
+      if (isMobile) {
+        setViewport('410px');
+      } else {
+        setViewport('100%');
+      }
+      document.querySelector('.frame-viewer-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function setViewport(width) {
+      const box = document.getElementById('iframe-box');
+      box.style.maxWidth = width;
+      document.querySelectorAll('.viewport-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.includes(width) || (width === '100%' && btn.innerText.includes('Desktop')) || (width === '410px' && btn.innerText.includes('Mobile')));
+      });
+    }
+  </script>
+</body>
+</html>

@@ -24,8 +24,8 @@ $recentAcks = array_slice($acknowledgements, 0, 5);
 ?>
 
 <div class="dashboard-title-row">
-    <h1>Railway Control Sighting Desk</h1>
-    <p class="text-secondary">Track active sightings, generate safety speed alerts, and monitor driver actions.</p>
+    <h1>Railway Control Sighting Desk <span class="badge badge-sample" style="font-size:0.75rem; vertical-align:middle; margin-left:8px;">Demonstration Environment</span></h1>
+    <p class="text-secondary">Track active sightings, broadcast safety advisory alerts, and monitor driver receipts.</p>
 </div>
 
 <div class="stats-grid">
@@ -37,7 +37,7 @@ $recentAcks = array_slice($acknowledgements, 0, 5);
     <div class="stat-card">
         <span class="stat-title">Critical Hazards</span>
         <span class="stat-value critical"><?php echo $criticalAlertsCount; ?></span>
-        <span class="stat-desc">Trains must slow down / stop</span>
+        <span class="stat-desc">Critical hazards requiring authorised railway review</span>
     </div>
     <div class="stat-card">
         <span class="stat-title">Verified Sightings</span>
@@ -51,9 +51,25 @@ $recentAcks = array_slice($acknowledgements, 0, 5);
     </div>
 </div>
 
+<div class="card-panel" style="margin-top: 25px; margin-bottom: 25px; border-left: 4px solid var(--accent-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; padding:18px 24px;">
+    <div>
+        <h3 style="margin-bottom:4px; font-size:1.1rem; color:#fff; display:flex; align-items:center; gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+            Railway Corridor Historical Intelligence & Analytics
+        </h3>
+        <p class="text-secondary" style="font-size:0.85rem; margin:0;">Access 24-hour diurnal patterns, dispatch latency, duplicate hazard alerts, and corridor risk classifications.</p>
+    </div>
+    <div>
+        <a href="<?php echo Router::url('control/analytics.php'); ?>" class="btn btn-outline btn-md">Open Corridor Analytics ↗</a>
+    </div>
+</div>
+
 <div class="card-panel" style="margin-top: 30px; margin-bottom: 30px;">
     <div class="panel-header">
-        <h2 class="panel-title">🚦 Live Railway Corridor Hazard Map</h2>
+        <h2 class="panel-title" style="display:flex; align-items:center; gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            Live Railway Corridor Hazard Map
+        </h2>
         <a href="<?php echo Router::url('control/map.php'); ?>" class="btn btn-outline btn-sm">Full Screen Map ↗</a>
     </div>
     <?php 
@@ -76,7 +92,7 @@ $recentAcks = array_slice($acknowledgements, 0, 5);
         
         <div class="table-responsive">
             <?php if (empty($recentReports)): ?>
-                <p class="text-muted text-center" style="padding: 20px 0;">🎉 No verified elephant reports awaiting alert conversion.</p>
+                <p class="text-muted text-center" style="padding: 20px 0;">No verified elephant reports awaiting alert conversion.</p>
             <?php else: ?>
                 <table class="data-table">
                     <thead>
@@ -132,14 +148,16 @@ $recentAcks = array_slice($acknowledgements, 0, 5);
                                 <td><strong><?php echo e($ack['driver_name']); ?></strong></td>
                                 <td><?php echo e($ack['section_name']); ?></td>
                                 <td>
-                                    <span class="badge <?php 
+                                    <?php 
+                                        $displayStatus = $ack['action_status_display'] ?? $ack['action_status'];
                                         $ac = $ack['action_status'];
-                                        if ($ac === 'Stopped') echo 'badge-danger';
-                                        elseif ($ac === 'Slowing Down') echo 'badge-warning-dark';
-                                        elseif ($ac === 'Acknowledged') echo 'badge-success';
-                                        else echo 'badge-outline';
-                                    ?>">
-                                        <?php echo e($ack['action_status']); ?>
+                                        $badgeClass = 'badge-outline';
+                                        if ($ac === 'Stopped') $badgeClass = 'badge-danger';
+                                        elseif ($ac === 'Slowing Down') $badgeClass = 'badge-warning-dark';
+                                        elseif ($ac === 'Acknowledged') $badgeClass = 'badge-success';
+                                    ?>
+                                    <span class="badge <?php echo $badgeClass; ?>">
+                                        <?php echo e($displayStatus); ?>
                                     </span>
                                 </td>
                                 <td><?php echo date('h:i A', strtotime($ack['acknowledged_at'])); ?></td>
@@ -155,7 +173,7 @@ $recentAcks = array_slice($acknowledgements, 0, 5);
 <div class="card-panel" style="text-align:center; padding: 30px; border-top: 4px solid var(--danger);">
     <h2>Need to Create a Safety Warning Manually?</h2>
     <p class="text-secondary" style="margin-bottom:15px;">If you receive emergency calls directly, bypass the report validation and broadcast alerts immediately.</p>
-    <a href="<?php echo Router::url('control/create_alert.php'); ?>" class="btn btn-danger btn-lg">🚨 Create Safety Warning Alert</a>
+    <a href="<?php echo Router::url('control/create_alert.php'); ?>" class="btn btn-danger btn-lg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:6px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>Create Safety Warning Alert</a>
 </div>
 
 <?php require_once __DIR__ . '/../../app/layouts/dashboard_footer.php'; ?>

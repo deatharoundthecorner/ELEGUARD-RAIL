@@ -19,7 +19,8 @@ class Milestone9CStage1TestSuite {
     private $pdo;
     private $passed = 0;
     private $failed = 0;
-    private $testDbName = 'eleguard_rail_test';
+    private $testDbName = 'eleguard_migration_test';
+    private $preOpSnapshot = null;
 
     public function __construct() {
         $this->pdo = new PDO("mysql:host=" . DB_HOST . ";port=" . DB_PORT, DB_USER, DB_PASS);
@@ -40,6 +41,9 @@ class Milestone9CStage1TestSuite {
         echo "========================================================\n";
         echo " EleGuard Rail - Milestone 9C Stage 1 Test Suite\n";
         echo "========================================================\n\n";
+
+        // Step 0: Capture operational DB baseline snapshot
+        $this->preOpSnapshot = captureOperationalDatabaseSnapshot();
 
         // Step 1: Set up fresh test database clone
         $this->setupTestDatabase();
@@ -76,38 +80,23 @@ class Milestone9CStage1TestSuite {
     }
 
     private function setupTestDatabase() {
-        echo "-- Step 1: Setting up isolated test database ({$this->testDbName}) --\n";
-        $this->pdo->exec("DROP DATABASE IF EXISTS `{$this->testDbName}`");
+        echo "-- Step 1: Setting up isolated ephemeral migration database ({$this->testDbName}) --\n";
+        safeTeardownTestDatabase($this->pdo, $this->testDbName);
         $this->pdo->exec("CREATE DATABASE `{$this->testDbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 
-        $this->pdo->exec("USE eleguard_rail");
-        $tables = $this->pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
-
+        // Seed ephemeral database from canonical pre-migration baseline (strictly NO connection to eleguard_rail)
+        $this->pdo->exec("USE `{$this->testDbName}`");
         $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-        foreach ($tables as $t) {
-            $createSql = $this->pdo->query("SHOW CREATE TABLE `{$t}`")->fetch(PDO::FETCH_ASSOC)['Create Table'];
-            $this->pdo->exec("USE `{$this->testDbName}`");
-            $this->pdo->exec($createSql);
-            $this->pdo->exec("INSERT INTO `{$this->testDbName}`.`{$t}` SELECT * FROM eleguard_rail.`{$t}`");
-            $this->pdo->exec("USE eleguard_rail");
+        $backupFile = __DIR__ . '/fixtures/canonical_baseline.sql';
+        if (!file_exists($backupFile)) {
+            $backupFile = __DIR__ . '/../database/backups/backup_before_9c_stage1.sql';
         }
+        $backupSql = file_get_contents($backupFile);
+        $this->pdo->exec($backupSql);
         $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 
         $count = (int)$this->pdo->query("SELECT COUNT(*) FROM `{$this->testDbName}`.elephant_reports")->fetchColumn();
         $this->assert($count === 43, "1.1 Cloned 43 existing reports into isolated test database");
-
-        // If clone inherited post-migration columns from operational DB, roll back test clone to pre-migration state
-        $cols = $this->pdo->query("SHOW COLUMNS FROM `{$this->testDbName}`.elephant_reports LIKE 'sighting_date'")->fetchAll();
-        if (!empty($cols)) {
-            $rollbackFile = __DIR__ . '/../database/migrations/rollback_03_temporal_intelligence.sql';
-            $sql = file_get_contents($rollbackFile);
-            $sql = str_replace('USE eleguard_rail;', "USE `{$this->testDbName}`;", $sql);
-            $sql = preg_replace('/--.*$/m', '', $sql);
-            $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
-            foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
-                if (!empty($stmt)) $this->pdo->exec($stmt);
-            }
-        }
 
         echo "\n";
     }
@@ -369,32 +358,22 @@ class Milestone9CStage1TestSuite {
 
     private function verifyOperationalDatabaseUntouched() {
         echo "-- Step 9: Verifying Operational Database (eleguard_rail) Untouched --\n";
-        $this->pdo->exec("USE eleguard_rail");
+        $roUser = defined('DB_ANALYTICS_USER') ? DB_ANALYTICS_USER : 'eleguard_readonly';
+        $roPass = defined('DB_ANALYTICS_PASS') ? DB_ANALYTICS_PASS : '';
+        if (empty($roPass) && file_exists(__DIR__ . '/../.env')) {
+            $lines = file(__DIR__ . '/../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos(trim($line), 'DB_ANALYTICS_PASS=') === 0) {
+                    $roPass = trim(explode('=', $line, 2)[1], " \t\n\r\0\x0B\"'");
+                }
+            }
+        }
+        $roPdo = new PDO("mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=eleguard_rail;charset=utf8mb4", $roUser, $roPass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
 
-        $counts = [
-            'elephant_reports' => (int)$this->pdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn(),
-            'hotspots' => (int)$this->pdo->query("SELECT COUNT(*) FROM hotspots")->fetchColumn(),
-            'railway_sections' => (int)$this->pdo->query("SELECT COUNT(*) FROM railway_sections")->fetchColumn(),
-            'incident_history' => (int)$this->pdo->query("SELECT COUNT(*) FROM incident_history")->fetchColumn(),
-            'alerts' => (int)$this->pdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn(),
-            'driver_acknowledgements' => (int)$this->pdo->query("SELECT COUNT(*) FROM driver_acknowledgements")->fetchColumn(),
-            'users' => (int)$this->pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(),
-            'system_logs' => (int)$this->pdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn()
-        ];
-
-        $expected = [
-            'elephant_reports' => 43,
-            'hotspots' => 4,
-            'railway_sections' => 4,
-            'incident_history' => 3,
-            'alerts' => 15,
-            'driver_acknowledgements' => 13,
-            'users' => 5,
-            'system_logs' => 185
-        ];
-
-        $matches = ($counts === $expected);
-        $this->assert($matches, "9.1 Operational database eleguard_rail remained 100% untouched throughout isolated testing");
+        $verify = verifyOperationalDatabaseSnapshot($this->preOpSnapshot, $roPdo);
+        $this->assert($verify['passed'], "9.1 Operational database eleguard_rail remained 100% untouched throughout isolated testing");
         echo "\n";
     }
 }

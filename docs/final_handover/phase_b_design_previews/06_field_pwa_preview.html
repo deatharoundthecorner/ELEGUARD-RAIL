@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Field Ranger PWA | ELEGUARD RAIL [Preview]</title>
+  <style>
+    :root {
+      --bg-field: #080d12;
+      --bg-card: #0f1822;
+      --bg-elevated: #162332;
+      --border-field: #1e3046;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --pwa-yellow: #eab308;
+      --pwa-green: #10b981;
+      --pwa-blue: #0284c7;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "Segoe UI Mono", "Roboto Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-field);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.45;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* Fixed Mobile Frame Wrapper */
+    .mobile-frame {
+      max-width: 410px;
+      width: 100%;
+      background: #090f16;
+      border: 1px solid var(--border-field);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Top Hardware Telemetry Bar */
+    .pwa-telemetry-header {
+      background: #06090d;
+      border-bottom: 1px solid var(--border-field);
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    .gps-lock-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .offline-sync-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #fde68a;
+      background: rgba(234, 179, 8, 0.12);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* App Header */
+    .pwa-app-bar {
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-field);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pwa-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pwa-sub {
+      font-size: 10px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    /* 6-Stage Progress Indicator */
+    .step-progress-bar {
+      display: flex;
+      background: #06090d;
+      padding: 8px 12px;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-field);
+    }
+
+    .step-segment {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: #1e293b;
+    }
+
+    .step-segment.completed {
+      background: var(--pwa-green);
+    }
+
+    .step-segment.active {
+      background: var(--pwa-yellow);
+    }
+
+    /* Form Content Body */
+    .pwa-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .step-header-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .form-input {
+      background: #060a0f;
+      border: 1px solid var(--border-field);
+      border-radius: 6px;
+      padding: 12px 14px;
+      color: #fff;
+      font-size: 14px;
+      font-family: var(--font-mono);
+    }
+
+    .form-input:focus {
+      outline: 2px solid var(--pwa-yellow);
+      border-color: transparent;
+    }
+
+    /* Diurnal Touch Pickers */
+    .diurnal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .diurnal-btn {
+      background: #0a111a;
+      border: 1px solid var(--border-field);
+      border-radius: 6px;
+      padding: 10px 8px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      text-align: left;
+    }
+
+    .diurnal-btn.selected {
+      background: #1f1b0a;
+      border-color: var(--pwa-yellow);
+      color: #fef08a;
+      font-weight: 700;
+    }
+
+    /* Bottom Action Deck */
+    .pwa-footer-actions {
+      padding: 14px 16px;
+      background: #06090d;
+      border-top: 1px solid var(--border-field);
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 10px;
+    }
+
+    .btn-save-draft {
+      background: #131c26;
+      border: 1px solid #233346;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      min-height: 48px;
+    }
+
+    .btn-next-step {
+      background: #0284c7;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-next-step:hover {
+      background: #0369a1;
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-frame">
+    <!-- Synthetic Demonstration Banner -->
+    <div style="background: #1e1b12; border-bottom: 1px solid #78350f; color: #fbbf24; font-family: var(--font-mono); font-size: 10px; padding: 6px 12px; display: flex; justify-content: space-between; align-items: center;">
+      <span>⚠️ SYNTHETIC PROTOTYPE &bull; SAMPLES ONLY</span>
+      <span>FIELD PWA &bull; DYNAMIC GPS</span>
+    </div>
+
+    <!-- Dynamic Hardware Telemetry Bar -->
+    <div class="pwa-telemetry-header">
+      <div id="gps-status-pill" class="gps-lock-pill" style="color: #6ee7b7; background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="12 2 19 21 12 17 5 21 12 2"/></svg>
+        <span id="gps-status-text">SIMULATED GNSS: &plusmn;18m (Scrub Fix)</span>
+      </div>
+      <div class="offline-sync-pill">
+        OFFLINE READY (SAMPLE: 0 QUEUED)
+      </div>
+    </div>
+
+    <!-- App Bar -->
+    <div class="pwa-app-bar">
+      <div>
+        <div class="pwa-title">EleGuard Field Telemetry</div>
+        <div class="pwa-sub">Offline Wildlife Sighting Engine</div>
+      </div>
+      <span style="font-family: var(--font-mono); font-size: 10px; color: var(--pwa-yellow);">STAGE 1 / 6</span>
+    </div>
+
+    <!-- 6-Stage Progress Bar -->
+    <div class="step-progress-bar">
+      <div class="step-segment active"></div>
+      <div class="step-segment"></div>
+      <div class="step-segment"></div>
+      <div class="step-segment"></div>
+      <div class="step-segment"></div>
+      <div class="step-segment"></div>
+    </div>
+
+    <!-- Step 1: Observation Time & Diurnal Period -->
+    <div class="pwa-body">
+      <div class="step-header-text">1. Temporal Sighting Telemetry</div>
+
+      <div class="form-group">
+        <label class="form-label">Observation Date</label>
+        <input class="form-input" type="date" value="2026-11-16">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Observation Time (SLST)</label>
+        <input class="form-input" type="time" value="05:58">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Diurnal Period (Auto-Detected)</label>
+        <div class="diurnal-grid">
+          <button class="diurnal-btn selected" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fef08a" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="23" y2="18"/><line x1="19.78" y1="10.22" x2="18.36" y2="11.64"/></svg>
+            Dawn (04:00&ndash;07:00)
+          </button>
+          <button class="diurnal-btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            Morning (07:00&ndash;11:00)
+          </button>
+          <button class="diurnal-btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+            Midday (11:00&ndash;14:00)
+          </button>
+          <button class="diurnal-btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 4V2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.5 12a4.5 4.5 0 0 0-4.5-4.5c-.88 0-1.7.26-2.39.71A5.002 5.002 0 0 0 3 13c0 2.76 2.24 5 5 5h8a4 4 0 0 0 0-8c-.17 0-.34.02-.5.05"/></svg>
+            Afternoon (14:00&ndash;17:00)
+          </button>
+          <button class="diurnal-btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="23" y2="18"/><polyline points="8 6 12 10 16 6"/></svg>
+            Dusk (17:00&ndash;19:30)
+          </button>
+          <button class="diurnal-btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            Night (19:30&ndash;23:30)
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nearest Railway Corridor</label>
+        <select class="form-input" style="background: #060a0f;">
+          <option>Habarana &ndash; Gal Oya</option>
+          <option selected>Minneriya &ndash; Hingurakgoda</option>
+          <option>Maho &ndash; Anuradhapura</option>
+        </select>
+      </div>
+
+      <!-- Real-time Hardware Geolocation State Demonstrator -->
+      <div style="background: #060a0f; border: 1px solid var(--border-field); border-radius: 6px; padding: 10px 12px; margin-top: 4px;">
+        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">
+          Hardware GPS Dynamic States (Demonstrator):
+        </div>
+        <div style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px; line-height: 1.3;">
+          Illustrative simulator toggling realistic mobile browser accuracy tiers:
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+          <button type="button" onclick="setGpsState('acquiring')" style="font-size: 10px; font-family: var(--font-mono); background: #162332; border: 1px solid #283e58; color: #38bdf8; padding: 3px 6px; border-radius: 3px; cursor: pointer;">Acquiring...</button>
+          <button type="button" onclick="setGpsState('good')" style="font-size: 10px; font-family: var(--font-mono); background: #0c2417; border: 1px solid #165335; color: #6ee7b7; padding: 3px 6px; border-radius: 3px; cursor: pointer;">High Fix (&plusmn;12m)</button>
+          <button type="button" onclick="setGpsState('poor')" style="font-size: 10px; font-family: var(--font-mono); background: #261908; border: 1px solid #633e0e; color: #fbbf24; padding: 3px 6px; border-radius: 3px; cursor: pointer;">Canopy/Cell (&plusmn;46m)</button>
+          <button type="button" onclick="setGpsState('denied')" style="font-size: 10px; font-family: var(--font-mono); background: #260d10; border: 1px solid #631920; color: #f87171; padding: 3px 6px; border-radius: 3px; cursor: pointer;">Denied/Unavailable</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Touch Action Footer -->
+    <div class="pwa-footer-actions">
+      <button class="btn-save-draft" onclick="alert('PROTOTYPE DEMONSTRATION: Sighting draft saved to simulated local encrypted storage.');">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save Draft
+      </button>
+      <button class="btn-next-step" onclick="alert('PROTOTYPE DEMONSTRATION: Advancing to Stage 2 (Observer Standoff & GPS Coordinates).');">
+        Next: Observer GPS &rarr;
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function setGpsState(state) {
+      const pill = document.getElementById('gps-status-pill');
+      const text = document.getElementById('gps-status-text');
+      if (state === 'acquiring') {
+        pill.style.color = '#38bdf8';
+        pill.style.background = 'rgba(56, 189, 248, 0.12)';
+        pill.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+        text.innerText = 'GPS: ACQUIRING FIX...';
+      } else if (state === 'good') {
+        pill.style.color = '#6ee7b7';
+        pill.style.background = 'rgba(16, 185, 129, 0.12)';
+        pill.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+        text.innerText = 'GPS: \u00B112m (HIGH FIX)';
+      } else if (state === 'poor') {
+        pill.style.color = '#fbbf24';
+        pill.style.background = 'rgba(245, 158, 11, 0.12)';
+        pill.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+        text.innerText = 'GPS: \u00B146m (POOR FIX)';
+      } else if (state === 'denied') {
+        pill.style.color = '#f87171';
+        pill.style.background = 'rgba(239, 68, 68, 0.12)';
+        pill.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+        text.innerText = 'GPS: UNAVAILABLE / DENIED';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -30,7 +30,7 @@ $recentReports = array_slice($myReports, 0, 5);
 ?>
 
 <div class="dashboard-title-row">
-    <h1>Welcome, <?php echo e($currentUser['name']); ?></h1>
+    <h1>Welcome, <?php echo e($currentUser['name']); ?> <span class="badge badge-sample" style="font-size:0.75rem; vertical-align:middle; margin-left:8px;">Demonstration Environment</span></h1>
     <p class="text-secondary">Community early warning sighting desk. Use this panel to file reports and track their status.</p>
 </div>
 
@@ -59,8 +59,8 @@ $recentReports = array_slice($myReports, 0, 5);
 
 <div class="card-panel" style="text-align: center; padding: 40px 20px; border-top: 4px solid var(--accent-color);">
     <h2>Reported an Elephant Near the Tracks?</h2>
-    <p class="text-secondary" style="margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">Help prevent collisions. File the location, urgency, and description immediately. Wildlife rangers and train controls will receive notifications instantly.</p>
-    <a href="<?php echo Router::url('reporter/submit_report.php'); ?>" class="btn btn-accent btn-lg">➕ File Sighting Report</a>
+    <p class="text-secondary" style="margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">Submit observed elephant activity along railway corridors. Sighting records are queued for authorised ecological review by wildlife officers prior to advisory preparation.</p>
+    <a href="<?php echo Router::url('reporter/submit_report.php'); ?>" class="btn btn-accent btn-lg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>File Sighting Report</a>
 </div>
 
 <div class="card-panel">

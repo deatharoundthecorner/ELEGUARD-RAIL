@@ -13,7 +13,6 @@ ini_set('display_errors', 1);
 // Date and Time Zone
 date_default_timezone_set('Asia/Colombo');
 
-// Session Settings
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+// Session Settings - Enforce security via Session core helper (TSK-J02)
+require_once __DIR__ . '/../core/Session.php';
+Session::start();

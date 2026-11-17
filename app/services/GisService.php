@@ -100,11 +100,22 @@ class GisService {
                 r.latitude,
                 r.longitude,
                 r.gps_accuracy_meters,
+                r.observer_latitude,
+                r.observer_longitude,
+                r.observer_gps_accuracy_meters,
+                r.estimated_animal_latitude,
+                r.estimated_animal_longitude,
+                r.animal_location_uncertainty_meters,
+                r.is_estimated_position,
+                r.section_assignment_status,
+                r.distance_to_track_meters,
+                r.track_proximity_zone,
                 r.urgency_level,
                 r.risk_score,
                 r.report_status,
                 r.description,
                 r.image_path,
+                r.provenance,
                 r.created_at
             FROM elephant_reports r
             LEFT JOIN railway_sections rs ON r.section_id = rs.id
@@ -156,10 +167,14 @@ class GisService {
         $limit = isset($filters['limit']) && is_numeric($filters['limit']) 
             ? max(1, min(500, (int)$filters['limit'])) 
             : 100;
-        $query .= " LIMIT " . $limit;
+        $query .= " LIMIT :limit";
 
         $stmt = $db->prepare($query);
-        $stmt->execute($params);
+        foreach ($params as $paramKey => $paramVal) {
+            $stmt->bindValue($paramKey, $paramVal);
+        }
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
         $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Process records and compute proximity
@@ -181,11 +196,22 @@ class GisService {
                 'latitude' => $lat,
                 'longitude' => $lon,
                 'gps_accuracy_meters' => $acc,
+                'observer_latitude' => $report['observer_latitude'] !== null ? (float)$report['observer_latitude'] : null,
+                'observer_longitude' => $report['observer_longitude'] !== null ? (float)$report['observer_longitude'] : null,
+                'observer_gps_accuracy_meters' => $report['observer_gps_accuracy_meters'] !== null ? (float)$report['observer_gps_accuracy_meters'] : null,
+                'estimated_animal_latitude' => $report['estimated_animal_latitude'] !== null ? (float)$report['estimated_animal_latitude'] : null,
+                'estimated_animal_longitude' => $report['estimated_animal_longitude'] !== null ? (float)$report['estimated_animal_longitude'] : null,
+                'animal_location_uncertainty_meters' => $report['animal_location_uncertainty_meters'] !== null ? (float)$report['animal_location_uncertainty_meters'] : null,
+                'is_estimated_position' => isset($report['is_estimated_position']) ? (int)$report['is_estimated_position'] : 0,
+                'section_assignment_status' => $report['section_assignment_status'] ?? 'provisional_estimated',
+                'distance_to_track_meters' => $report['distance_to_track_meters'] !== null ? (float)$report['distance_to_track_meters'] : null,
+                'track_proximity_zone' => $report['track_proximity_zone'] ?? null,
                 'urgency_level' => $report['urgency_level'],
                 'risk_level' => $report['risk_score'],
                 'report_status' => $report['report_status'],
                 'description' => $report['description'],
                 'has_image' => !empty($report['image_path']),
+                'provenance' => $report['provenance'] ?? 'unknown',
                 'created_at' => $report['created_at'],
                 'proximity' => null
             ];
@@ -270,23 +296,82 @@ class GisService {
     }
 
     /**
-     * Converts a list of sighting reports to a GeoJSON FeatureCollection.
+     * Converts a list of sighting reports to a GeoJSON FeatureCollection with optional coordinate privacy masking.
      * 
      * @param array $reports
+     * @param bool $hasPreciseAccess Whether authenticated role is authorized for full-precision coordinates
      * @return array GeoJSON FeatureCollection
      */
-    public static function reportsToGeoJson(array $reports) {
+    public static function reportsToGeoJson(array $reports, $hasPreciseAccess = true) {
         $features = [];
         foreach ($reports as $r) {
             if ($r['latitude'] === null || $r['longitude'] === null) {
                 continue;
             }
+
+            // Apply server-side coordinate masking if user role lacks precise access
+            if ($hasPreciseAccess) {
+                $lat = (float)$r['latitude'];
+                $lon = (float)$r['longitude'];
+                $obsLat = $r['observer_latitude'] !== null ? (float)$r['observer_latitude'] : null;
+                $obsLon = $r['observer_longitude'] !== null ? (float)$r['observer_longitude'] : null;
+                $distMeters = $r['distance_to_track_meters'] ?? ($r['proximity']['distance_meters'] ?? null);
+                $proxData = $r['proximity'];
+                $obsAcc = $r['observer_gps_accuracy_meters'] ?? null;
+                $animUncert = $r['animal_location_uncertainty_meters'] ?? null;
+                $gpsAcc = $r['gps_accuracy_meters'] ?? null;
+            } else {
+                // Approximate 2-decimal masking (~1.1 km resolution)
+                $lat = round((float)$r['latitude'], 2);
+                $lon = round((float)$r['longitude'], 2);
+                $obsLat = $r['observer_latitude'] !== null ? round((float)$r['observer_latitude'], 2) : null;
+                $obsLon = $r['observer_longitude'] !== null ? round((float)$r['observer_longitude'], 2) : null;
+
+                // Mask primary distance to nearest 100 meters
+                $rawDist = $r['distance_to_track_meters'] ?? ($r['proximity']['distance_meters'] ?? null);
+                $distMeters = $rawDist !== null ? round($rawDist / 100) * 100 : null;
+
+                // Strip sub-meter telemetry and suppress precise uncertainty fields
+                $obsAcc = null;
+                $animUncert = null;
+                $gpsAcc = null;
+
+                $proxData = $r['proximity'];
+                if (is_array($proxData)) {
+                    $proxData['distance_meters'] = $distMeters;
+                    $proxData['closest_track_point'] = null; // Suppress exact track point coordinates
+                    $proxData['gps_accuracy_meters'] = null; // Suppress GPS accuracy to prevent range reconstruction
+
+                    // Mask effective uncertainty range: construct coarse 100m interval around fuzzed distance
+                    // preventing arithmetic reconstruction of exact distance: (min + max) / 2 = distMeters
+                    if (isset($proxData['effective_uncertainty_range']) && is_array($proxData['effective_uncertainty_range'])) {
+                        $proxData['effective_uncertainty_range'] = [
+                            'min_distance_meters' => $distMeters !== null ? max(0, $distMeters - 100) : null,
+                            'max_distance_meters' => $distMeters !== null ? ($distMeters + 100) : null,
+                            'accuracy_meters' => null
+                        ];
+                    }
+
+                    // Replace precise textual distance ranges with generalized approximate text
+                    if (isset($proxData['uncertainty_range_text'])) {
+                        if ($distMeters !== null) {
+                            $approxKm = round($distMeters / 1000, 1);
+                            $proxData['uncertainty_range_text'] = "Approx. {$approxKm} km from corridor (coarse estimate)";
+                        } else {
+                            $proxData['uncertainty_range_text'] = "Approximate distance unavailable";
+                        }
+                    }
+                }
+            }
+
+            $obsCoords = ($obsLat !== null && $obsLon !== null) ? [$obsLon, $obsLat] : null;
+
             $features[] = [
                 'type' => 'Feature',
                 'id' => 'report_' . $r['id'],
                 'geometry' => [
                     'type' => 'Point',
-                    'coordinates' => [(float)$r['longitude'], (float)$r['latitude']]
+                    'coordinates' => [$lon, $lat]
                 ],
                 'properties' => [
                     'id' => (int)$r['id'],
@@ -299,11 +384,97 @@ class GisService {
                     'urgency_level' => $r['urgency_level'],
                     'risk_level' => $r['risk_level'],
                     'report_status' => $r['report_status'],
+                    'verification_status' => $r['report_status'],
+                    'section_assignment_status' => $r['section_assignment_status'] ?? 'provisional_estimated',
+                    'is_estimated_position' => (int)($r['is_estimated_position'] ?? 0),
+                    'observer_coordinates' => $obsCoords,
+                    'observer_accuracy_meters' => $obsAcc,
+                    'animal_uncertainty_meters' => $animUncert,
                     'description' => $r['description'],
                     'has_image' => (bool)$r['has_image'],
-                    'gps_accuracy_meters' => $r['gps_accuracy_meters'],
-                    'proximity' => $r['proximity'],
+                    'gps_accuracy_meters' => $gpsAcc,
+                    'distance_to_track_meters' => $distMeters,
+                    'track_proximity_zone' => $r['track_proximity_zone'] ?? null,
+                    'proximity' => $proxData,
+                    'is_masked' => !$hasPreciseAccess,
+                    'coordinate_privacy' => $hasPreciseAccess ? 'full_precision_operational' : 'approximate_masked_2_decimals',
+                    'provenance' => $r['provenance'] ?? 'unknown',
+                    'is_synthetic' => (isset($r['provenance']) && ($r['provenance'] === 'development_test' || strpos($r['provenance'], 'test') !== false || strpos($r['provenance'], 'demo') !== false)) ? true : false,
                     'created_at' => $r['created_at']
+                ]
+            ];
+        }
+
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $features
+        ];
+    }
+
+    /**
+     * Retrieves active railway safety alerts formatted as GeoJSON.
+     * 
+     * @param int|null $sectionId Optional railway section filter
+     * @return array GeoJSON FeatureCollection
+     */
+    public static function getActiveAlertsGeoJson($sectionId = null) {
+        $db = Database::getInstance()->getConnection();
+        $query = "
+            SELECT 
+                a.id,
+                a.report_id,
+                a.section_id,
+                rs.section_name,
+                rs.district,
+                a.alert_level,
+                a.alert_message,
+                a.alert_status,
+                a.created_at
+            FROM alerts a
+            LEFT JOIN railway_sections rs ON a.section_id = rs.id
+            WHERE a.alert_status = 'Active'
+        ";
+        $params = [];
+        if ($sectionId !== null && is_numeric($sectionId)) {
+            $query .= " AND a.section_id = :sec_id";
+            $params[':sec_id'] = (int)$sectionId;
+        }
+        $query .= " ORDER BY a.created_at DESC";
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+        $alerts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $features = [];
+        foreach ($alerts as $a) {
+            // Heuristic caution speed recommendation based on alert level (system advisory only)
+            $speedKmh = null;
+            $lvl = strtolower($a['alert_level'] ?? '');
+            if ($lvl === 'critical') $speedKmh = 20;
+            elseif ($lvl === 'high') $speedKmh = 30;
+            elseif ($lvl === 'medium') $speedKmh = 45;
+            elseif ($lvl === 'low') $speedKmh = 60;
+
+            $features[] = [
+                'type' => 'Feature',
+                'id' => 'alert_' . $a['id'],
+                'geometry' => null,
+                'properties' => [
+                    'id' => (int)$a['id'],
+                    'report_id' => $a['report_id'] !== null ? (int)$a['report_id'] : null,
+                    'type' => 'active_alert',
+                    'section_id' => (int)$a['section_id'],
+                    'section_name' => $a['section_name'],
+                    'district' => $a['district'],
+                    'alert_level' => $a['alert_level'],
+                    'suggested_caution_speed_kmh' => $speedKmh,
+                    'speed_restriction_kmh' => $speedKmh, // Preserved for API backward-compatibility
+                    'speed_recommendation_label' => $speedKmh ? "System Advisory: {$speedKmh} km/h Caution" : null,
+                    'is_advisory_only' => true,
+                    'advisory_disclaimer' => 'ADVISORY RECOMMENDATION ONLY — NOT AN OFFICIAL TRAIN ORDER',
+                    'message' => $a['alert_message'],
+                    'alert_status' => $a['alert_status'],
+                    'status' => $a['alert_status'],
+                    'created_at' => $a['created_at']
                 ]
             ];
         }
@@ -318,12 +489,14 @@ class GisService {
      * Builds the complete consolidated GIS payload for map visualization and analysis.
      * 
      * @param array $filters Query filters
+     * @param bool $hasPreciseAccess Whether caller has operational precise coordinates access
      * @return array Consolidated GIS response
      */
-    public static function getGisPayload(array $filters = []) {
+    public static function getGisPayload(array $filters = [], $hasPreciseAccess = true) {
         $routes = self::getRailwayRoutes();
         $hotspots = self::getHotspots($filters['section_id'] ?? null, $filters['risk_level'] ?? null);
         $reports = self::getElephantReports($filters, true);
+        $alerts = self::getActiveAlertsGeoJson($filters['section_id'] ?? null);
 
         // Compute summary counts
         $totalReports = count($reports);
@@ -345,6 +518,7 @@ class GisService {
                 'total_track_length_km' => $routes['metadata']['total_network_length_km'] ?? 138.29,
                 'total_hotspots' => count($hotspots),
                 'total_sighting_reports' => $totalReports,
+                'total_active_alerts' => count($alerts['features']),
                 'verified_reports' => $verifiedCount,
                 'pending_reports' => $pendingCount,
                 'critical_reports' => $criticalCount
@@ -352,7 +526,8 @@ class GisService {
             'filters_applied' => array_filter($filters, function($v) { return $v !== null && $v !== ''; }),
             'routes' => $routes,
             'hotspots' => self::hotspotsToGeoJson($hotspots),
-            'reports' => self::reportsToGeoJson($reports)
+            'reports' => self::reportsToGeoJson($reports, $hasPreciseAccess),
+            'alerts' => $alerts
         ];
     }
 }

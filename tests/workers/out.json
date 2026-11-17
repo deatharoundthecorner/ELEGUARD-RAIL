@@ -1,0 +1,1 @@
+{"success":false,"status_code":422,"error":{"type":"https:\/\/eleguard.rail.gov.lk\/errors\/validation-error","title":"Invalid Observation Payload","status":422,"detail":"The provided sighting report contains validation errors.","invalid_params":{"client_report_uuid":"Invalid RFC 4122 v4 UUID format."}},"worker_id":1,"execution_duration_ms":0.447,"invoked_at":1794367243.133524}

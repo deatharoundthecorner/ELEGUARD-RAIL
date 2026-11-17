@@ -49,14 +49,12 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
     
-    $opReports = (int)$opPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-    $opLogs = (int)$opPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-    $opAlerts = (int)$opPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-    $opRep1 = $opPdo->query("SELECT sighting_date, sighting_time, risk_score, report_status FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+    $opSnapshot = captureOperationalDatabaseSnapshot($opPdo);
+    $opRep1 = $opSnapshot['report1'];
 
-    runTest("0.1 Operational DB elephant_reports baseline is 43", $opReports === 43, $totalTests, $passedTests, $failedTests, "Got: $opReports");
-    runTest("0.2 Operational DB system_logs baseline is 185", $opLogs === 185, $totalTests, $passedTests, $failedTests, "Got: $opLogs");
-    runTest("0.3 Operational DB alerts baseline is 15", $opAlerts === 15, $totalTests, $passedTests, $failedTests, "Got: $opAlerts");
+    runTest("0.1 Operational DB elephant_reports baseline captured", isset($opSnapshot['tables']['elephant_reports']), $totalTests, $passedTests, $failedTests);
+    runTest("0.2 Operational DB system_logs baseline captured", isset($opSnapshot['tables']['system_logs']), $totalTests, $passedTests, $failedTests);
+    runTest("0.3 Operational DB alerts baseline captured", isset($opSnapshot['tables']['alerts']), $totalTests, $passedTests, $failedTests);
     runTest("0.4 Operational Report #1 sighting time is NULL", $opRep1['sighting_time'] === null, $totalTests, $passedTests, $failedTests);
     runTest("0.5 Operational Report #1 risk score baseline is Medium", $opRep1['risk_score'] === 'Medium', $totalTests, $passedTests, $failedTests);
 } catch (Exception $e) {
@@ -907,14 +905,12 @@ runTest("20.19 Cross-provenance comparison does NOT exclude candidate (is_test_c
 // -------------------------------------------------------------------------
 echo "\n--- 19. POST-TEST OPERATIONAL DATABASE VERIFICATION ---\n";
 try {
-    $postReports = (int)$opPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-    $postLogs = (int)$opPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-    $postAlerts = (int)$opPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-    $postRep1 = $opPdo->query("SELECT sighting_date, sighting_time, risk_score, report_status FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+    $res = verifyOperationalDatabaseSnapshot($opSnapshot, $opPdo);
+    $postRep1 = $res['post']['report1'];
 
-    runTest("19.1 Operational DB elephant_reports remains 43", $postReports === 43, $totalTests, $passedTests, $failedTests, "Got: $postReports");
-    runTest("19.2 Operational DB system_logs remains 185", $postLogs === 185, $totalTests, $passedTests, $failedTests, "Got: $postLogs");
-    runTest("19.3 Operational DB alerts remains 15", $postAlerts === 15, $totalTests, $passedTests, $failedTests, "Got: $postAlerts");
+    runTest("19.1 Operational DB elephant_reports remains untouched", $res['tables']['elephant_reports']['passed'], $totalTests, $passedTests, $failedTests);
+    runTest("19.2 Operational DB system_logs remains untouched", $res['tables']['system_logs']['passed'], $totalTests, $passedTests, $failedTests);
+    runTest("19.3 Operational DB alerts remains untouched", $res['tables']['alerts']['passed'], $totalTests, $passedTests, $failedTests);
     runTest("19.4 Operational Report #1 sighting time remains NULL", $postRep1['sighting_time'] === null, $totalTests, $passedTests, $failedTests);
     runTest("19.5 Operational Report #1 risk score remains Medium (identical to baseline)", $postRep1['risk_score'] === $opRep1['risk_score'] && $postRep1['risk_score'] === 'Medium', $totalTests, $passedTests, $failedTests);
     runTest("19.6 Operational Report #1 status remains Pending", $postRep1['report_status'] === 'Pending', $totalTests, $passedTests, $failedTests);

@@ -50,14 +50,12 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
     
-    $opReports = (int)$opPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-    $opLogs = (int)$opPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-    $opAlerts = (int)$opPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-    $opRep1 = $opPdo->query("SELECT sighting_date, sighting_time, risk_score, report_status FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+    $opSnapshot = captureOperationalDatabaseSnapshot($opPdo);
+    $opRep1 = $opSnapshot['report1'];
 
-    runTest("0.1 Operational DB elephant_reports baseline is 43", $opReports === 43, $totalTests, $passedTests, $failedTests, "Got: $opReports");
-    runTest("0.2 Operational DB system_logs baseline is 185", $opLogs === 185, $totalTests, $passedTests, $failedTests, "Got: $opLogs");
-    runTest("0.3 Operational DB alerts baseline is 15", $opAlerts === 15, $totalTests, $passedTests, $failedTests, "Got: $opAlerts");
+    runTest("0.1 Operational DB elephant_reports baseline captured", isset($opSnapshot['tables']['elephant_reports']), $totalTests, $passedTests, $failedTests);
+    runTest("0.2 Operational DB system_logs baseline captured", isset($opSnapshot['tables']['system_logs']), $totalTests, $passedTests, $failedTests);
+    runTest("0.3 Operational DB alerts baseline captured", isset($opSnapshot['tables']['alerts']), $totalTests, $passedTests, $failedTests);
     runTest("0.4 Operational Report #1 sighting time is NULL", $opRep1['sighting_time'] === null, $totalTests, $passedTests, $failedTests);
     runTest("0.5 Operational Report #1 risk score baseline is Medium", $opRep1['risk_score'] === 'Medium', $totalTests, $passedTests, $failedTests);
 } catch (Exception $e) {
@@ -65,28 +63,23 @@ try {
     exit(1);
 }
 
-// Ensure isolated test database exists and has fresh clone of tables
+// Ensure isolated disposable test database exists and has fresh canonical tables
+$testDbName = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? null);
+if (empty($testDbName) || $testDbName === 'eleguard_rail_test' || $testDbName === 'eleguard_rail') {
+    $testDbName = 'eleguard_test_tmp_' . bin2hex(random_bytes(6));
+    putenv("DB_NAME={$testDbName}");
+    $_ENV['DB_NAME'] = $testDbName;
+}
+
 try {
-    $opPdo->exec("CREATE DATABASE IF NOT EXISTS `eleguard_rail_test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $testTables = $opPdo->query("SHOW TABLES FROM `eleguard_rail_test`")->fetchAll(PDO::FETCH_COLUMN);
-    if (empty($testTables)) {
-        $tables = $opPdo->query("SHOW TABLES FROM `eleguard_rail`")->fetchAll(PDO::FETCH_COLUMN);
-        $opPdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-        foreach ($tables as $t) {
-            $createSql = $opPdo->query("SHOW CREATE TABLE `eleguard_rail`.`{$t}`")->fetch(PDO::FETCH_ASSOC)['Create Table'];
-            $opPdo->exec("USE `eleguard_rail_test`");
-            $opPdo->exec($createSql);
-            $opPdo->exec("INSERT INTO `eleguard_rail_test`.`{$t}` SELECT * FROM `eleguard_rail`.`{$t}`");
-        }
-        $opPdo->exec("SET FOREIGN_KEY_CHECKS = 1");
-    }
+    ensureTestDatabaseExists($opPdo, $testDbName);
 } catch (Exception $e) {
     echo "  [FATAL] Failed to initialize isolated test DB: " . $e->getMessage() . "\n";
     exit(1);
 }
 
 // Connect to isolated test database
-$testPdo = new PDO("mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=eleguard_rail_test;charset=utf8mb4", DB_USER, DB_PASS, [
+$testPdo = new PDO("mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname={$testDbName};charset=utf8mb4", DB_USER, DB_PASS, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 ]);
 
@@ -386,14 +379,12 @@ runTest("19.1 getFullAnalyticsSummary aggregates all 7 analytical domains cleanl
 );
 
 try {
-    $postReports = (int)$opPdo->query("SELECT COUNT(*) FROM elephant_reports")->fetchColumn();
-    $postLogs = (int)$opPdo->query("SELECT COUNT(*) FROM system_logs")->fetchColumn();
-    $postAlerts = (int)$opPdo->query("SELECT COUNT(*) FROM alerts")->fetchColumn();
-    $postRep1 = $opPdo->query("SELECT sighting_date, sighting_time, risk_score, report_status FROM elephant_reports WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+    $res = verifyOperationalDatabaseSnapshot($opSnapshot, $opPdo);
+    $postRep1 = $res['post']['report1'];
 
-    runTest("19.2 Operational DB elephant_reports remains 43", $postReports === 43, $totalTests, $passedTests, $failedTests, "Got: $postReports");
-    runTest("19.3 Operational DB system_logs remains 185", $postLogs === 185, $totalTests, $passedTests, $failedTests, "Got: $postLogs");
-    runTest("19.4 Operational DB alerts remains 15", $postAlerts === 15, $totalTests, $passedTests, $failedTests, "Got: $postAlerts");
+    runTest("19.2 Operational DB elephant_reports remains untouched", $res['tables']['elephant_reports']['passed'], $totalTests, $passedTests, $failedTests);
+    runTest("19.3 Operational DB system_logs remains untouched", $res['tables']['system_logs']['passed'], $totalTests, $passedTests, $failedTests);
+    runTest("19.4 Operational DB alerts remains untouched", $res['tables']['alerts']['passed'], $totalTests, $passedTests, $failedTests);
     runTest("19.5 Operational Report #1 sighting time remains NULL", $postRep1['sighting_time'] === null, $totalTests, $passedTests, $failedTests);
     runTest("19.6 Operational Report #1 risk score remains Medium (identical to baseline)", $postRep1['risk_score'] === $opRep1['risk_score'] && $postRep1['risk_score'] === 'Medium', $totalTests, $passedTests, $failedTests);
     runTest("19.7 Operational Report #1 status remains Pending", $postRep1['report_status'] === 'Pending', $totalTests, $passedTests, $failedTests);

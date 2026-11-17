@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Desk — Railway Operations Monitoring Workstation [Preview]</title>
+  <style>
+    :root {
+      --bg-canvas: #080c12;
+      --bg-panel: #0e1520;
+      --bg-panel-subtle: #141d2b;
+      --border-panel: #1c2738;
+      --border-focus: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --rail-amber: #f59e0b;
+      --rail-crimson: #ef4444;
+      --rail-green: #10b981;
+      --rail-cyan: #06b6d4;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "Segoe UI Mono", "Roboto Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top Railway Operational Header */
+    .dispatch-header {
+      background: #06090e;
+      border-bottom: 2px solid #24334a;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dispatch-branding {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slr-insignia {
+      width: 28px;
+      height: 28px;
+      background: #b91c1c;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .dispatch-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .dispatch-subtitle {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .dispatch-telemetry-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .clock-display {
+      background: #0f1622;
+      border: 1px solid #1e2b3e;
+      padding: 6px 12px;
+      border-radius: 4px;
+      color: var(--rail-amber);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .controller-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #111a26;
+      border: 1px solid #202d3f;
+      padding: 6px 12px;
+      border-radius: 4px;
+      color: #cbd5e1;
+    }
+
+    .dot-live {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--rail-green);
+      box-shadow: 0 0 6px var(--rail-green);
+    }
+
+    /* Broadcast & Hotline Bar */
+    .emergency-hotline-bar {
+      background: #19140e;
+      border-bottom: 1px solid #3b2a14;
+      padding: 8px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .hotline-items {
+      display: flex;
+      gap: 24px;
+      color: #fde68a;
+    }
+
+    .hotline-items strong {
+      color: #fff;
+    }
+
+    .btn-manual-broadcast {
+      background: #b91c1c;
+      color: #fff;
+      border: 1px solid #ef4444;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-manual-broadcast:hover {
+      background: #dc2626;
+    }
+
+    /* Main Operational Workstation View */
+    .workspace-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+    }
+
+    /* Linear Track Corridor Status Strip */
+    .corridor-strip-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 6px;
+      padding: 16px 20px;
+    }
+
+    .strip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .strip-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .track-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .track-section-block {
+      background: #090e15;
+      border: 1px solid #1a2536;
+      border-radius: 4px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+
+    .track-section-block.hazard-critical {
+      border-left: 4px solid var(--rail-crimson);
+      background: #140b0e;
+    }
+
+    .track-section-block.hazard-high {
+      border-left: 4px solid var(--rail-amber);
+      background: #14110a;
+    }
+
+    .track-section-block.clear {
+      border-left: 4px solid var(--rail-green);
+    }
+
+    .sec-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .sec-chainage {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .sec-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    /* Dual Workstation Grid */
+    .workstation-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 12px 16px;
+      background: var(--bg-panel-subtle);
+      border-bottom: 1px solid var(--border-panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-head-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .counter-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: #1e2b3e;
+      color: var(--text-muted);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12.5px;
+    }
+
+    th {
+      background: #0a0f16;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-panel);
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #151f2d;
+      color: var(--text-main);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .btn-action-purple {
+      background: rgba(124, 58, 237, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.5);
+      color: #c4b5fd;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-action-purple:hover {
+      background: rgba(124, 58, 237, 0.4);
+      color: #fff;
+    }
+
+    .ack-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #141c28;
+    }
+
+    .ack-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .ack-driver {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .ack-time {
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+    }
+
+    .ack-status-text {
+      font-size: 12px;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ack-section {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <!-- Synthetic Demonstration Banner -->
+  <div style="background: #1e1b12; border-bottom: 1px solid #78350f; color: #fbbf24; font-family: var(--font-mono); font-size: 11px; padding: 6px 24px; display: flex; justify-content: space-between; align-items: center;">
+    <span>⚠️ SYNTHETIC DEMONSTRATION PROTOTYPE &bull; ILLUSTRATIVE VALUES ONLY</span>
+    <span>STATUS: READ-ONLY PREVIEW &bull; NO LIVE DISPATCH</span>
+  </div>
+
+  <!-- Operational Header -->
+  <header class="dispatch-header">
+    <div class="dispatch-branding">
+      <div class="slr-insignia">SLR</div>
+      <div>
+        <div class="dispatch-title">SRI LANKA RAILWAYS &bull; CENTRAL CONTROL DESK</div>
+        <div class="dispatch-subtitle">Wildlife Collision Prevention & Train Safety Telemetry</div>
+      </div>
+    </div>
+
+    <div class="dispatch-telemetry-bar">
+      <div class="clock-display">
+        05:58:14 SLST &bull; UTC+5:30
+      </div>
+      <div class="controller-badge">
+        <div class="dot-live"></div>
+        <span>Controller: <strong>control@eleguard.lk</strong> (Desk 01)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Emergency Dispatch & Verified Hotlines -->
+  <div class="emergency-hotline-bar">
+    <div class="hotline-items">
+      <span>SLR Central Control: <strong>+94 11 242 1281</strong></span>
+      <span>DWC Emergency Hotline: <strong>1992</strong></span>
+      <span>Habarana Ranger Office: <strong>+94 66 228 6250</strong></span>
+      <span style="color: var(--text-muted);">Station Local Contacts: <em>Pending official verification</em></span>
+    </div>
+    <button class="btn-manual-broadcast" onclick="alert('PROTOTYPE DEMONSTRATION ONLY: Manual advisory broadcast simulation. Authorised dispatch requires verified sighting intake and Train Controller sign-off.')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      Broadcast Urgent Train Advisory <span style="font-size: 9px; background: rgba(0,0,0,0.3); padding: 1px 4px; border-radius: 2px; margin-left: 4px;">[DEMO CONTROL]</span>
+    </button>
+  </div>
+
+  <div class="workspace-body">
+    <!-- Visual Corridor Linear Status Strip -->
+    <div class="corridor-strip-card">
+      <div class="strip-header">
+        <div class="strip-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="12" x2="22" y2="12"/><line x1="6" y1="7" x2="6" y2="17"/><line x1="18" y1="7" x2="18" y2="17"/><circle cx="12" cy="12" r="3"/></svg>
+          Northern & Batticaloa Line &bull; Active Corridor Occupancy & Wildlife Advisory Status
+        </div>
+        <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">REPORTED OCCUPANCY REFRESH: 30s (SCHEDULED & STATION-REPORTED OCCUPANCY)</span>
+      </div>
+
+      <div class="track-strip">
+        <div class="track-section-block hazard-critical">
+          <div class="sec-name">Minneriya &ndash; Hingurakgoda</div>
+          <div class="sec-chainage">MP 105.4 &ndash; 108.2 &bull; Marker 105</div>
+          <div class="sec-status-row">
+            <span style="color: #f87171; font-weight: 700;">ADVISORY SPEED CAUTION</span>
+            <span style="color: #fca5a5; font-family: var(--font-mono);">3 Elephants (18m) [Sample]</span>
+          </div>
+        </div>
+
+        <div class="track-section-block hazard-high">
+          <div class="sec-name">Habarana &ndash; Gal Oya</div>
+          <div class="sec-chainage">MP 84.1 &ndash; 87.6 &bull; Culvert 412</div>
+          <div class="sec-status-row">
+            <span style="color: #fbbf24; font-weight: 700;">ADVISORY CAUTION</span>
+            <span style="color: #fde68a; font-family: var(--font-mono);">1 Bull near fence [Sample]</span>
+          </div>
+        </div>
+
+        <div class="track-section-block clear">
+          <div class="sec-name">Maho &ndash; Anuradhapura</div>
+          <div class="sec-chainage">MP 42.0 &ndash; 46.8 &bull; Culvert 118</div>
+          <div class="sec-status-row">
+            <span style="color: #34d399; font-weight: 600;">TRACK CLEAR</span>
+            <span style="color: var(--text-muted); font-family: var(--font-mono);">Normal Speed</span>
+          </div>
+        </div>
+
+        <div class="track-section-block clear">
+          <div class="sec-name">Polonnaruwa &ndash; Welikanda</div>
+          <div class="sec-chainage">MP 122.0 &ndash; 125.5 &bull; Crossing 14</div>
+          <div class="sec-status-row">
+            <span style="color: #34d399; font-weight: 600;">TRACK CLEAR</span>
+            <span style="color: var(--text-muted); font-family: var(--font-mono);">Normal Speed</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 10px; font-size: 11.5px; color: var(--text-muted); font-family: var(--font-mono); line-height: 1.5;">
+        * STATUTORY CONTROLLER AUTHORITY: Train Controllers hold sole operational authority under Sri Lanka Railways Operating Rules. Advisory speed cautions are situational decision-support tools and do not replace Caution Orders (Form T.409/T.410). Corridor occupancy is based on station-reported block clearances and train timetables; continuous GPS train tracking is not operational on this line.
+      </div>
+    </div>
+
+    <!-- Main Dispatcher Grid -->
+    <div class="workstation-grid">
+      <!-- Left: Triage & Broadcast Queue -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-head-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Stage 1 & 2: Verified Sightings Intake & Advisory Preparation
+          </div>
+          <span class="counter-pill">2 ACTIONABLE (DEMO)</span>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Section / Landmark</th>
+              <th>Count</th>
+              <th>Urgency</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-family: var(--font-mono);">05:47 PM</td>
+              <td>
+                <strong>Habarana &ndash; Gal Oya</strong><br>
+                <span style="color: var(--text-muted); font-size: 11px;">Culvert 412 jungle reserve</span>
+              </td>
+              <td style="font-weight: 700;">3</td>
+              <td><span style="color: #f87171; font-weight: 700; font-family: var(--font-mono);">CRITICAL</span></td>
+              <td>
+                <a class="btn-action-purple" href="#" onclick="alert('PROTOTYPE DEMONSTRATION: Preparing advisory notice for Train Controller authorisation. Operational dispatch requires controller warrant.'); return false;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+                  Authorise Dispatch (Demo)
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-family: var(--font-mono);">05:31 PM</td>
+              <td>
+                <strong>Minneriya &ndash; Hingurakgoda</strong><br>
+                <span style="color: var(--text-muted); font-size: 11px;">Near boundary fence crossing</span>
+              </td>
+              <td style="font-weight: 700;">1</td>
+              <td><span style="color: #fbbf24; font-weight: 700; font-family: var(--font-mono);">HIGH</span></td>
+              <td>
+                <a class="btn-action-purple" href="#" onclick="alert('PROTOTYPE DEMONSTRATION: Preparing advisory notice for Train Controller authorisation. Operational dispatch requires controller warrant.'); return false;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+                  Authorise Dispatch (Demo)
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Right: Real-Time Driver Cab Response Telemetry -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-head-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Stage 3: Locomotive Driver Cab Receipt Telemetry
+          </div>
+          <span class="counter-pill">RECEIPT AUDIT (REAL-TIME)</span>
+        </div>
+
+        <div style="overflow-y: auto;">
+          <div class="ack-row">
+            <div class="ack-meta">
+              <span class="ack-driver">Locomotive Driver A &bull; Train #6011</span>
+              <span class="ack-time">05:49 PM (2m ago)</span>
+            </div>
+            <div class="ack-status-text">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Briefing Noted (Standard Vigilance) &bull; Form T.409/T.410 Precedence
+            </div>
+            <div class="ack-section">Section: Minneriya &ndash; Hingurakgoda (MP 105.4) &bull; Receipt Logged</div>
+          </div>
+
+          <div class="ack-row">
+            <div class="ack-meta">
+              <span class="ack-driver">Locomotive Driver C &bull; Train #4022</span>
+              <span class="ack-time">05:34 PM (17m ago)</span>
+            </div>
+            <div class="ack-status-text" style="color: #94a3b8;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Acknowledged &mdash; Advisory Received &bull; Operating Under Caution Orders
+            </div>
+            <div class="ack-section">Section: Habarana &ndash; Gal Oya (MP 84.1) &bull; Receipt Logged</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

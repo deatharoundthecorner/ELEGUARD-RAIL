@@ -19,7 +19,7 @@ $recentPending = array_slice($pendingReports, 0, 5);
 ?>
 
 <div class="dashboard-title-row">
-    <h1>Wildlife Rangers Sighting Center</h1>
+    <h1>Wildlife Rangers Sighting Center <span class="badge badge-sample" style="font-size:0.75rem; vertical-align:middle; margin-left:8px;">Demonstration Environment</span></h1>
     <p class="text-secondary">Review public elephant reports, verify threats, or register official ranger sightings.</p>
 </div>
 
@@ -46,9 +46,19 @@ $recentPending = array_slice($pendingReports, 0, 5);
     </div>
 </div>
 
+<div class="card-panel" style="margin-top: 25px; margin-bottom: 25px; border-left: 4px solid var(--success); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; padding:18px 24px;">
+    <div>
+        <h3 style="margin-bottom:4px; font-size:1.1rem; color:#fff; display:flex; align-items:center; gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>Wildlife Sighting Intelligence & Duplicate Cluster Analytics</h3>
+        <p class="text-secondary" style="font-size:0.85rem; margin:0;">Explore diurnal sighting activity, duplicate candidate pairs, GPS telemetry health, and AI advisory concordance.</p>
+    </div>
+    <div>
+        <a href="<?php echo Router::url('wildlife/analytics.php'); ?>" class="btn btn-outline btn-md">Open Sighting Analytics ↗</a>
+    </div>
+</div>
+
 <div class="card-panel" style="margin-top: 30px;">
     <div class="panel-header">
-        <h2 class="panel-title">🗺️ Live Wildlife & Railway Corridor GIS Map</h2>
+        <h2 class="panel-title" style="display:flex; align-items:center; gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>Live Wildlife & Railway Corridor GIS Map</h2>
         <a href="<?php echo Router::url('wildlife/map.php'); ?>" class="btn btn-outline btn-sm">Full Screen Map ↗</a>
     </div>
     <?php 
@@ -70,7 +80,7 @@ $recentPending = array_slice($pendingReports, 0, 5);
 
         <div class="table-responsive">
             <?php if (empty($recentPending)): ?>
-                <p class="text-muted text-center" style="padding: 20px 0;">🎉 No pending elephant reports to verify.</p>
+                <p class="text-muted text-center" style="padding: 20px 0;">No pending elephant reports to verify.</p>
             <?php else: ?>
                 <table class="data-table">
                     <thead>
@@ -109,17 +119,17 @@ $recentPending = array_slice($pendingReports, 0, 5);
                                     if ($dAiSt === 'processed') {
                                         if ($dDetected) {
                                             $confPct = round($dConf * 100);
-                                            echo "<span class=\"badge badge-success\" style=\"font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">🟢 Detected ({$confPct}%)</span>";
+                                            echo "<span class=\"badge badge-success\" style=\"font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">Detected ({$confPct}%)</span>";
                                         } elseif ($dConf !== null && $dConf >= 0.20) {
                                             $confPct = round($dConf * 100);
-                                            echo "<span class=\"badge badge-warning\" style=\"font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">🟡 Uncertain ({$confPct}%)</span>";
+                                            echo "<span class=\"badge badge-warning\" style=\"font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">Uncertain ({$confPct}%)</span>";
                                         } else {
-                                            echo "<span class=\"badge\" style=\"background:#4b5563; color:#fff; font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">⚪ None</span>";
+                                            echo "<span class=\"badge\" style=\"background:#4b5563; color:#fff; font-size:0.75rem;\" title=\"" . e($rep['ai_detection_notes']) . "\">None</span>";
                                         }
                                     } elseif ($dAiSt === 'pending') {
-                                        echo "<span class=\"badge badge-warning\" style=\"font-size:0.75rem;\">⏳ Pending</span>";
+                                        echo "<span class=\"badge badge-warning\" style=\"font-size:0.75rem;\">Pending</span>";
                                     } elseif ($dAiSt === 'failed') {
-                                        echo "<span class=\"badge badge-danger\" style=\"font-size:0.75rem;\">⚠️ Error</span>";
+                                        echo "<span class=\"badge badge-danger\" style=\"font-size:0.75rem;\">Error</span>";
                                     } else {
                                         echo "<span class=\"text-muted\" style=\"font-size:0.75rem;\">&mdash;</span>";
                                     }
@@ -139,7 +149,7 @@ $recentPending = array_slice($pendingReports, 0, 5);
     <div class="card-panel" style="display: flex; flex-direction: column; justify-content: center; text-align: center; border-left: 4px solid var(--success);">
         <h2>Official Ranger Sighting?</h2>
         <p class="text-secondary" style="margin-bottom: 20px;">Ranger sightings are submitted directly as <strong>Verified</strong> reports. Use the submission form to create immediate warnings.</p>
-        <a href="<?php echo Router::url('wildlife/submit_report.php'); ?>" class="btn btn-accent btn-lg">➕ File Ranger Sighting</a>
+        <a href="<?php echo Router::url('wildlife/submit_report.php'); ?>" class="btn btn-accent btn-lg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>File Ranger Sighting</a>
     </div>
 </div>
 

@@ -5,8 +5,12 @@
 // Mobile Sidebar Toggle
 function toggleSidebar() {
     const sidebar = document.getElementById('dashboardSidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
     if (sidebar) {
         sidebar.classList.toggle('show');
+    }
+    if (backdrop) {
+        backdrop.classList.toggle('show');
     }
 }
 

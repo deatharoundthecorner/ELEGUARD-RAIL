@@ -118,13 +118,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         if ($newReportId !== false && $newReportId > 0) {
-            // 2. Elevate ONLY the newly inserted report to 'Verified' because submitter is a Wildlife Officer
-            ReportService::updateStatus($newReportId, 'Verified', $currentUser['id']);
-            
+            // Sighting registered as 'Pending'; anti-self-verification requires independent officer review
             // Log ranger submit action
-            Auth::logActivity($currentUser['id'], 'Ranger Sighting Filed', "Ranger filed sighting #{$newReportId} in section #{$sectionId} (Confirmed).");
+            Auth::logActivity($currentUser['id'], 'Ranger Sighting Filed', "Ranger filed sighting #{$newReportId} in section #{$sectionId} (Pending Review).");
 
-            Session::flash('success', 'Official ranger sighting registered successfully as a confirmed (Verified) report.');
+            Session::flash('success', 'Official ranger sighting registered successfully (Pending verification review).');
             Router::redirect('wildlife/reports.php');
         } else {
             $errors['submit'] = 'Failed to register report. Please check database connection.';
@@ -135,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="dashboard-title-row">
     <h1>File Official Ranger Sighting</h1>
-    <p class="text-secondary">Official ranger reports are automatically marked as <strong>Verified</strong> for immediate action by Railway Control.</p>
+    <p class="text-secondary">Official ranger field observations are registered as <strong>Pending</strong> for verification review by wildlife officers.</p>
 </div>
 
 <div class="card-panel" style="max-width: 700px;">
@@ -369,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-accent">Submit Verified Sighting</button>
+            <button type="submit" class="btn btn-accent">Submit Ranger Sighting</button>
             <a href="<?php echo Router::url('wildlife/dashboard.php'); ?>" class="btn btn-secondary">Cancel</a>
         </div>
     </form>

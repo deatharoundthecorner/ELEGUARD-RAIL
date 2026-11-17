@@ -32,21 +32,32 @@ $currentUser = Auth::user();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Stylesheets -->
+    <!-- Stylesheets: Central Design Foundation -->
+    <link rel="stylesheet" href="<?php echo Router::url('assets/css/tokens.css'); ?>">
+    <link rel="stylesheet" href="<?php echo Router::url('assets/css/components.css'); ?>">
     <link rel="stylesheet" href="<?php echo Router::url('assets/css/style.css'); ?>">
     <link rel="stylesheet" href="<?php echo Router::url('assets/css/dashboard.css'); ?>">
     
     <?php if ($currentUser['role'] === 'driver'): ?>
         <link rel="stylesheet" href="<?php echo Router::url('assets/css/driver-alert.css'); ?>">
     <?php endif; ?>
+    
+    <!-- Application Base URL for Relocatable Deployments -->
+    <script>
+        window.APP_BASE_URL = "<?php echo rtrim(Router::url(''), '/'); ?>";
+        window.APP_URL = window.APP_BASE_URL;
+    </script>
 </head>
-<body class="dashboard-body">
+<body class="dashboard-body role-<?php echo htmlspecialchars($currentUser['role']); ?>">
     
     <div class="dashboard-container">
         
         <!-- Sidebar Navigation -->
         <?php include __DIR__ . '/dashboard_sidebar.php'; ?>
         
+        <!-- Mobile/Tablet Sidebar Backdrop -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
         <!-- Main Dashboard View Panel -->
         <div class="dashboard-main">
             <header class="dashboard-topbar">
@@ -60,7 +71,9 @@ $currentUser = Auth::user();
                 </div>
                 <div class="topbar-right">
                     <div class="user-profile-badge">
-                        <span class="user-avatar">👤</span>
+                        <span class="user-avatar avatar-pill" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </span>
                         <div class="user-meta">
                             <span class="user-name"><?php echo e($currentUser['name']); ?></span>
                             <span class="user-role-tag"><?php echo e(ucwords(str_replace('_', ' ', $currentUser['role']))); ?></span>

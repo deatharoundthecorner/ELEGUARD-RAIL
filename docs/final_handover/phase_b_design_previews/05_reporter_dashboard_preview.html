@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Sighting Portal | ELEGUARD RAIL [Preview]</title>
+  <style>
+    :root {
+      --bg-canvas: #0b1219;
+      --bg-surface: #121c27;
+      --bg-surface-elevated: #1a2736;
+      --border-color: #213245;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-blue: #0284c7;
+      --accent-blue-hover: #0369a1;
+      --sig-green: #10b981;
+      --sig-amber: #f59e0b;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "Segoe UI Mono", "Roboto Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      overflow-y: auto;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 960px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-bottom: 24px;
+    }
+
+    /* Community Header */
+    .reporter-header {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .user-pill {
+      background: #1a2839;
+      border: 1px solid #2d425b;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    /* Hero Primary Action Card - Flat & Non-Gradient */
+    .hero-action-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid #283e58;
+      border-radius: 8px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+    }
+
+    .hero-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      max-width: 580px;
+    }
+
+    .btn-file-sighting {
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+      transition: background 0.15s ease;
+    }
+
+    .btn-file-sighting:hover {
+      background: #0369a1;
+    }
+
+    /* 3-Step Reporting Visual Guide */
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .guide-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .step-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      width: fit-content;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .guide-heading {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .guide-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Submissions History */
+    .history-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .history-header {
+      padding: 14px 20px;
+      background: var(--bg-surface-elevated);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sub-item {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .sub-item:last-child {
+      border-bottom: none;
+    }
+
+    .sub-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sub-location {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .sub-time {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    .status-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .status-verified {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+    }
+
+    .status-review {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fbbf24;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Synthetic Demonstration Banner -->
+    <div style="background: #1e1b12; border: 1px solid #78350f; color: #fbbf24; font-family: var(--font-mono); font-size: 11px; padding: 6px 14px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+      <span>⚠️ SYNTHETIC DEMONSTRATION PROTOTYPE &bull; ILLUSTRATIVE VALUES ONLY</span>
+      <span>COMMUNITY SIGHTING PORTAL &bull; EARLY WARNING INTELLIGENCE</span>
+    </div>
+
+    <!-- Header -->
+    <header class="reporter-header">
+      <div>
+        <div class="brand-title">ELEGUARD RAIL &bull; COMMUNITY SAFETY PORTAL</div>
+        <div class="brand-sub">Sri Lanka Wildlife Conservation Department &amp; Railway Operations</div>
+      </div>
+      <div class="user-pill">
+        Reporter Account: <strong>reporter@eleguard.lk</strong>
+      </div>
+    </header>
+
+    <!-- Hero CTA Card -->
+    <div class="hero-action-card">
+      <div class="hero-title">Report an Elephant Sighting Near the Tracks</div>
+      <p class="hero-desc">
+        Your observation provides critical early warning intelligence to help train crews and wildlife rangers reduce the risk of collisions along railway corridors.
+        Reports undergo independent DWC ecological review before Railway Control evaluates operational advisories.
+      </p>
+      <button class="btn-file-sighting" onclick="alert('PROTOTYPE DEMONSTRATION: Open sighting report submission form.');">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        File New Sighting Report
+      </button>
+    </div>
+
+    <!-- 3-Step Guide -->
+    <div class="guide-grid">
+      <div class="guide-card">
+        <span class="step-badge">STEP 1</span>
+        <div class="guide-heading">Observe Safely</div>
+        <div class="guide-text">Never approach elephants. Maintain a safe observer standoff distance (50&ndash;150m) and do not use bright lights or flash.</div>
+      </div>
+
+      <div class="guide-card">
+        <span class="step-badge">STEP 2</span>
+        <div class="guide-heading">Note Track Landmark</div>
+        <div class="guide-text">Identify the nearest railway landmark: milepost, culvert marker, railway bridge, or crossing gate.</div>
+      </div>
+
+      <div class="guide-card">
+        <span class="step-badge">STEP 3</span>
+        <div class="guide-heading">Two-Stage Verification</div>
+        <div class="guide-text">DWC Wildlife Rangers first verify observation data. Next, Railway Operations Control independently assesses track hazards and issues train advisories if necessary. For emergencies, dial <strong>1992</strong>.</div>
+      </div>
+    </div>
+
+    <!-- My Submissions History -->
+    <div class="history-card">
+      <div class="history-header">
+        <div class="history-title">Your Recent Sighting Submissions (Demonstration)</div>
+        <span style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);">Showing 2 of 28 reports</span>
+      </div>
+
+      <div class="sub-item">
+        <div class="sub-info">
+          <div class="sub-location">Habarana &ndash; Gal Oya (Near Milepost 78.5 jungle border)</div>
+          <div class="sub-time">Report #88 &bull; Filed 2026-11-15 05:47 PM &bull; 3 Elephants</div>
+        </div>
+        <span class="status-pill status-review">STAGE 1: UNDER RANGER REVIEW</span>
+      </div>
+
+      <div class="sub-item">
+        <div class="sub-info">
+          <div class="sub-location">Minneriya Crossing Marker 105</div>
+          <div class="sub-time">Report #32 &bull; Filed 2026-11-08 12:36 PM &bull; 3 Elephants &bull; Ecological Validity Verified</div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+          <span class="status-pill status-verified">ECOLOGICALLY VERIFIED</span>
+          <span style="font-size: 10px; font-family: var(--font-mono); color: #38bdf8;">Forwarded to Rail Control Desk</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

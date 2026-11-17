@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Operations Console | ELEGUARD RAIL [Preview]</title>
+  <style>
+    :root {
+      --bg-canvas: #0b0f17;
+      --bg-panel: #131b26;
+      --bg-panel-subtle: #192332;
+      --border-panel: #202d3f;
+      --border-subtle: #29394f;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-steel: #38bdf8;
+      --accent-rail: #0284c7;
+      --sig-green: #10b981;
+      --sig-amber: #f59e0b;
+      --sig-red: #ef4444;
+      --sig-blue: #0ea5e9;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "Segoe UI Mono", "Roboto Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 240px;
+      background: #0d131d;
+      border-right: 1px solid var(--border-panel);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .brand-bar {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-panel);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 26px;
+      height: 26px;
+      background: var(--accent-rail);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .brand-text {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-group {
+      padding: 16px 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-panel);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-steel);
+      font-weight: 600;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .nav-item svg {
+      flex-shrink: 0;
+    }
+
+    .nav-count {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--bg-panel-subtle);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    .user-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border-panel);
+      background: #090e15;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar-pill {
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .user-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: var(--accent-steel);
+      font-family: var(--font-mono);
+    }
+
+    /* Main View Area */
+    .main-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .top-status-header {
+      padding: 14px 28px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .breadcrumb-root { color: var(--text-muted); }
+    .breadcrumb-sep { color: var(--text-dim); }
+    .breadcrumb-current { color: #fff; font-weight: 600; }
+
+    .system-health-strip {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .health-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .health-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+    }
+
+    .db-immutability-badge {
+      color: var(--text-muted);
+      border-left: 1px solid var(--border-panel);
+      padding-left: 12px;
+    }
+
+    .db-immutability-badge strong {
+      color: #fff;
+    }
+
+    /* Content Area */
+    .content-container {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Top KPI Row - Compact & Flat */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .kpi-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 6px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .kpi-value-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #fff;
+      line-height: 1;
+    }
+
+    .kpi-subtext {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Two Column Operational Layout */
+    .ops-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .panel-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 12px 16px;
+      background: var(--bg-panel-subtle);
+      border-bottom: 1px solid var(--border-panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-action-btn {
+      background: transparent;
+      border: 1px solid var(--border-panel);
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+    }
+
+    .panel-action-btn:hover {
+      background: var(--border-panel);
+      color: #fff;
+    }
+
+    /* Structured Operational Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12.5px;
+    }
+
+    th {
+      background: #0f1621;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-panel);
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #162130;
+      color: var(--text-main);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .badge-critical { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .badge-high { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .badge-verified { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .badge-pending { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+    /* API Diagnostics Matrix */
+    .api-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .api-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid #162130;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .api-route {
+      color: var(--accent-steel);
+    }
+
+    .api-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .api-status {
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    .api-ms {
+      color: var(--text-dim);
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand-bar">
+      <div class="brand-logo">ER</div>
+      <div>
+        <div class="brand-text">ELEGUARD RAIL</div>
+        <div class="brand-sub">Sri Lanka Railways DWC</div>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Core Operations</div>
+      <a class="nav-item active" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Admin Console
+      </a>
+      <a class="nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Data Analytics
+      </a>
+      <a class="nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+        Railway GIS Map
+      </a>
+
+      <div class="nav-label" style="margin-top: 16px;">System Governance</div>
+      <a class="nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Role Accounts
+        <span class="nav-count">5</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Railway Corridors
+        <span class="nav-count">4</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Audit System Logs
+        <span class="nav-count">217</span>
+      </a>
+    </div>
+
+    <div class="user-footer">
+      <div class="avatar-pill">SA</div>
+      <div class="user-details">
+        <div class="user-name">System Administrator</div>
+        <div class="user-role">ADMIN &bull; 127.0.0.1:3308</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View -->
+  <main class="main-view">
+    <!-- Synthetic Demonstration Banner -->
+    <div style="background: #1e1b12; border-bottom: 1px solid #78350f; color: #fbbf24; font-family: var(--font-mono); font-size: 11px; padding: 7px 28px; display: flex; justify-content: space-between; align-items: center;">
+      <span>⚠️ SYNTHETIC DEMONSTRATION PROTOTYPE &bull; ILLUSTRATIVE SAMPLE VALUES ONLY</span>
+      <span>STATUS: READ-ONLY TECHNICAL CONSOLE &bull; NO LIVE DISPATCH</span>
+    </div>
+
+    <div class="top-status-header">
+      <div class="header-breadcrumb">
+        <span class="breadcrumb-root">Control Console</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">Infrastructure Overview (Illustrative Showcase)</span>
+      </div>
+
+      <div class="system-health-strip">
+        <div class="health-pill">
+          <div class="health-dot"></div>
+          SERVICES NOMINAL
+        </div>
+        <div class="db-immutability-badge">
+          DB: <strong>eleguard_rail_demo</strong> (MariaDB 3308 &bull; Read-Only Isolated)
+        </div>
+      </div>
+    </div>
+
+    <div class="content-container">
+      <!-- 4 Compact Telemetry KPI Tiles -->
+      <div class="kpi-row">
+        <div class="kpi-panel">
+          <div class="kpi-label">Active Corridors <span style="font-size: 9px; color: #38bdf8;">[SAMPLE]</span></div>
+          <div class="kpi-value-row">
+            <span class="kpi-value">4</span>
+            <span class="kpi-subtext">Maho &bull; Gal Oya &bull; Hingurakgoda</span>
+          </div>
+        </div>
+
+        <div class="kpi-panel">
+          <div class="kpi-label">Pending Ranger Verification <span style="font-size: 9px; color: #fbbf24;">[SAMPLE]</span></div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" style="color: #fbbf24;">26</span>
+            <span class="kpi-subtext">Awaiting DWC Review</span>
+          </div>
+        </div>
+
+        <div class="kpi-panel">
+          <div class="kpi-label">Active Safety Broadcasts <span style="font-size: 9px; color: #f87171;">[SAMPLE]</span></div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" style="color: #f87171;">12</span>
+            <span class="kpi-subtext">Driver Advisories Live</span>
+          </div>
+        </div>
+
+        <div class="kpi-panel">
+          <div class="kpi-label">Data Provenance Integrity</div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" style="color: #34d399;">100%</span>
+            <span class="kpi-subtext">SHA-256 Verified Immutable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-Column Operational Layout -->
+      <div class="ops-grid">
+        <!-- Left: Railway Corridor Status -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              Railway Corridor Advisory Speed Cautions & Wildlife Hazards (Demonstration)
+            </div>
+            <button class="panel-action-btn">Export Corridor Report</button>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Railway Section</th>
+                  <th>Chainage (MP)</th>
+                  <th>Advisory Speed Caution</th>
+                  <th>Recent Sighting</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Minneriya &ndash; Hingurakgoda</strong></td>
+                  <td style="font-family: var(--font-mono); color: var(--text-muted);">MP 105.4 &ndash; 108.2</td>
+                  <td><span class="badge badge-critical">20 km/h Advisory Caution (T.409 Precedence)</span></td>
+                  <td>3 Elephants approaching line (18m)</td>
+                  <td><span class="badge badge-critical">Active Hazard</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Habarana &ndash; Gal Oya</strong></td>
+                  <td style="font-family: var(--font-mono); color: var(--text-muted);">MP 84.1 &ndash; 87.6</td>
+                  <td><span class="badge badge-high">35 km/h Daytime Advisory Caution</span></td>
+                  <td>1 Lone Bull sighted near culvert 412</td>
+                  <td><span class="badge badge-high">Advisory</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Maho &ndash; Anuradhapura</strong></td>
+                  <td style="font-family: var(--font-mono); color: var(--text-muted);">MP 42.0 &ndash; 46.8</td>
+                  <td><span class="badge badge-pending">Track Speed Caution Cleared</span></td>
+                  <td>Water buffalo grazing (Resolved false alarm)</td>
+                  <td><span class="badge badge-verified">Clear</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Polonnaruwa &ndash; Welikanda</strong></td>
+                  <td style="font-family: var(--font-mono); color: var(--text-muted);">MP 122.0 &ndash; 125.5</td>
+                  <td><span class="badge badge-pending">Track Speed Caution Cleared</span></td>
+                  <td>No sightings within past 48h</td>
+                  <td><span class="badge badge-verified">Clear</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="padding: 10px 16px; font-size: 11.5px; color: var(--text-muted); font-family: var(--font-mono); border-top: 1px solid var(--border-panel); background: #0c131d; line-height: 1.5;">
+            * STATUTORY NOTICE: Speed guidance is advisory decision-support only. Official Sri Lanka Railways Caution Orders (Form T.409/T.410) issued by Train Controllers govern operational locomotive speeds. Automated dashboard indications never supersede official operating circulars.
+          </div>
+        </div>
+
+        <!-- Right: Real-Time API Health Matrix -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              REST Analytics Health
+            </div>
+            <span style="font-size: 11px; font-family: var(--font-mono); color: #34d399;">PROBES LIVE</span>
+          </div>
+
+          <div class="api-list">
+            <div class="api-row">
+              <span class="api-route">/api/analytics/summary.php</span>
+              <div class="api-meta">
+                <span class="api-status">200 OK</span>
+                <span class="api-ms">28ms</span>
+              </div>
+            </div>
+            <div class="api-row">
+              <span class="api-route">/api/analytics/temporal.php</span>
+              <div class="api-meta">
+                <span class="api-status">200 OK</span>
+                <span class="api-ms">47ms</span>
+              </div>
+            </div>
+            <div class="api-row">
+              <span class="api-route">/api/analytics/sections.php</span>
+              <div class="api-meta">
+                <span class="api-status">200 OK</span>
+                <span class="api-ms">80ms</span>
+              </div>
+            </div>
+            <div class="api-row">
+              <span class="api-route">/api/analytics/hotspots.php</span>
+              <div class="api-meta">
+                <span class="api-status">200 OK</span>
+                <span class="api-ms">195ms</span>
+              </div>
+            </div>
+            <div class="api-row">
+              <span class="api-route">/api/analytics/duplicates.php</span>
+              <div class="api-meta">
+                <span class="api-status">200 OK</span>
+                <span class="api-ms">129ms</span>
+              </div>
+            </div>
+            <div class="api-row">
+              <span class="api-route">/api/analytics/ai_advisory.php</span>
+              <div class="api-meta">
+                <span class="api-status">200 OK</span>
+                <span class="api-ms">200ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent System Audit Log -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            System Activity & Immutable Audit Trail (Illustrative Demonstration Records)
+          </div>
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Showing latest 3 of 217 entries</span>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp (UTC+5:30)</th>
+                <th>Operator</th>
+                <th>Action Category</th>
+                <th>Resource Reference</th>
+                <th>Integrity Checksum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family: var(--font-mono);">2026-11-16 05:47:12</td>
+                <td>control@eleguard.lk</td>
+                <td>Safety Alert Broadcast Issued</td>
+                <td>Alert #12 (Minneriya Corridor MP 105.4)</td>
+                <td><span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-steel);">SHA256: 8a4c10...d4e8</span></td>
+              </tr>
+              <tr>
+                <td style="font-family: var(--font-mono);">2026-11-16 05:32:04</td>
+                <td>wildlife@eleguard.lk</td>
+                <td>Field Verification Completed</td>
+                <td>Report #88 (Habarana Reserve Section)</td>
+                <td><span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-steel);">SHA256: 17b93f...c2a1</span></td>
+              </tr>
+              <tr>
+                <td style="font-family: var(--font-mono);">2026-11-16 05:10:45</td>
+                <td>driver@eleguard.lk</td>
+                <td>Cab Advisory Acknowledged</td>
+                <td>Train 6011 (Briefing Noted &mdash; Standard Vigilance)</td>
+                <td><span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-steel);">SHA256: 9e32aa...f014</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
