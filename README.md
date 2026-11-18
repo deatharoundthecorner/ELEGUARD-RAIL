@@ -13,6 +13,18 @@ The platform bridges community sighting reports, field ranger telemetry, biologi
 
 ---
 
+> [!NOTE]
+> ### ELEGUARD RAIL — DEVELOPMENT COMPLETED AND FROZEN
+> Active engineering and formal milestone delivery for **ELEGUARD RAIL** have officially concluded.
+> The repository is now frozen and published in a stable, verified, and documented state for academic, research, and independent development purposes under the [MIT License](LICENSE).
+> The original project team is no longer actively developing or maintaining this project. External developers, researchers, and students are encouraged to independently fork, modify, and extend the platform.
+>
+> - 📄 **Project Status & Closure Record:** [PROJECT_STATUS.md](PROJECT_STATUS.md)
+> - 🛠️ **Developer Handover & Setup Guide:** [FINAL_HANDOVER.md](FINAL_HANDOVER.md)
+> - 🤝 **Contributing & Forking Guidelines:** [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
 > [!CAUTION]
 > ### Mandatory Safety & Operational Disclaimer
 >
@@ -113,7 +125,7 @@ In Sri Lanka, wild elephant habitats intersect high-speed railway corridors acro
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-org/ELEGUARD-RAIL.git
+   git clone https://github.com/deatharoundthecorner/ELEGUARD-RAIL.git
    cd ELEGUARD-RAIL
    ```
 
@@ -291,6 +303,10 @@ A comprehensive 15-slide technical and stakeholder presentation prepared for int
 
 Formal engineering deliverables and architectural audits compiled under the Master Development Directive:
 
+- 🏁 **[Project Status & Closure Record](PROJECT_STATUS.md)** — Formal statement of project completion, frozen development baseline, and future engineering opportunities.
+- 📘 **[Developer Handover Guide](FINAL_HANDOVER.md)** — Step-by-step instructions for cloning, configuring, running, testing, and independently extending the codebase.
+- 🤝 **[Contributing Guidelines](CONTRIBUTING.md)** — Guidance for external developers, independent forks, safety boundaries, and vulnerability reporting.
+- 📑 **[Final Release Report](docs/final_handover/FINAL_RELEASE_REPORT.md)** — Master release verification record and architectural audit trail.
 - 📋 **[Master Development Audit](docs/development/master_development_audit.md)** — Comprehensive repository baseline, migration status, AI runtime assessment, and 9-stage engineering roadmap.
 - 🗺️ **[Engineering Development Roadmap](docs/development/development_roadmap.md)** — Detailed milestone progression (Milestones 1–8, 9A/9B, 9C, Stage J, Stages A–I) and future engineering horizon.
 - 🏛️ **[Architectural Decision Records (ADRs)](docs/development/architecture_decisions.md)** — Ten formal ADRs documenting three-database isolation, privilege separation, geodetic forward projection, 7-period diurnal continuum, UUID idempotency, Web Crypto AES-GCM vault, advisory YOLOX-Tiny ONNX pipeline, and RFC 9457 error standards.
